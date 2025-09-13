@@ -1,36 +1,36 @@
+// src/main/java/com/wime/controller/LoginController.java
 package com.wime.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wime.model.usuario;
-import com.wime.repository.UsuarioRepository;
+import com.wime.service.LoginService;
+import com.wime.service.LoginService.LoginResponse;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class LoginController {
 
-    private final UsuarioRepository usuarioRepository;
-
     @Autowired
-    public LoginController(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
-    }
+    private LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody usuario request) {
-        usuario usuario = usuarioRepository.findByCorreoAndClave(
-                request.getCorreo(), request.getClave()
-        );
+    public LoginResponse login(@RequestParam String email,@RequestParam String contrasena,HttpSession session) {
 
-        if (usuario != null) {
-            return ResponseEntity.ok("✅ Login exitoso, bienvenido " + usuario.getNombre());
-        } else {
-            return ResponseEntity.status(401).body("❌ Credenciales incorrectas");
+        LoginResponse response = loginService.login(email, contrasena);
+
+        if (response.success) {
+            // Guardar en sesión
+            session.setAttribute("usuario", response.nombreUsuario);
+            session.setAttribute("id_usuario", response.idUsuario);
+            session.setAttribute("tipo", response.tipo);
         }
+
+        return response;
     }
 }
