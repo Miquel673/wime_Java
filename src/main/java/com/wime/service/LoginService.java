@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import com.wime.model.Usuario;
+import com.wime.model.usuario;
 import com.wime.repository.UsuarioRepository;
 
 @Service
@@ -19,38 +19,43 @@ public class LoginService {
     private UsuarioRepository usuarioRepo;
 
     public LoginResponse login(String email, String contrasena) {
-        Optional<Usuario> usuarioOpt = usuarioRepo.findByEmailUsuario(email);
+        Optional<usuario> usuarioOpt = usuarioRepo.findByEmailUsuario(email);
 
         if (usuarioOpt.isEmpty()) {
             return new LoginResponse(false, "❌ Usuario no encontrado.");
         }
 
-        Usuario usuario = usuarioOpt.get();
+        usuario usuario = usuarioOpt.get();
 
         // Verificar contraseña
-        if (!BCrypt.checkpw(contrasena, usuario.getContrasenaUsuario())) {
+        if (!BCrypt.checkpw(contrasena, usuario.getContrasena())) {
             return new LoginResponse(false, "❌ Contraseña incorrecta.");
         }
 
         // Verificar estado
-        if (!"Activo".equals(usuario.getEstado())) {
+        if (!"Activo".equalsIgnoreCase(usuario.getEstado())) {
             return new LoginResponse(false, "Tu cuenta está inactiva. Contacta con soporte.", "Inactivo");
         }
 
-LocalDateTime ultimoLogin = usuario.getUltimoLogin();
-if (ultimoLogin != null) {
-    long diasInactivo = Duration.between(ultimoLogin, LocalDateTime.now()).toDays();
-    if (diasInactivo > 60) {
-        usuario.setEstado("Inactivo");
-        usuarioRepo.save(usuario);
-        return new LoginResponse(false, "❌ Tu cuenta ha sido desactivada por inactividad.", "Inactivo");
-    }
-}
+        // Verificar inactividad (más de 60 días)
+        LocalDateTime ultimoLogin = usuario.getUltimoLogin();
+        if (ultimoLogin != null) {
+            long diasInactivo = Duration.between(ultimoLogin, LocalDateTime.now()).toDays();
+            if (diasInactivo > 60) {
+                usuario.setEstado("Inactivo");
+                usuarioRepo.save(usuario);
+                return new LoginResponse(false, "❌ Tu cuenta ha sido desactivada por inactividad.", "Inactivo");
+            }
+        }
 
-// Actualizar último login
-usuario.setUltimoLogin(LocalDateTime.now());
-usuarioRepo.save(usuario);
-        return new LoginResponse(true, "✅ Inicio de sesión exitoso.", usuario.getNombreUsuario(), usuario.getIdUsuario(), usuario.getTipo());
+        // Actualizar último login
+        usuario.setUltimoLogin(LocalDateTime.now());
+        usuarioRepo.save(usuario);
+
+        return new LoginResponse(true, "✅ Inicio de sesión exitoso.",
+                usuario.getNombreUsuario(),
+                usuario.getIdUsuario(),
+                usuario.getTipo());
     }
 
     // Clase interna para la respuesta
@@ -62,7 +67,6 @@ usuarioRepo.save(usuario);
         public Long idUsuario;
         public String tipo;
 
-        // Constructores
         public LoginResponse(boolean success, String message) {
             this.success = success;
             this.message = message;
