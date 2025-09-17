@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h2>Iniciar Sesión</h2>
+    <form action="/login" method="post">
+        <label for="nombreUsuario">Usuario:</label><br>
+        <input type="text" id="nombreUsuario" name="nombreUsuario" required><br><br>
+        <label for="contrasena">Contraseña:</label><br>
+        <input type="password" id="contrasena" name="contrasena" required><br><br>
+        <input type="submit" value="Acceder">
+    </form>
+
+    <p th:if="${error}" style="color:red;">[[${error}]]</p>
+</body>
+</html>

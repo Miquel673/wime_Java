@@ -1,12 +1,12 @@
-// src/main/java/com/wime/repository/UsuarioRepository.java
 package com.wime.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.wime.model.usuario;
+import com.wime.model.Usuario;
 
-public interface UsuarioRepository extends JpaRepository<usuario, Long> {
-    Optional<usuario> findByEmailUsuario(String emailUsuario);
+@Repository
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    // Método para encontrar un usuario por nombre
+    Usuario findByNombreUsuario(String nombreUsuario);
 }
