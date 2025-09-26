@@ -23,24 +23,20 @@ function cargarTareas() {
     .catch(error => console.error("❌ Error en fetch:", error));
 }
 
-
 function cargarRutinas() {
-  fetch("/api/rutinas")
-    .then(res => res.json())
+  fetch("http://localhost:8080/api/rutinas/listar")
+    .then(response => response.json())
     .then(data => {
-      if (Array.isArray(data)) {
-        console.log("✅ Rutinas recibidas:", data);
-        mostrarRutinas(data);
+      console.log("📌 Respuesta del backend (rutinas):", data); // 👈
+      if (data.success) {
+        mostrarRutinas(data.rutinas);
       } else {
-        console.warn("⚠️ Formato inesperado en rutinas:", data);
-        mostrarError("rutinas", "No se pudieron cargar las rutinas.");
+        console.error("⚠️ Error cargando rutinas:", data.message);
       }
     })
-    .catch(err => {
-      console.error("❌ Error cargando rutinas:", err);
-      mostrarError("rutinas", "Error al cargar rutinas.");
-    });
+    .catch(error => console.error("❌ Error en fetch:", error));
 }
+ 
 
 // ------------------------
 // FUNCIONES DE VISUALIZACIÓN
