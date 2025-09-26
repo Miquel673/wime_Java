@@ -1,0 +1,18 @@
+Wime - Proyecto Formativo Scrum #5
+
+Wime es un sistema de gestion de tareas y rutinas el cual esta diseñado para que los usuarios puedan organizar sus ideas, su dia a dia o pueda simplemente mejorar su rendimiento en cualquier campo al que este mismo se dedique.
+La idea nace de la necesidad de las personas a dejar de procrastinar, dejar todo lo importante para ultimo momento y asi bajar sus niveles de eficiencia.
+Nuestro programa se enfoca en ayudar a esas personas brindandoles herramientas intuitivas para manejar de manera eficiente la forma en la cual trabajan.
+
+En una de las encuestas, notamos que a la gente se le dificulta mucho mantenerse concentrados para la realizacion de sus tareas diarias por lo cual se considera que nuestro gestor de tareas y rutinas es totalmente necesario.
+
+Nuestro equipo de trabajo (Scrum) esta conformado por los siguientes participantes
+- Miguel Angel Ibarvo (Scrum Master)
+- Yeinner Ramires Hoyer (Product Owner)
+- Jordan David Garcia (Equipo de desarrollo)
+- Eva Sandrith Arroyo (Equipo de desarrollo)
+- Paula Andrea Barbosa (Equipo de desarrollo)
+
+# Este documento esta creado con la intencion de que si en algun momento el proyecto llegase a pausar o a "olvidar" sirva de apoyo en caso de que se necesite el contexto del desarrollo de este programa.
+
+En esta carpeta podemos observar distintos tipos de archivos, estos contienentanto la logica, como los estilos y la estructura principal del programa, este esta alojado en la carpeta del servidor Xammpp.

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wime | Barra Lateral</title>
+  <link rel="stylesheet" href="/Wime/public/Css/Wime_SideBar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/Wime/public/Css/Wime_interfaz_Calendario.Css">
+
+</head>
+<body>
+  <section class="sidebar">
+    <a href="/Wime/public/HTML/Wime_interfaz_Pagina-Principal.html" id="Wime_Nombre"><h2>WIME</h2></a>
+    <a href="/Wime/private/PhP/Wime_interfaz_BandejaEntrada.php"><i class="fas fa-envelope me-2"></i>Bandeja</a>
+    <a href="#" id="nuevoBtn" data-bs-toggle="modal" data-bs-target="#modalNuevo">Nuevo</a>
+    <a href="/Wime/Interfaces/Admin/php/Wime_interfaz_Tablero.php">🏠 Tablero</a>
+    <a href="/Wime/Interfaces/Admin/php/Wime_interfaz_AdministrarUsuarios.php">Administrar</a>
+
+    <!-- Calendario -->
+    
+
+
+    <div class="footer-links">
+      <a href="/Wime/Interfaces/Admin/php/Wime_interfaz_Cuenta.php">👤 Cuenta</a>
+      <a href="/Wime/private/PhP/Wime_interfaz_configuracion.php"><i class="fas fa-cog me-2"></i>Configuración</a>
+      <a href="/Wime/Controllers/LogOutController.php">🔓 Cerrar Sesión</a>
+    </div>
+  </section>
+
+  <script src="/Wime/public/Js/calendario.js"></script>
+</body>
+</html>

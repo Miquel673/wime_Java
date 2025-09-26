@@ -1,0 +1,23 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar específico: deja lo que necesites aquí */
+
+/* Personalización adicional */
+img[alt="Avatar"] {
+  background-color: #ccc;
+}
+
+.footer-links {
+  position: absolute;
+  bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px !important;
+    margin-right: 25px !important;
+  }
+}
+

@@ -1,0 +1,101 @@
+body {
+    left: 50%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.new-btn {
+    background-color: #d0d0ff;
+    border: none;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
+
+.menu a {
+    display: block;
+    margin: 0.5rem 0;
+    text-decoration: none;
+    color: black;
+}
+
+
+
+.account-actions a {
+    display: block;
+    margin-top: 0.5rem;
+    text-decoration: none;
+    color: black;
+}
+
+.settings {
+    flex-grow: 1;
+    margin-left: 18%;
+    margin-right: 10px;
+    padding: 5px;
+    overflow-y: auto;
+    background-color: white;
+}
+
+.tabs button {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+}
+
+.content {
+    margin-top: 1rem;
+}
+
+.themes, .notifications, .messages {
+    margin-bottom: 1.5rem;
+}
+
+.theme-options {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.theme {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.theme.light {
+    background-color: white;
+}
+
+.theme.dark {
+    background-color: black;
+    color: white;
+}
+
+footer {
+    margin-top: 2rem;
+}
+
+footer a {
+    color: #0077cc;
+    text-decoration: none;
+}

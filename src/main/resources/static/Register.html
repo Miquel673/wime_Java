@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wime | Registro</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/Css/Wime_interfaz_Registro_Usuario.css">
+  <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png" />
+
+</head>
+
+<body>
+  <div class="registro-container">
+    <div class="card-registro d-flex flex-row">
+
+      <!-- Carrusel -->
+      <div class="col-md-6 p-0 registro-left">
+  <div id="carouselExampleControls" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="10000">
+    <div class="carousel-inner h-100">
+      <div class="carousel-item active">
+        <img src="/IMG/pruebaWime/City.jpeg" class="d-block w-100" alt="Slide 1">
+      </div>
+      <div class="carousel-item">
+        <img src="/IMG/pruebaWime/ReallyGood.jpeg" class="d-block w-100" alt="Slide 2">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Formulario -->
+      <div class="col-md-6 formulario bg-white text-center mb-4">
+        <img src="/IMG/Logo_Wime.png" width="80" alt="Logo" class="mb-3" /> 
+        <h2 class="mb-4 text-center">Crea tu cuenta</h2>
+
+  <form id="registroForm">
+    <div class="mb-3">
+      <label for="EmailUsuario" class="form-label">Correo electrónico</label>
+      <input type="email" class="form-control" id="EmailUsuario" name="EmailUsuario" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="NombreUsuario" class="form-label">Nombre de usuario</label>
+      <input type="text" class="form-control" id="NombreUsuario" name="NombreUsuario" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="ContrasenaUsuario" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" id="ContrasenaUsuario" name="ContrasenaUsuario" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="confirm_password" class="form-label">Confirmar contraseña</label>
+      <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+    </div>
+
+    <div class="mb-4">
+      <label for="Birth_Day" class="form-label">Fecha de nacimiento</label>
+      <input type="date" class="form-control" id="Birth_Day" name="Birth_Day" required>
+    </div>
+
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-primary">Registrarse</button>
+      <button type="button" class="btn btn-outline-secondary" onclick="location.href='/index.html'">Cancelar</button>
+    </div>
+  </form>
+
+
+        <hr class="my-4">
+
+        <h6 class="text-center">O regístrate con</h6>
+        <div class="gap-1 mt-1">
+          <button class="btn btn-outline-danger">Google</button>
+          <button class="btn btn-outline-primary">Facebook</button>
+          <button class="btn btn-dark">Microsoft</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.getElementById("form-registro").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const usuario = {
+    nombreUsuario: document.getElementById("nombre").value,
+    emailUsuario: document.getElementById("email").value,
+    contrasenaUsuario: document.getElementById("contrasena").value
+  };
+
+  try {
+    const res = await fetch("http://localhost:8080/auth/Register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(usuario)
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Registro exitoso");
+      window.location.href = "login.html";
+    } else {
+      alert("⚠️ " + data.message);
+    }
+  } catch (err) {
+    console.error("❌ Error en la petición:", err);
+  }
+});
+
+  </script>
+</body>
+</html>

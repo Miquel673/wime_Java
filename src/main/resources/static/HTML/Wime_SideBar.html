@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wime | Barra Lateral</title>
+  <link rel="stylesheet" href="/Wime/public/Css/Wime_SideBar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <section class="sidebar">
+    <a href="/Wime/public/HTML/Wime_interfaz_Pagina-Principal.html" id="Wime_Nombre"><h2>WIME</h2></a>
+    <a href="/Wime/private/PhP/Wime_interfaz_BandejaEntrada.php">Bandeja</a>
+    <a href="#" id="nuevoBtn" data-bs-toggle="modal" data-bs-target="#modalNuevo">Nuevo</a>
+    <a href="/Wime/public/HTML/Wime_interfaz_Tablero.html">Tablero</a>
+
+    <!-- Calendario -->
+    <div id="calendario-Cuenta">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <button id="prev" class="btn btn-sm btn-outline-primary">◀</button>
+        <h5 id="mes-anio" class="m-0"></h5>
+        <button id="next" class="btn btn-sm btn-outline-primary">▶</button>
+      </div>
+      <div id="dias-semana">
+        <div>D</div><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div>
+      </div>
+      <div id="dias"></div>
+    </div>
+
+    <div class="footer-links">
+      <a href="Wime_interfaz_Cuenta.html">👤 Cuenta</a>
+      <a href="/Wime/private/PhP/Wime_interfaz_configuracion.php"><i class="fas fa-cog me-2"></i>Configuración</a>
+    </div>
+
+    <!-- Botón logout -->
+    <div class="sidebar-footer mt-auto p-3">
+      <button id="logout-btn" class="btn btn-danger w-100">
+        <i class="fa fa-sign-out-alt"></i> Cerrar sesión
+      </button>
+    </div>
+  </section>
+
+  <script src="/Wime/public/Js/calendario.js"></script>
+
+  <script>
+    function cerrarSesion() {
+      fetch("http://localhost:8080/api/auth/logout", {
+        method: "POST",
+        credentials: "include"
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log("✅ Sesión cerrada");
+          window.location.href = "/HTML/Wime_interfaz_Inicio-Sesion.html";
+        } else {
+          console.error("⚠️ Error cerrando sesión:", data.message);
+        }
+      })
+      .catch(err => console.error("❌ Error en la solicitud:", err));
+    }
+
+    // 🔹 Vinculamos el botón con la función
+    document.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("logout-btn");
+      if (btn) {
+        btn.addEventListener("click", cerrarSesion);
+      }
+    });
+  </script>
+</body>
+</html>

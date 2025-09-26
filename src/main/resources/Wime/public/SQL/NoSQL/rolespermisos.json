@@ -1,0 +1,19 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"wine"},
+{"type":"table","name":"rolespermisos","database":"wine","data":
+[
+{"IDRoles":"4","IDUsuario":"4","NombreUsuario":"Katerin","permisos":"Select,pdate,Intert","Roles":"Usuario"},
+{"IDRoles":"5","IDUsuario":"5","NombreUsuario":"Rin","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"6","IDUsuario":"6","NombreUsuario":"Yukio","permisos":"Select,pdate,Insert","Roles":""},
+{"IDRoles":"7","IDUsuario":"7","NombreUsuario":"John","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"8","IDUsuario":"8","NombreUsuario":"Serafina","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"9","IDUsuario":"9","NombreUsuario":"Arlo","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"10","IDUsuario":"10","NombreUsuario":"Remi","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"11","IDUsuario":"11","NombreUsuario":"Blyke","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"12","IDUsuario":"12","NombreUsuario":"Subaru ","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"13","IDUsuario":"13","NombreUsuario":"Reinhard","permisos":"Select,pdate,Insert","Roles":"Usuario"},
+{"IDRoles":"14","IDUsuario":"14","NombreUsuario":"Administrador","permisos":"ALL PRIVILEGES","Roles":"Administrador"}
+]
+}
+]
