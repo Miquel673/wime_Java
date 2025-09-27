@@ -18,10 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===================== Gráfico Estadístico ===================== //
 
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("http://localhost:8080/EstadisticasController")
+  fetch("http://localhost:8080/api/estadisticas", {
   credentials: "include"
-    .then(res => res.json())
-    .then(data => {
+})
+  .then(res => res.json())
+  .then(data => {
       if (data.success) {
         const ctx = document.getElementById("grafico-estadisticas").getContext("2d");
 

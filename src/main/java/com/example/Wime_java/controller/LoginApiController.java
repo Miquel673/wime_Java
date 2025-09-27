@@ -26,57 +26,58 @@ public class LoginApiController {
     }
 
     @PostMapping("/login")
-public Map<String, Object> login(@RequestParam String email,
-                                 @RequestParam String contrasena,
-                                 HttpSession session) {   // 👈 añade HttpSession
-    Map<String, Object> response = new HashMap<>();
+    public Map<String, Object> login(@RequestParam String email,
+                                     @RequestParam String contrasena,
+                                     HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
 
-    try {
-        Optional<Usuario> usuarioOpt = usuarioService.login(email, contrasena);
+        try {
+            Optional<Usuario> usuarioOpt = usuarioService.login(email, contrasena);
 
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
+            if (usuarioOpt.isPresent()) {
+                Usuario usuario = usuarioOpt.get();
 
-            // ✅ Guardar en sesión
-            session.setAttribute("usuario", usuario);
-            session.setAttribute("id_usuario", usuario.getIdUsuario().longValue());
+                // ✅ Guardar en sesión
+                session.setAttribute("usuario", usuario);
+                session.setAttribute("id_usuario", usuario.getIdUsuario().longValue());
+                session.setAttribute("rol", usuario.getTipo()); // 👈 Guardamos el tipo (ej: "admin" o "usuario")
 
+                response.put("success", true);
+                response.put("message", "✅ Login exitoso");
+                response.put("usuario", usuario.getNombreUsuario());
+                response.put("rol", usuario.getTipo()); // 👈 Devolvemos el rol
+                response.put("idUsuario", usuario.getIdUsuario());
 
-            response.put("success", true);
-            response.put("message", "Login exitoso");
-            response.put("usuario", usuario.getNombreUsuario());
-            response.put("tipo", usuario.getTipo());
-            response.put("idUsuario", usuario.getIdUsuario());
+            } else {
+                response.put("success", false);
+                response.put("message", "❌ Usuario o contraseña incorrectos o cuenta inactiva.");
+            }
 
-        } else {
+        } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "Usuario o contraseña incorrectos o cuenta inactiva.");
+            response.put("message", "⚠️ Error interno en el servidor.");
+            response.put("error", e.getMessage());
         }
 
-    } catch (Exception e) {
-        response.put("success", false);
-        response.put("message", "Error interno en el servidor.");
-        response.put("error", e.getMessage());
+        return response;
     }
-
-    return response;
-}
-
 
     @GetMapping("/check-session")
-public Map<String, Object> checkSession(HttpSession session) {
-    Map<String, Object> response = new HashMap<>();
-    Usuario usuario = (Usuario) session.getAttribute("usuario");
+    public Map<String, Object> checkSession(HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-    if (usuario != null) {
-        response.put("active", true);
-        response.put("usuario", usuario.getNombreUsuario());
-    } else {
-        response.put("active", false);
+        if (usuario != null) {
+            response.put("active", true);
+            response.put("usuario", usuario.getNombreUsuario());
+            response.put("rol", usuario.getTipo()); // 👈 También lo devolvemos aquí
+        } else {
+            response.put("active", false);
+        }
+
+        return response;
     }
 
-    return response;
-}
 
 @PostMapping("/logout")
 public Map<String, Object> logout(HttpSession session) {

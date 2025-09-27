@@ -19,30 +19,39 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     fetch("http://localhost:8080/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
-      credentials: "include"
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Error en la respuesta del servidor: " + response.status);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Respuesta del servidor:", data);
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: `email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
+  credentials: "include"
+})
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Error en la respuesta del servidor: " + response.status);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Respuesta del servidor:", data);
 
-        if (data.success) {
-          mostrarToast("Inicio de sesión exitoso", true, true);
-        } else {
-          mostrarToast(data.message || "Usuario o contraseña incorrectos", false);
-        }
-      })
-      .catch(error => {
-        console.error("Error en la solicitud:", error);
-        mostrarToast("Error de conexión con el servidor", false);
-      });
+    if (data.success) {
+      mostrarToast("Inicio de sesión exitoso", true, true);
+
+      // 👇 Redirección según el rol
+      if (data.rol === "Administrador") {
+        window.location.href = "/Admin/HTML/Wime_interfaz_Tablero_admin.html";
+      } else {
+        window.location.href = "/HTML/Wime_interfaz_Tablero.html";
+      }
+
+    } else {
+      mostrarToast(data.message || "Usuario o contraseña incorrectos", false);
+    }
+  })
+  .catch(error => {
+    console.error("Error en la solicitud:", error);
+    mostrarToast("Error de conexión con el servidor", false);
+  });
+
   });
 });
 

@@ -9,4 +9,5 @@ import com.example.Wime_java.model.Rutina;
 public interface RutinaRepository extends JpaRepository<Rutina, Long> {
     List<Rutina> findByIdUsuario(Long idUsuario);
 
+    Long countByIdUsuarioAndEstado(Long idUsuario, String estado); // 👈 nuevo
 }
