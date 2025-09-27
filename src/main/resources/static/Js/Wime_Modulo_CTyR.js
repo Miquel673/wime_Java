@@ -214,6 +214,7 @@ function cambiarEstadoTarea(id, nuevoEstado) {
     });
 }
 
+
 // ------------------------
 // CRUD - RUTINAS
 // ------------------------
