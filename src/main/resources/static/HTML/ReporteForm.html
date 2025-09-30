@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="card shadow-sm my-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">📑 Generar Reporte</h5>
+  </div>
+  <div class="card-body">
+    <form id="form-reporte" class="d-flex gap-2">
+      <select id="tipo-reporte" class="form-select" required>
+        <option value="">Selecciona...</option>
+        <option value="tareas">Tareas</option>
+        <option value="rutinas">Rutinas</option>
+      </select>
+      <button type="submit" class="btn btn-success">📄 Exportar PDF</button>
+    </form>
+  </div>
+</div>
+    <script src="/JS/FiltroReporte.js"></script>
+</body>
+</html>

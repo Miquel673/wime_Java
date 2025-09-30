@@ -43,3 +43,5 @@ document.addEventListener("DOMContentLoaded", () => {
         tarjeta.closest(".col").style.display = coincide ? "block" : "none";
       });
     }
+
+

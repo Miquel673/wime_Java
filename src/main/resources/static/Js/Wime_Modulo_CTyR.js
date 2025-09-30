@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ------------------------
 
 function cargarTareas() {
-  fetch("/api/tareas/listar")
+  fetch("http://localhost:8080/api/tareas/listar")
     .then(response => response.json())
     .then(data => {
       console.log("📌 Respuesta del backend (tareas):", data); // 👈
@@ -48,7 +48,7 @@ function mostrarTareas(tareas) {
 
   contenedor.innerHTML = "";
 
-  if (tareas.length === 0) {
+    if (!Array.isArray(tareas) || tareas.length === 0) {
     contenedor.innerHTML = `<p class="text-center w-100">No hay tareas disponibles.</p>`;
     return;
   }
@@ -94,6 +94,8 @@ function mostrarTareas(tareas) {
     contenedor.appendChild(tarjeta);
   });
 }
+
+//Rutinas//
 
 function mostrarRutinas(rutinas) {
   const contenedor = document.getElementById("contenedor-rutinas");
@@ -185,7 +187,7 @@ function mostrarError(tipo, mensaje) {
 function eliminarTarea(id) {
   if (!confirm("¿Estás seguro de eliminar esta tarea?")) return;
 
-  fetch(`/api/tareas/${id}`, { method: "DELETE" })
+  fetch(`/api/eliminar/{id}`, { method: "DELETE" })
     .then(res => res.json())
     .then(data => {
       if (data.success) {
@@ -213,6 +215,7 @@ function cambiarEstadoTarea(id, nuevoEstado) {
       }
     });
 }
+
 
 // ------------------------
 // CRUD - RUTINAS
