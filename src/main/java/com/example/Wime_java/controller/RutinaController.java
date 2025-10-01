@@ -40,6 +40,8 @@ public class RutinaController {
         return response;
     }
 
+    //Crear rutina
+
     // Eliminar rutina
     @DeleteMapping("/eliminar/{id}")
     public Map<String, Object> eliminarRutina(@PathVariable Long id, HttpSession session) {

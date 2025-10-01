@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,13 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Wime_java.model.Notificacion;
 import com.example.Wime_java.model.Tarea;
 import com.example.Wime_java.repository.NotificacionRepository;
 import com.example.Wime_java.repository.TareaRepository;
+import com.example.Wime_java.service.TareaService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -27,6 +28,11 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/api/tareas") // 👈 Ahora sí concuerda con tu JS
 public class TareaController {
 
+    private final TareaService tareaService;
+
+    public TareaController(TareaService tareaService) {
+        this.tareaService = tareaService;
+    }
     
 
     @Autowired
@@ -88,54 +94,35 @@ public class TareaController {
 
     // ✅ Crear tarea
     @PostMapping("/crear")
-    public Map<String, Object> crearTarea(
-            @RequestParam String titulo,
-            @RequestParam String prioridad,
-            @RequestParam String fecha_limite,
-            @RequestParam(required = false) String descripcion,
+    public ResponseEntity<Map<String, Object>> guardarTarea(
+            @RequestBody Tarea tarea,
             HttpSession session) {
 
-        Map<String, Object> response = new HashMap<>();
-
-        // Validar sesión
         Long idUsuario = (Long) session.getAttribute("id_usuario");
         if (idUsuario == null) {
-            response.put("success", false);
-            response.put("message", "❌ Sesión no iniciada");
-            return response;
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "❌ Sesión no iniciada"
+            ));
         }
 
-        // Validar campos obligatorios
-        if (titulo == null || titulo.isEmpty() ||
-            prioridad == null || prioridad.isEmpty() ||
-            fecha_limite == null || fecha_limite.isEmpty()) {
-
-            response.put("success", false);
-            response.put("message", "⚠️ Faltan campos obligatorios");
-            return response;
-        }
+        tarea.setIdUsuario(idUsuario);
+        tarea.setEstado("pendiente");
 
         try {
-            Tarea tarea = new Tarea();
-            tarea.setIdUsuario(idUsuario);
-            tarea.setTitulo(titulo.trim());
-            tarea.setPrioridad(prioridad);
-            tarea.setFechaLimite(java.time.LocalDate.parse(fecha_limite));
-            tarea.setDescripcion(descripcion != null ? descripcion.trim() : "");
-            tarea.setEstado("pendiente");
-
-            tareaRepository.save(tarea);
-
-            response.put("success", true);
-            response.put("message", "✅ Tarea creada con éxito");
+            tareaService.guardarTarea(tarea);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "✅ Tarea creada con éxito"
+            ));
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "❌ Error al guardar");
-            response.put("error", e.getMessage());
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "success", false,
+                    "message", "❌ Error al guardar"
+            ));
         }
-
-        return response;
     }
+
 
     // ✅ Listar tareas del usuario logueado// ✅ Listar tareas del usuario logueado
 @GetMapping("/listar")

@@ -32,7 +32,7 @@ public class Notificacion {
         // Validar sesión
         Integer idUsuario = (Integer) session.getAttribute("id_usuario");
         if (idUsuario == null) {
-            response.sendRedirect("/Wime/public/HTML/Wime_interfaz_Inicio-Sesion.html");
+            response.sendRedirect("/login.html");
             return;
         }
 

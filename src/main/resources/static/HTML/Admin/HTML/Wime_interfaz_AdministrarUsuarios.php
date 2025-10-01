@@ -3,7 +3,7 @@ session_start();
 
 // ✅ Validar sesión
 if (!isset($_SESSION["id_usuario"]) || !isset($_SESSION["tipo"])) {
-    header("Location: /Wime/Interfaces/Admin/HTML/Wime_interfaz_Inicio-Sesion.html");
+    header("Location: /");
     exit;
 }
 // ✅ Validar si es administrador
