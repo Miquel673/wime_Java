@@ -58,39 +58,40 @@ function mostrarTareas(tareas) {
     tarjeta.className = "col";
 
     tarjeta.innerHTML = `
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <h5 class="card-title titulo-tarea text-white bg-${getColorPorPrioridad(tarea.prioridad)}">${tarea.titulo}</h5>
-          <p class="card-text"><strong>Prioridad:</strong> ${tarea.prioridad}</p>
-          <p class="card-text"><strong>Fecha límite:</strong> ${tarea.fechaLimite || "N/A"}</p>
-          <p class="card-text">${tarea.descripcion || "Sin descripción."}</p>
-          <span class="badge bg-${getColorPorEstado(tarea.estado)}">${tarea.estado || "Pendiente"}</span>
+  <div class="card shadow-sm h-100">
+    <div class="card-body">
+      <h5 class="card-title titulo-tarea text-white bg-${getColorPorPrioridad(tarea.prioridad)}">${tarea.titulo}</h5>
+      <p class="card-text"><strong>Prioridad:</strong> ${tarea.prioridad}</p>
+      <p class="card-text"><strong>Fecha límite:</strong> ${tarea.fechaLimite || "N/A"}</p>
+      <p class="card-text">${tarea.descripcion || "Sin descripción."}</p>
+      <span class="badge bg-${getColorPorEstado(tarea.estado)}">${tarea.estado || "Pendiente"}</span>
 
-          <button class="btn btn-sm btn-outline-dark w-100 mt-2" data-bs-toggle="collapse" data-bs-target="#opciones-${tarea.idTarea}">
-            ▼ Ver opciones
+      <button class="btn btn-sm btn-outline-dark w-100 mt-2" data-bs-toggle="collapse" data-bs-target="#opciones-${tarea.idTarea}">
+        ▼ Ver opciones
+      </button>
+
+      <div class="collapse mt-2" id="opciones-${tarea.idTarea}">
+        <label class="pb-2"><strong>Estado:</strong></label>
+        <div class="dropdown mb-2">
+          <button class="btn btn-sm dropdown-toggle text-white bg-${getColorPorEstado(tarea.estado)}" type="button" data-bs-toggle="dropdown">
+            ${tarea.estado || "Pendiente"}
           </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#" onclick="cambiarEstadoTarea(${tarea.idTarea}, 'pendiente')">Pendiente</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarEstadoTarea(${tarea.idTarea}, 'en progreso')">En progreso</a></li>
+            <li><a class="dropdown-item" href="#" onclick="cambiarEstadoTarea(${tarea.idTarea}, 'completada')">Completada</a></li>
+          </ul>
+        </div>
 
-          <div class="collapse mt-2" id="opciones-${tarea.idTarea}">
-            <label class="pb-2"><strong>Estado:</strong></label>
-            <div class="dropdown mb-2">
-              <button class="btn btn-sm dropdown-toggle text-white bg-${getColorPorEstado(tarea.estado)}" type="button" data-bs-toggle="dropdown">
-                ${tarea.estado || "Pendiente"}
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#" onclick="cambiarEstadoTarea(${tarea.idTarea}, 'pendiente')">Pendiente</a></li>
-                <li><a class="dropdown-item" href="#" onclick="cambiarEstadoTarea(${tarea.idTarea}, 'en progreso')">En progreso</a></li>
-                <li><a class="dropdown-item" href="#" onclick="cambiarEstadoTarea(${tarea.idTarea}, 'completada')">Completada</a></li>
-              </ul>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-danger btn-sm" onclick="eliminarTarea(${tarea.idTarea})">Eliminar</button>
-              <a href="/HTML/Wime_interfaz_Modulo_ETareas.html?id=${tarea.idTarea}" class="btn btn-sm btn-outline-secondary bg-primary text-light">Editar</a>
-            </div>
-          </div>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-danger btn-sm btn-eliminar" data-id="${tarea.idTarea}">Eliminar</button>
+          <button class="btn btn-sm btn-outline-secondary bg-primary text-light btn-editar" data-id="${tarea.idTarea}">Editar</button>
         </div>
       </div>
-    `;
+    </div>
+  </div>
+`;
+
     contenedor.appendChild(tarjeta);
   });
 }
@@ -184,21 +185,33 @@ function mostrarError(tipo, mensaje) {
 // CRUD - TAREAS
 // ------------------------
 
-function eliminarTarea(id) {
-  if (!confirm("¿Estás seguro de eliminar esta tarea?")) return;
+// Delegación de eventos para botones
+document.addEventListener("click", (e) => {
+  // ✅ Eliminar tarea
+  if (e.target.matches(".btn-eliminar")) {
+    const id = e.target.dataset.id;
+    if (!confirm("¿Estás seguro de eliminar esta tarea?")) return;
 
-  fetch(`/api/eliminar/{id}`, { method: "DELETE" })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("✅ Tarea eliminada");
-        cargarTareas();
-      } else {
-        alert("❌ Error al eliminar: " + data.message);
-      }
-    })
-    .catch(err => console.error("❌ Error:", err));
+    fetch(`/api/tareas/eliminar/${id}`, { method: "DELETE" })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message); // 🔄 reemplazo temporal
+          setTimeout(() => cargarTareas(), 800);
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(err => alert("❌ Error: " + err));
+  }
+
+  // ✅ Editar tarea (redirección con ID en la URL)
+if (e.target.matches(".btn-editar")) {
+  const id = e.target.dataset.id;
+  window.location.href = `/HTML/Wime_interfaz_Modulo_ETareas.html?id=${id}`;
 }
+});
+
 
 function cambiarEstadoTarea(id, nuevoEstado) {
   fetch(`/api/tareas/${id}/estado`, {

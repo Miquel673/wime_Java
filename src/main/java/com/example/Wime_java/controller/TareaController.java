@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -145,28 +146,87 @@ public Map<String, Object> listarTareas(HttpSession session) {
 }
 
 
-    // ✅ Eliminar tarea
-    @DeleteMapping("/eliminar/{id}")
-    public Map<String, Object> eliminarTarea(@PathVariable Long id, HttpSession session) {
-        Map<String, Object> response = new HashMap<>();
+@DeleteMapping("/eliminar/{id}")
+public Map<String, Object> eliminarTarea(@PathVariable Long id, HttpSession session) {
+    Map<String, Object> response = new HashMap<>();
 
-        Long idUsuario = (Long) session.getAttribute("id_usuario");
-        if (idUsuario == null) {
-            response.put("success", false);
-            response.put("message", "❌ Sesión no iniciada");
-            return response;
-        }
-
-        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
-        if (tareaOpt.isPresent() && tareaOpt.get().getIdUsuario().equals(idUsuario)) {
-            tareaRepository.deleteById(id);
-            response.put("success", true);
-            response.put("message", "🗑️ Tarea eliminada");
-        } else {
-            response.put("success", false);
-            response.put("message", "⚠️ Tarea no encontrada o no pertenece al usuario");
-        }
-
+    Long idUsuario = (Long) session.getAttribute("id_usuario");
+    if (idUsuario == null) {
+        response.put("success", false);
+        response.put("message", "❌ Sesión no iniciada");
         return response;
     }
+
+    Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+    if (tareaOpt.isPresent() && tareaOpt.get().getIdUsuario().equals(idUsuario)) {
+        tareaRepository.deleteById(id);
+        response.put("success", true);
+        response.put("message", "🗑️ Tarea eliminada");
+    } else {
+        response.put("success", false);
+        response.put("message", "⚠️ Tarea no encontrada o no pertenece al usuario");
+    }
+
+    return response;
+}
+    
+// ✅ Obtener tarea por ID
+@GetMapping("/{id}")
+public ResponseEntity<?> obtenerTarea(@PathVariable Long id, HttpSession session) {
+    Long idUsuario = (Long) session.getAttribute("id_usuario");
+    if (idUsuario == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "❌ Sesión no iniciada"));
+    }
+
+    Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+    if (tareaOpt.isPresent() && tareaOpt.get().getIdUsuario().equals(idUsuario)) {
+        return ResponseEntity.ok(tareaOpt.get());
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "⚠️ Tarea no encontrada"));
+    }
+}
+
+// ✅ Editar tarea
+@PutMapping("/editar/{id}")
+public ResponseEntity<Map<String, Object>> editarTarea(
+        @PathVariable Long id,
+        @RequestBody Tarea datosEditados,
+        HttpSession session) {
+
+    Map<String, Object> response = new HashMap<>();
+
+    Long idUsuario = (Long) session.getAttribute("id_usuario");
+    if (idUsuario == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "success", false,
+                "message", "❌ Sesión no iniciada"
+        ));
+    }
+
+    Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+    if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                "success", false,
+                "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+        ));
+    }
+
+    Tarea tarea = tareaOpt.get();
+    tarea.setTitulo(datosEditados.getTitulo());
+    tarea.setPrioridad(datosEditados.getPrioridad());
+    tarea.setFechaLimite(datosEditados.getFechaLimite());
+    tarea.setDescripcion(datosEditados.getDescripcion());
+    tarea.setEstado(datosEditados.getEstado());
+
+    tareaRepository.save(tarea);
+
+    response.put("success", true);
+    response.put("message", "✅ Tarea actualizada con éxito");
+    return ResponseEntity.ok(response);
+}
+
+
+
+
+
 }

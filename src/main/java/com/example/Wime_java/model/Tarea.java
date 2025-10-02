@@ -29,7 +29,7 @@ public class Tarea {
     @Column(name = "prioridad", nullable = false, length = 50)
     private String prioridad;
 
-    @Column(name = "fecha_limite", nullable = false)
+    @Column(name = "fecha_limite", nullable = true)
     private LocalDate fechaLimite;
 
     @Column(name = "descripcion", columnDefinition = "TEXT")
