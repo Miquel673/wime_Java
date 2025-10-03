@@ -77,30 +77,3 @@ delete data.fecha_limite; // 👈 quitamos el duplicado
 });
 
 
-//Rutinas//
-
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("form-editar-rutina");
-
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    const datos = new FormData(form);
-
-    fetch("/Wime/Controllers/EDRController.php", {
-      method: "POST",
-      body: datos
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("✅ Rutina actualizada correctamente");
-        window.location.href = "/Wime/private/PhP/Wime_interfaz_Tablero.php";
-      } else {
-        alert("❌ " + data.message);
-      }
-    })
-    .catch(err => {
-      console.error("❌ Error en la solicitud:", err);
-    });
-  });
-});

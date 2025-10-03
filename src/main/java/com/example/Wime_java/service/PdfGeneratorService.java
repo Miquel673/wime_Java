@@ -77,7 +77,7 @@ public class PdfGeneratorService {
             Document document = new Document(pdf);
 
             PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-            document.add(new Paragraph("📋 Reporte de Tareas")
+            document.add(new Paragraph(" Reporte de Tareas")
                     .setFont(font)
                     .setBold()
                     .setFontSize(18));
@@ -134,7 +134,7 @@ public class PdfGeneratorService {
             Document document = new Document(pdf);
 
             PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-            document.add(new Paragraph("📋 Reporte de Rutinas")
+            document.add(new Paragraph(" Reporte de Rutinas")
                     .setFont(font)
                     .setBold()
                     .setFontSize(18));

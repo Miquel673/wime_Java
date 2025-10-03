@@ -1,19 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Llamar al controlador de Java en lugar del PHP
-  fetch("/estadisticas")
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        document.getElementById("tareas-completadas").textContent = data.tareas_completadas;
-        document.getElementById("rutinas-finalizadas").textContent = data.rutinas_finalizadas;
-        document.getElementById("en-proceso").textContent = data.en_proceso;
-      } else {
-        console.warn("⚠️ No se pudieron cargar las estadísticas:", data.message);
-      }
-    })
-    .catch(err => console.error("❌ Error de red:", err));
-});
-
 
 // ===================== Gráfico Estadístico ===================== //
 

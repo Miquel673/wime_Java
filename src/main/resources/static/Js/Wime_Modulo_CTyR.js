@@ -234,37 +234,19 @@ function cambiarEstadoTarea(id, nuevoEstado) {
 // CRUD - RUTINAS
 // ------------------------
 
-function eliminarRutina(id) {
-  if (!confirm("¿Estás seguro de eliminar esta rutina?")) return;
 
-  fetch(`/api/rutinas/${id}`, { method: "DELETE" })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("✅ Rutina eliminada");
-        cargarRutinas();
-      } else {
-        alert("❌ Error al eliminar la rutina.");
-      }
-    })
-    .catch(err => console.error("❌ Error eliminando rutina:", err));
-}
+//eliminacion de rutina
 
-function cambiarEstadoRutina(id, nuevoEstado) {
-  fetch(`/api/rutinas/${id}/estado`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ estado: nuevoEstado })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        cargarRutinas();
-      } else {
-        alert("❌ Error al cambiar el estado de la rutina.");
-      }
-    })
-    .catch(err => console.error("❌ Error:", err));
+async function eliminarRutina(id) {
+  if (!confirm("¿Eliminar esta rutina?")) return;
+
+  const res = await fetch(`/api/rutinas/eliminar/${id}`, { method: "DELETE" });
+  const data = await res.json();
+
+  alert(data.message);
+  if (data.success) {
+    cargarRutinas();
+  }
 }
 
 // ------------------------

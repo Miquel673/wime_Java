@@ -10,23 +10,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Data
 @Entity
 @Table(name = "rutinas")
+@Data
 public class Rutina {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "IDRutina")
     private Long idRutina;
 
     @Column(name = "IDusuarios", nullable = false)
     private Long idUsuario;
 
-    @Column(name = "NombreRutina", nullable = false)
+    @Column(name = "NombreRutina", nullable = false, length = 200)
     private String nombreRutina;
-
-    @Column(name = "Prioridad", nullable = false)
-    private String prioridad;
 
     @Column(name = "FechaAsignacion", nullable = false)
     private LocalDate fechaAsignacion;
@@ -34,15 +32,18 @@ public class Rutina {
     @Column(name = "FechaFin", nullable = false)
     private LocalDate fechaFin;
 
-    @Column(name = "Frecuencia", nullable = false)
-    private String frecuencia;
+    @Column(name = "Fechacompletorutina", nullable = true)
+    private LocalDate fechaCompletoRutina;
 
-    @Column(name = "Descripcion")
+    @Column(name = "Prioridad", nullable = false, length = 50)
+    private String prioridad;
+
+    @Column(name = "Descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "Estado", nullable = false)
-    private String estado = "pendiente";
+    @Column(name = "Estado", nullable = false, length = 50)
+    private String estado;
 
-    @Column(name = "Compartir_Con")
-    private String compartirCon;
+    @Column(name = "Frecuencia", length = 50)
+    private String frecuencia;
 }
