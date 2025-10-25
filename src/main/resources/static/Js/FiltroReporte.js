@@ -37,6 +37,7 @@ document.getElementById("form-reporte").addEventListener("submit", async (e) => 
   }
 });
 
+// Vista previa del reporte
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("form-reporte");
@@ -46,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const previewDiv = document.getElementById("preview");
   const previewHeader = document.getElementById("preview-header");
   const previewBody = document.getElementById("preview-body");
+
 
   /* ✅ Vista previa
   btnPreview.addEventListener("click", async () => {

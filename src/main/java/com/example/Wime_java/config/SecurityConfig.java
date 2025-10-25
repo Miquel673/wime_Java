@@ -45,15 +45,15 @@ public class SecurityConfig {
         @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // 🚫 desactivar CSRF (necesario para APIs con fetch)
-            .cors(cors -> {})             // ✅ habilitar CORS
+            .csrf(csrf -> csrf.disable()) //  desactivar CSRF (necesario para APIs con fetch)
+            .cors(cors -> {})             //  habilitar CORS
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() // dejar libre login y endpoints auth
-                .anyRequest().permitAll()                   // ⚠️ permitir TODO (por ahora)
+                .anyRequest().permitAll()                   //  permitir TODO (por ahora)
             )
-            .formLogin(form -> form.disable())              // 🚫 desactivar login de Spring
-            .httpBasic(basic -> basic.disable())            // 🚫 desactivar auth básica
-            .logout(logout -> logout.disable());            // 🚫 desactivar logout automático
+            .formLogin(form -> form.disable())              // desactivar login de Spring
+            .httpBasic(basic -> basic.disable())            //  desactivar auth básica
+            .logout(logout -> logout.disable());            //  desactivar logout automático
 
         return http.build();
     }

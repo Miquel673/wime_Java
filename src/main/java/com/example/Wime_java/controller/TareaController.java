@@ -17,30 +17,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.Wime_java.model.Notificacion;
 import com.example.Wime_java.model.Tarea;
 import com.example.Wime_java.repository.NotificacionRepository;
 import com.example.Wime_java.repository.TareaRepository;
+import com.example.Wime_java.service.NotificacionService;
 import com.example.Wime_java.service.TareaService;
 
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/api/tareas") // 👈 Ahora sí concuerda con tu JS
+@RequestMapping("/api/tareas")
 public class TareaController {
-
-    private final TareaService tareaService;
-
-    public TareaController(TareaService tareaService) {
-        this.tareaService = tareaService;
-    }
-    
 
     @Autowired
     private TareaRepository tareaRepository;
 
     @Autowired
     private NotificacionRepository notificacionRepository;
+
+    @Autowired
+    private TareaService tareaService;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     // ✅ Cambiar estado de tarea
     @PutMapping("/{id}/estado")
@@ -51,7 +50,6 @@ public class TareaController {
 
         Map<String, Object> response = new HashMap<>();
 
-        // 1. Validar sesión
         Long idUsuario = (Long) session.getAttribute("id_usuario");
         if (idUsuario == null) {
             response.put("success", false);
@@ -66,7 +64,6 @@ public class TareaController {
             return response;
         }
 
-        // 2. Buscar la tarea
         Optional<Tarea> tareaOpt = tareaRepository.findById(id);
         if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
             response.put("success", false);
@@ -74,26 +71,21 @@ public class TareaController {
             return response;
         }
 
-        // 3. Actualizar estado
         Tarea tarea = tareaOpt.get();
         tarea.setEstado(nuevoEstado);
         tareaRepository.save(tarea);
 
-        // 4. Guardar notificación
-        Notificacion notif = new Notificacion();
-        notif.setIdUsuario(idUsuario);
-        notif.setTipo("tarea");
-        notif.setMensaje("Se ha cambiado el estado de una Tarea.");
-        notificacionRepository.save(notif);
+        // 🔔 Crear notificación de cambio de estado
+        String tituloNotif = "Tarea actualizada";
+        String mensajeNotif = "La tarea '" + tarea.getTitulo() + "' cambió su estado a: " + nuevoEstado;
+        notificacionService.crearNotificacion(idUsuario, tituloNotif, mensajeNotif);
 
-        // 5. Respuesta
         response.put("success", true);
         response.put("message", "✅ Estado de la tarea actualizado");
         return response;
     }
 
-
-    // ✅ Crear tarea
+    // ✅ Crear tarea con notificación automática
     @PostMapping("/crear")
     public ResponseEntity<Map<String, Object>> guardarTarea(
             @RequestBody Tarea tarea,
@@ -112,6 +104,12 @@ public class TareaController {
 
         try {
             tareaService.guardarTarea(tarea);
+
+            // 🔔 Generar notificación automática
+            String titulo = "Nueva tarea creada";
+            String mensaje = "Se ha creado la tarea: " + tarea.getTitulo();
+            notificacionService.crearNotificacion(idUsuario, titulo, mensaje);
+
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "message", "✅ Tarea creada con éxito"
@@ -124,109 +122,116 @@ public class TareaController {
         }
     }
 
+    // ✅ Listar tareas del usuario logueado
+    @GetMapping("/listar")
+    public Map<String, Object> listarTareas(HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
 
-    // ✅ Listar tareas del usuario logueado// ✅ Listar tareas del usuario logueado
-@GetMapping("/listar")
-public Map<String, Object> listarTareas(HttpSession session) {
-    Map<String, Object> response = new HashMap<>();
+        Long idUsuario = (Long) session.getAttribute("id_usuario");
+        if (idUsuario == null) {
+            response.put("success", false);
+            response.put("message", "❌ Sesión no iniciada");
+            return response;
+        }
 
-    Long idUsuario = (Long) session.getAttribute("id_usuario");
-    if (idUsuario == null) {
-        response.put("success", false);
-        response.put("message", "❌ Sesión no iniciada");
-        return response;
-    }
+        List<Tarea> tareas = tareaRepository.findByIdUsuario(idUsuario);
 
-    // 👇 Ahora sí usamos el método correcto
-    List<Tarea> tareas = tareaRepository.findByIdUsuario(idUsuario);
-
-    response.put("success", true);
-    response.put("tareas", tareas);
-    return response;
-}
-
-
-@DeleteMapping("/eliminar/{id}")
-public Map<String, Object> eliminarTarea(@PathVariable Long id, HttpSession session) {
-    Map<String, Object> response = new HashMap<>();
-
-    Long idUsuario = (Long) session.getAttribute("id_usuario");
-    if (idUsuario == null) {
-        response.put("success", false);
-        response.put("message", "❌ Sesión no iniciada");
-        return response;
-    }
-
-    Optional<Tarea> tareaOpt = tareaRepository.findById(id);
-    if (tareaOpt.isPresent() && tareaOpt.get().getIdUsuario().equals(idUsuario)) {
-        tareaRepository.deleteById(id);
         response.put("success", true);
-        response.put("message", "🗑️ Tarea eliminada");
-    } else {
-        response.put("success", false);
-        response.put("message", "⚠️ Tarea no encontrada o no pertenece al usuario");
+        response.put("tareas", tareas);
+        return response;
     }
 
-    return response;
-}
-    
-// ✅ Obtener tarea por ID
-@GetMapping("/{id}")
-public ResponseEntity<?> obtenerTarea(@PathVariable Long id, HttpSession session) {
-    Long idUsuario = (Long) session.getAttribute("id_usuario");
-    if (idUsuario == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "❌ Sesión no iniciada"));
+    // ✅ Eliminar tarea
+    @DeleteMapping("/eliminar/{id}")
+    public Map<String, Object> eliminarTarea(@PathVariable Long id, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+
+        Long idUsuario = (Long) session.getAttribute("id_usuario");
+        if (idUsuario == null) {
+            response.put("success", false);
+            response.put("message", "❌ Sesión no iniciada");
+            return response;
+        }
+
+        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+        if (tareaOpt.isPresent() && tareaOpt.get().getIdUsuario().equals(idUsuario)) {
+            Tarea tarea = tareaOpt.get();
+            tareaRepository.deleteById(id);
+
+            // 🔔 Notificación al eliminar
+            String titulo = "Tarea eliminada";
+            String mensaje = "Se ha eliminado la tarea: " + tarea.getTitulo();
+            notificacionService.crearNotificacion(idUsuario, titulo, mensaje);
+
+            response.put("success", true);
+            response.put("message", "🗑️ Tarea eliminada");
+        } else {
+            response.put("success", false);
+            response.put("message", "⚠️ Tarea no encontrada o no pertenece al usuario");
+        }
+
+        return response;
     }
 
-    Optional<Tarea> tareaOpt = tareaRepository.findById(id);
-    if (tareaOpt.isPresent() && tareaOpt.get().getIdUsuario().equals(idUsuario)) {
-        return ResponseEntity.ok(tareaOpt.get());
-    } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "⚠️ Tarea no encontrada"));
-    }
-}
+    // ✅ Obtener tarea por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerTarea(@PathVariable Long id, HttpSession session) {
+        Long idUsuario = (Long) session.getAttribute("id_usuario");
+        if (idUsuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("success", false, "message", "❌ Sesión no iniciada"));
+        }
 
-// ✅ Editar tarea
-@PutMapping("/editar/{id}")
-public ResponseEntity<Map<String, Object>> editarTarea(
-        @PathVariable Long id,
-        @RequestBody Tarea datosEditados,
-        HttpSession session) {
-
-    Map<String, Object> response = new HashMap<>();
-
-    Long idUsuario = (Long) session.getAttribute("id_usuario");
-    if (idUsuario == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                "success", false,
-                "message", "❌ Sesión no iniciada"
-        ));
+        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+        if (tareaOpt.isPresent() && tareaOpt.get().getIdUsuario().equals(idUsuario)) {
+            return ResponseEntity.ok(tareaOpt.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "⚠️ Tarea no encontrada"));
+        }
     }
 
-    Optional<Tarea> tareaOpt = tareaRepository.findById(id);
-    if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                "success", false,
-                "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
-        ));
+    // ✅ Editar tarea
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<Map<String, Object>> editarTarea(
+            @PathVariable Long id,
+            @RequestBody Tarea datosEditados,
+            HttpSession session) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        Long idUsuario = (Long) session.getAttribute("id_usuario");
+        if (idUsuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "success", false,
+                    "message", "❌ Sesión no iniciada"
+            ));
+        }
+
+        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+        if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "success", false,
+                    "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+            ));
+        }
+
+        Tarea tarea = tareaOpt.get();
+        tarea.setTitulo(datosEditados.getTitulo());
+        tarea.setPrioridad(datosEditados.getPrioridad());
+        tarea.setFechaLimite(datosEditados.getFechaLimite());
+        tarea.setDescripcion(datosEditados.getDescripcion());
+        tarea.setEstado(datosEditados.getEstado());
+
+        tareaRepository.save(tarea);
+
+        // 🔔 Notificación al editar
+        String titulo = "Tarea modificada";
+        String mensaje = "La tarea '" + tarea.getTitulo() + "' ha sido actualizada.";
+        notificacionService.crearNotificacion(idUsuario, titulo, mensaje);
+
+        response.put("success", true);
+        response.put("message", "✅ Tarea actualizada con éxito");
+        return ResponseEntity.ok(response);
     }
-
-    Tarea tarea = tareaOpt.get();
-    tarea.setTitulo(datosEditados.getTitulo());
-    tarea.setPrioridad(datosEditados.getPrioridad());
-    tarea.setFechaLimite(datosEditados.getFechaLimite());
-    tarea.setDescripcion(datosEditados.getDescripcion());
-    tarea.setEstado(datosEditados.getEstado());
-
-    tareaRepository.save(tarea);
-
-    response.put("success", true);
-    response.put("message", "✅ Tarea actualizada con éxito");
-    return ResponseEntity.ok(response);
-}
-
-
-
-
-
 }

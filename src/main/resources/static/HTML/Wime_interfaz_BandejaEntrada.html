@@ -1,83 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>🔔 Notificaciones - Wime</title>
-  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css">
-  <style>
-    .notificacion-nueva {
-      background-color: #e9f5ff;
-    }
-    .notificacion-tipo {
-      font-size: 0.85rem;
-      font-weight: bold;
-      color: #4a90e2;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Bandeja de Notificaciones - Wime</title>
+  <link rel="stylesheet" href="/Css/Wime_interfaz_Notificaciones.css">
 </head>
-<body class="container py-5">
-  <h2 class="mb-4">🔔 Tus Notificaciones</h2>
+<body>
+  <div class="container">
+    <h2>🔔 Bandeja de Notificaciones</h2>
 
-  <form action="/Wime/Controllers/NotiController.php" method="post" class="mb-3 d-flex gap-2">
-  <button name="accion" value="marcar_leidas" class="btn btn-success">✅ Marcar todas como leídas</button>
-  <button name="accion" value="eliminar_todas" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar todas las notificaciones?')">🗑️ Eliminar todas</button>
-  </form>
+    <div class="acciones">
+      <button id="btnMarcarLeidas" class="btn btn-success">Marcar todas como leídas</button>
+      <button id="btnEliminarNotificaciones" class="btn btn-danger">Eliminar todas</button>
+    </div>
 
-  <a href="/Html/Wime_interfaz_Tablero.html" class="btn btn-outline-secondary mt-4">← Volver al Tablero</a>
+    <div id="listaNotificaciones"></div>
 
-  <script>
+    <a href="/Html/Wime_interfaz_Tablero.html" class="btn-volver">← Volver al Tablero</a>
+  </div>
 
-    function renderNotificaciones(resultado) {
-  const contenedor = document.getElementById("lista-notificaciones");
-  contenedor.innerHTML = ""; // limpiar antes de renderizar
-
-  if (resultado.length > 0) {
-    const ul = document.createElement("ul");
-    ul.className = "list-group";
-
-    resultado.forEach(n => {
-      const li = document.createElement("li");
-      li.className = `list-group-item d-flex justify-content-between align-items-start ${n.leida ? "" : "notificacion-nueva"}`;
-
-      const divTexto = document.createElement("div");
-      divTexto.className = "ms-2 me-auto";
-
-      const divTipo = document.createElement("div");
-      divTipo.className = "notificacion-tipo";
-
-      // Convertir fecha al formato dd M, HH:mm
-      const fecha = new Date(n.fecha);
-      const opciones = { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" };
-      divTipo.textContent = `${n.tipo.charAt(0).toUpperCase() + n.tipo.slice(1)} | ${fecha.toLocaleDateString("es-ES", opciones)}`;
-
-      const mensaje = document.createElement("div");
-      mensaje.textContent = n.mensaje;
-
-      divTexto.appendChild(divTipo);
-      divTexto.appendChild(mensaje);
-      li.appendChild(divTexto);
-
-      if (!n.leida) {
-        const spanNuevo = document.createElement("span");
-        spanNuevo.className = "badge bg-primary rounded-pill";
-        spanNuevo.textContent = "Nuevo";
-        li.appendChild(spanNuevo);
-      }
-
-      ul.appendChild(li);
-    });
-
-    contenedor.appendChild(ul);
-
-  } else {
-    const alerta = document.createElement("div");
-    alerta.className = "alert alert-info";
-    alerta.textContent = "No tienes notificaciones por el momento.";
-    contenedor.appendChild(alerta);
-  }
-}
-
-  </script>
-
+  <script src="/Js/Notificacion.js"></script>
 </body>
 </html>

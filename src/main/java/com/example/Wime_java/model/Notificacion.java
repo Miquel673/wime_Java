@@ -15,39 +15,48 @@ public class Notificacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idNotificacion;
+    @Column(name = "IDnotificacion")
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "id_usuario", nullable = false)
     private Long idUsuario;
 
-    @Column(nullable = false)
+    @Column(name = "tipo", nullable = false)
     private String tipo;
 
-    @Column(nullable = false)
+    @Column(name = "mensaje", nullable = false)
     private String mensaje;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha = LocalDateTime.now();
+    @Column(name = "fecha", nullable = false)
+    private LocalDateTime fecha;
 
-    @Column(nullable = false)
+    @Column(name = "leida", nullable = false)
     private boolean leida = false;
 
-    // Getters y setters
-    public Long getIdNotificacion() { return idNotificacion; }
-    public void setIdNotificacion(Long idNotificacion) { this.idNotificacion = idNotificacion; }
+    // Constructor vacío (requerido por JPA)
+    public Notificacion() {}
 
+    // Constructor con parámetros básicos
+    public Notificacion(Long idUsuario, String tipo, String mensaje) {
+        this.idUsuario = idUsuario;
+        this.tipo = tipo;
+        this.mensaje = mensaje;
+        this.fecha = LocalDateTime.now();
+        this.leida = false;
+    }
+
+    // Getters y Setters
+    public Long getId() { return id; }
     public Long getIdUsuario() { return idUsuario; }
-    public void setIdUsuario(Long idUsuario) { this.idUsuario = idUsuario; }
-
     public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
-
     public String getMensaje() { return mensaje; }
-    public void setMensaje(String mensaje) { this.mensaje = mensaje; }
-
     public LocalDateTime getFecha() { return fecha; }
-    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
-
     public boolean isLeida() { return leida; }
+
+    public void setId(Long id) { this.id = id; }
+    public void setIdUsuario(Long idUsuario) { this.idUsuario = idUsuario; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+    public void setMensaje(String mensaje) { this.mensaje = mensaje; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
     public void setLeida(boolean leida) { this.leida = leida; }
 }

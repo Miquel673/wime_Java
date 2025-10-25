@@ -1,13 +1,5 @@
-<?php
-session_start();
-if (!isset($_SESSION["id_usuario"])) {
-  header("Location: /Wime/public/HTML/Wime_interfaz_Inicio-Sesion.html");
-  exit;
-}
-?>
-
 <!DOCTYPE html>
-
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,13 +24,13 @@ if (!isset($_SESSION["id_usuario"])) {
       document.body.classList.toggle('sidebar-visible');
     }
 
-    fetch('/Wime/Interfaces/Admin/HTML/Wime_SideBar.html')
+    // Load the static sidebar HTML content (Wime_SideBar.html)
+    fetch('/Wime/Interfaces/Admin/HTML/Wime_SideBar.html') 
       .then(response => response.text())
       .then(html => {
         document.getElementById('sidebar-container').innerHTML = html;
-        if (typeof inicializarCalendario === "function") {
-          inicializarCalendario();
-        }
+        // The original code tried to call 'inicializarCalendario', 
+        // this should be done in the JS file that handles the sidebar/calendar
       });
   </script>
 
@@ -70,12 +62,13 @@ if (!isset($_SESSION["id_usuario"])) {
       <input type="text" placeholder="🔍 Buscar" class="form-control" id="busqueda" style="max-width: 300px;">
       <button class="btn btn-primary "><a class="link-offset-2 link-underline link-underline-opacity-0 text-light" href="#" id="nuevoBtn" data-bs-toggle="modal" data-bs-target="#modalNuevo">Nuevo</a></button>
     </div>
-    <select id="filtro-estado" class="form-select" style="max-width: 200px;">
+    
+    <select id="filtro-estado" class="form-select mt-3" style="max-width: 200px;">
         <option value="">Todos los estados</option>
         <option value="pendiente">Pendiente</option>
         <option value="en progreso">En progreso</option>
         <option value="completada">Completada</option>
-      </select>
+    </select>
 
     <div id="contenido">
       <div id="contenedor-tareas" class="row row-cols-1 row-cols-md-2 g-4 mt-3"></div>
@@ -89,5 +82,59 @@ if (!isset($_SESSION["id_usuario"])) {
   <script src="/Wime/public/Js/Wime_Editar.js"></script>
   <script src="/Wime/public/Js/calendario.js"></script>
   <script src="/Wime/public/Js/Filtros.js"></script>
+  
+  <script>
+    // Example of a function that would fetch and render tasks/routines
+    async function loadContent(type) {
+        const container = type === 'tareas' ? document.getElementById('contenedor-tareas') : document.getElementById('contenedor-rutinas');
+        container.innerHTML = '<p>Cargando...</p>';
+
+        // NOTE: This URL should point to your new Node.js/Express API endpoint
+        const apiEndpoint = type === 'tareas' ? '/api/tareas' : '/api/rutinas';
+        
+        try {
+            const response = await fetch(apiEndpoint); 
+            if (!response.ok) throw new Error(`Error al cargar ${type}.`);
+            
+            const items = await response.json();
+            
+            if (items.length === 0) {
+                container.innerHTML = `<p class="alert alert-info">No hay ${type} registradas.</p>`;
+                return;
+            }
+
+            // Simple rendering logic
+            container.innerHTML = items.map(item => 
+                `<div class="col"><div class="card shadow-sm p-3">
+                    <h5>${item.titulo || item.NombreRutina}</h5>
+                    <p>Prioridad: <strong>${item.prioridad || item.Prioridad}</strong></p>
+                    <a href="/Wime/Interfaces/Admin/html/Wime_interfaz_Modulo_E${type === 'tareas' ? 'Tareas' : 'Rutinas'}.html?id=${item.IDtarea || item.IDRutina}" class="btn btn-sm btn-info">Editar</a>
+                </div></div>`
+            ).join('');
+
+        } catch (error) {
+            container.innerHTML = `<p class="alert alert-danger">Error: ${error.message}</p>`;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Tab switching logic
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const type = this.getAttribute('data-tipo');
+                document.getElementById('contenedor-tareas').style.display = type === 'tareas' ? 'flex' : 'none';
+                document.getElementById('contenedor-rutinas').style.display = type === 'rutinas' ? 'flex' : 'none';
+                
+                loadContent(type);
+            });
+        });
+        
+        // Initial load
+        loadContent('tareas');
+    });
+  </script>
 </body>
 </html>

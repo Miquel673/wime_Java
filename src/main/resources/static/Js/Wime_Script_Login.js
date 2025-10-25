@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("✅ Script cargado correctamente");
+  console.log("✅ Script de login cargado correctamente");
 
   const form = document.getElementById("form-login");
   if (!form) {
@@ -19,39 +19,60 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     fetch("http://localhost:8080/api/auth/login", {
-  method: "POST",
-  headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  body: `email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
-  credentials: "include"
-})
-  .then(response => {
-    if (!response.ok) {
-      throw new Error("Error en la respuesta del servidor: " + response.status);
-    }
-    return response.json();
-  })
-  .then(data => {
-    console.log("Respuesta del servidor:", data);
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
+      credentials: "include"
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor: " + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("📦 Respuesta del servidor:", data);
 
-    if (data.success) {
-      mostrarToast("Inicio de sesión exitoso", true, true);
+        if (data.success) {
+          mostrarToast("Inicio de sesión exitoso", true, true);
 
-      // 👇 Redirección según el rol
-      if (data.rol === "Administrador") {
-        window.location.href = "/Admin/HTML/Wime_interfaz_Tablero_admin.html";
-      } else {
-        window.location.href = "/HTML/Wime_interfaz_Tablero.html";
-      }
+          // 🧠 Detectar el ID correctamente (soporta ambos nombres)
+          const idUsuario = data.id_usuario || data.idUsuario;
+          const nombreUsuario = data.nombre || data.nombreUsuario || "Usuario";
+          const rolUsuario = data.rol || data.rolUsuario || "Usuario";
 
-    } else {
-      mostrarToast(data.message || "Usuario o contraseña incorrectos", false);
-    }
-  })
-  .catch(error => {
-    console.error("Error en la solicitud:", error);
-    mostrarToast("Error de conexión con el servidor", false);
-  });
+          if (idUsuario) {
+            sessionStorage.setItem("idUsuario", idUsuario);
+            console.log("🟢 ID de usuario guardado:", idUsuario);
+          } else {
+            console.warn("⚠️ No se recibió un ID de usuario en la respuesta del backend.");
+          }
 
+          // Guardar otros datos del usuario
+          sessionStorage.setItem("nombreUsuario", nombreUsuario);
+          sessionStorage.setItem("rolUsuario", rolUsuario);
+
+          console.log("👤 Usuario guardado en sesión:", {
+            idUsuario,
+            nombreUsuario,
+            rolUsuario
+          });
+
+          // 👇 Redirección según el rol
+          if (rolUsuario === "Administrador") {
+            window.location.href = "/Admin/HTML/Wime_interfaz_Tablero_admin.html";
+          } else {
+            window.location.href = "/HTML/Wime_interfaz_Tablero.html";
+          }
+
+        } else {
+          mostrarToast(data.message || "Usuario o contraseña incorrectos", false);
+        }
+      })
+      .catch(error => {
+        console.error("❌ Error en la solicitud:", error);
+        mostrarToast("Error de conexión con el servidor", false);
+      });
   });
 });
 

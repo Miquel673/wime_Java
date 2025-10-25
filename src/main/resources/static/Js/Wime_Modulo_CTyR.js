@@ -292,3 +292,5 @@ function showContent(tipo) {
   const activeTab = document.querySelector(`.tab[data-tipo="${tipo}"]`);
   if (activeTab) activeTab.classList.add("active");
 }
+
+
