@@ -34,12 +34,20 @@ public class TareaService {
     }
 
     public Tarea actualizarEstado(Long id, String nuevoEstado) {
-        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
-        if (tareaOpt.isPresent()) {
-            Tarea tarea = tareaOpt.get();
-            tarea.setEstado(nuevoEstado);
-            return tareaRepository.save(tarea);
-        }
-        throw new RuntimeException("❌ No se encontró la tarea con ID: " + id);
+    Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+
+    if (tareaOpt.isEmpty()) {
+        throw new IllegalArgumentException("⚠️ No se encontró la tarea con ID: " + id);
     }
+
+    Tarea tarea = tareaOpt.get();
+    tarea.setEstado(nuevoEstado);
+
+    try {
+        return tareaRepository.save(tarea);
+    } catch (Exception e) {
+        throw new RuntimeException("❌ Error al actualizar el estado en la base de datos: " + e.getMessage());
+    }
+}
+
 }

@@ -1,9 +1,24 @@
+:root {
+  --color-bg: #f9f9f9;
+  --color-text: #333;
+  --color-primary: #007bff;
+  --color-card: #fff;
+}
+
+body.dark-mode {
+  --color-bg: #1e1e1e;
+  --color-text: #f2f2f2;
+  --color-card: #2a2a2a;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
-    margin: 0;
-    padding: 0;
-  }
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Segoe UI", sans-serif;
+  transition: background 0.3s, color 0.3s;
+  margin: 0;
+  padding: 2rem;
+}
   
   .main {
     width: 26cm;

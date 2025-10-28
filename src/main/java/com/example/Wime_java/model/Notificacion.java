@@ -33,11 +33,14 @@ public class Notificacion {
     @Column(name = "leida", nullable = false)
     private boolean leida = false;
 
-    // Constructor vacío (requerido por JPA)
-    public Notificacion() {}
+        // ✅ Constructor vacío
+    public Notificacion() {
+        this.fecha = LocalDateTime.now(); // <-- AQUI LA MAGIA
+        this.leida = false;
+    }
 
-    // Constructor con parámetros básicos
-    public Notificacion(Long idUsuario, String tipo, String mensaje) {
+    // ✅ Constructor completo (si lo tienes)
+    public Notificacion(Long idUsuario, String titulo, String mensaje) {
         this.idUsuario = idUsuario;
         this.tipo = tipo;
         this.mensaje = mensaje;

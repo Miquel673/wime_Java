@@ -10,8 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  // ✅ Solicitar permiso para notificaciones de escritorio
+  solicitarPermisoNotificaciones();
+
   // 🔹 Cargar las notificaciones al iniciar
   cargarNotificaciones(idUsuario);
+
+  // 🕒 Verificar cada 30 segundos si hay nuevas notificaciones
+  setInterval(() => verificarNuevasNotificaciones(idUsuario), 30000);
 
   // 🟢 Asignar eventos a los botones globales
   const btnMarcarLeidas = document.getElementById("btnMarcarLeidas");
@@ -36,6 +42,7 @@ async function cargarNotificaciones(idUsuario) {
   try {
     const response = await fetch(`http://localhost:8080/api/notificaciones/${idUsuario}`);
     if (!response.ok) throw new Error("Error al obtener notificaciones");
+
     const notificaciones = await response.json();
     console.log("📩 Notificaciones recibidas:", notificaciones);
     renderNotificaciones(notificaciones);
@@ -89,6 +96,10 @@ function renderNotificaciones(notificaciones) {
     return;
   }
 
+  // 🔹 Ordenar las notificaciones por fecha (más recientes primero)
+  notificaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+  // 🔹 Crear los elementos visuales
   notificaciones.forEach(n => {
     const item = document.createElement("div");
     item.classList.add("notificacion");
@@ -102,6 +113,62 @@ function renderNotificaciones(notificaciones) {
       </p>
       <hr>
     `;
+
     contenedor.appendChild(item);
   });
+}
+
+
+
+// 🟢 Pedir permiso de notificación al navegador
+function solicitarPermisoNotificaciones() {
+  if (!("Notification" in window)) {
+    console.warn("⚠️ El navegador no soporta notificaciones de escritorio");
+    return;
+  }
+
+  if (Notification.permission === "default") {
+    Notification.requestPermission().then((permiso) => {
+      if (permiso === "granted") {
+        console.log("✅ Permiso de notificaciones concedido");
+      } else {
+        console.warn("🚫 Permiso de notificaciones denegado");
+      }
+    });
+  }
+}
+
+
+// 🔔 Mostrar una notificación de escritorio
+function mostrarNotificacion(titulo, mensaje) {
+  if (Notification.permission === "granted") {
+    const opciones = {
+      body: mensaje,
+      icon: "/IMG/logo.png", // Cambia por el icono de tu proyecto
+      vibrate: [200, 100, 200],
+      tag: "wime-notif",
+    };
+
+    new Notification(titulo, opciones);
+  }
+}
+
+
+// 🔍 Verificar nuevas notificaciones
+async function verificarNuevasNotificaciones(idUsuario) {
+  try {
+    const resp = await fetch(`http://localhost:8080/api/notificaciones/${idUsuario}`);
+    if (!resp.ok) throw new Error("Error al obtener nuevas notificaciones");
+
+    const notificaciones = await resp.json();
+
+    // Solo mostrar las no leídas
+    notificaciones.forEach((n) => {
+      if (!n.leida) {
+        mostrarNotificacion(n.tipo, n.mensaje);
+      }
+    });
+  } catch (error) {
+    console.error("❌ Error verificando nuevas notificaciones:", error);
+  }
 }

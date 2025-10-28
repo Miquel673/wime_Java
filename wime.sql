@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-07-2025 a las 03:39:17
+-- Tiempo de generación: 25-10-2025 a las 17:43:44
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -95,31 +95,24 @@ INSERT INTO `categoria` (`IDCategoria`, `IDusuario`, `IDTarea`, `IDRurtina`, `No
 --
 
 CREATE TABLE `notificaciones` (
-  `IDnotificaciones` int(11) NOT NULL,
-  `IDusuario` int(11) NOT NULL,
-  `IDTarea` int(11) NOT NULL,
-  `IDRutina` int(11) NOT NULL,
-  `NombreTarea` varchar(50) NOT NULL,
-  `NombreRutina` varchar(50) NOT NULL,
-  `Mensaje` varchar(100) NOT NULL,
-  `FechaHora` datetime NOT NULL
+  `IDnotificacion` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `tipo` varchar(50) DEFAULT NULL,
+  `mensaje` text DEFAULT NULL,
+  `fecha` datetime DEFAULT current_timestamp(),
+  `leida` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `notificaciones`
 --
 
-INSERT INTO `notificaciones` (`IDnotificaciones`, `IDusuario`, `IDTarea`, `IDRutina`, `NombreTarea`, `NombreRutina`, `Mensaje`, `FechaHora`) VALUES
-(4, 4, 4, 4, 'anime', 'Ejercicio', 'Un paso a la vez es suficiente, siempre que no te detengas', '2025-04-24 13:30:00'),
-(5, 5, 5, 5, 'cita', 'practicar', 'El trabajo duro es inútil si no crees en ti mismo', '2025-04-05 17:39:02'),
-(6, 6, 6, 6, 'Cocina', 'ingles', 'No importa cuán lento vayas, mientras no te detengas', '2025-04-25 10:42:32'),
-(7, 7, 7, 7, 'Ejercicio', 'limpieza', 'Incluso si no tienes talento, puedes superar a alguien que lo tiene si trabajas lo suficiente', '2025-04-05 17:39:02'),
-(8, 8, 8, 8, 'videojuegos', 'codigo', 'No hay atajos para llegar a lo más alto. ¡Tienes que escalar paso a paso!', '2025-04-05 17:39:02'),
-(9, 9, 9, 9, 'Trabajo', 'Conducir', 'Las pequeñas victorias también son victorias. Celebra cada una de ellas', '2025-04-05 17:45:19'),
-(10, 10, 10, 10, 'compras', 'anime', 'No hay nada que no puedas hacer si te lo propones', '2025-04-05 17:45:19'),
-(11, 11, 11, 11, 'peliculas', 'caminata', 'Los errores son la prueba de que lo estás intentando', '2025-04-05 17:45:19'),
-(12, 12, 12, 12, 'Lavar', 'trabajo', '¡Mientras no me rinda, no ha terminado!', '2025-04-05 17:45:19'),
-(13, 13, 13, 13, 'oficio', 'bicicleta', 'La fuerza no siempre se mide en poder… a veces se trata de no rendirse.', '2025-04-05 17:45:19');
+INSERT INTO `notificaciones` (`IDnotificacion`, `id_usuario`, `tipo`, `mensaje`, `fecha`, `leida`) VALUES
+(11, 34, 'tarea', 'Se ha creado una nueva tarea: escribirle al pana miguel kkkk', '2025-08-04 19:35:31', 1),
+(49, 20, 'Tarea actualizada', 'La tarea \'Interfaz de Administrador Wim\' cambió su estado a: completada', '2025-10-25 13:25:45', 1),
+(50, 20, 'Tarea actualizada', 'La tarea \'Crear Modulo de vista de rutinas\' cambió su estado a: completada', '2025-10-25 13:38:26', 1),
+(51, 20, 'Tarea actualizada', 'La tarea \'Realizacion de reportes\' cambió su estado a: pendiente', '2025-10-25 15:39:47', 0),
+(52, 20, 'Nueva tarea creada', 'Se ha creado la tarea: hola mundo', '2025-10-25 15:40:43', 0);
 
 -- --------------------------------------------------------
 
@@ -189,69 +182,65 @@ INSERT INTO `rolespermisos` (`IDRoles`, `IDUsuario`, `NombreUsuario`, `permisos`
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `rutina`
+-- Estructura de tabla para la tabla `rutinas`
 --
 
-CREATE TABLE `rutina` (
+CREATE TABLE `rutinas` (
   `IDRutina` int(11) NOT NULL,
-  `IDusuarios` int(1) NOT NULL,
-  `NombreRutina` varchar(50) NOT NULL,
-  `FechaAsignacion` datetime NOT NULL,
-  `FechaFin` datetime NOT NULL,
-  `Fechacompletorutina` datetime DEFAULT NULL,
-  `Prioridad` enum('Bajo','Medio','Alto') NOT NULL,
-  `Descripcion` varchar(100) NOT NULL,
-  `Estado` enum('Incompleto','Completo') NOT NULL
+  `IDusuarios` int(11) NOT NULL,
+  `NombreRutina` varchar(100) NOT NULL,
+  `FechaAsignacion` date NOT NULL,
+  `FechaFin` date NOT NULL,
+  `Fechacompletorutina` date DEFAULT NULL,
+  `Prioridad` enum('alta','media','baja') NOT NULL,
+  `Descripcion` text DEFAULT NULL,
+  `compartir_con` varchar(100) DEFAULT NULL,
+  `Estado` enum('pendiente','en progreso','completada') DEFAULT 'pendiente',
+  `Frecuencia` enum('diario','semanal','mensual') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `rutina`
+-- Volcado de datos para la tabla `rutinas`
 --
 
-INSERT INTO `rutina` (`IDRutina`, `IDusuarios`, `NombreRutina`, `FechaAsignacion`, `FechaFin`, `Fechacompletorutina`, `Prioridad`, `Descripcion`, `Estado`) VALUES
-(4, 4, 'Ejercicio', '2025-04-01 08:55:23', '2025-04-08 08:55:23', '2025-04-07 10:47:27', 'Alto', 'Ejercitar mi cuerpo', 'Completo'),
-(5, 5, 'practicar', '2025-04-01 08:55:23', '2025-04-05 08:55:23', '2025-04-15 10:53:40', 'Alto', 'tomar una hora al dia pra practicar codigo', 'Incompleto'),
-(6, 6, 'ingles', '2025-04-01 08:55:23', '2025-04-19 08:55:23', '2025-04-09 10:53:40', 'Medio', 'tomar clase de ingles', 'Completo'),
-(7, 7, 'limpieza', '2025-04-01 08:55:23', '2025-04-15 08:55:23', '2025-04-18 10:53:40', 'Medio', 'limpiar mi cuarto todo los dias', 'Incompleto'),
-(8, 8, 'codigo', '2025-04-05 15:53:59', '2025-04-09 15:53:59', NULL, 'Medio', 'mejorar mi conicimiento de JS', 'Completo'),
-(9, 9, 'Conducir', '2025-04-30 09:01:56', '2025-04-03 09:01:56', NULL, 'Medio', 'tomar clases de conducir', 'Completo'),
-(10, 10, 'anime', '2025-05-01 09:01:56', '2025-04-14 09:01:56', NULL, 'Bajo', 'leer todo el manga de One piece', 'Completo'),
-(11, 11, 'caminata', '2025-04-05 16:00:05', '2025-04-10 16:00:05', NULL, 'Medio', 'salir a caminar', 'Completo'),
-(12, 12, 'trabajo', '2025-04-05 16:00:05', '2025-04-12 16:00:05', NULL, 'Alto', 'trabajar horas extras', 'Completo'),
-(13, 13, 'bicicleta', '2025-04-05 16:00:05', '2025-04-10 16:00:05', NULL, 'Bajo', 'andar en bicicleta ', 'Completo');
+INSERT INTO `rutinas` (`IDRutina`, `IDusuarios`, `NombreRutina`, `FechaAsignacion`, `FechaFin`, `Fechacompletorutina`, `Prioridad`, `Descripcion`, `compartir_con`, `Estado`, `Frecuencia`) VALUES
+(2, 20, 'Programar si', '2025-07-08', '2025-07-12', NULL, 'alta', 'hacer la pagina', '', 'completada', 'semanal');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tarea`
+-- Estructura de tabla para la tabla `tareas`
 --
 
-CREATE TABLE `tarea` (
-  `IDTarea` int(11) NOT NULL,
-  `IDusuario` int(11) NOT NULL,
-  `NombreTarea` varchar(50) NOT NULL,
-  `FechaAsignacion` datetime NOT NULL,
-  `FechaFin` datetime NOT NULL,
-  `Descripcion` varchar(100) NOT NULL,
-  `Prioridad` enum('Bajo','Medio','Alto') NOT NULL,
-  `Estado` enum('Incompleto','Completo') NOT NULL
+CREATE TABLE `tareas` (
+  `IDtarea` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `titulo` varchar(100) NOT NULL,
+  `prioridad` enum('alta','media','baja') NOT NULL,
+  `fecha_limite` date DEFAULT NULL,
+  `compartir_con` varchar(100) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `estado` varchar(20) DEFAULT 'pendiente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `tarea`
+-- Volcado de datos para la tabla `tareas`
 --
 
-INSERT INTO `tarea` (`IDTarea`, `IDusuario`, `NombreTarea`, `FechaAsignacion`, `FechaFin`, `Descripcion`, `Prioridad`, `Estado`) VALUES
-(4, 4, 'anime', '2025-04-01 15:22:08', '2025-04-12 15:22:08', 'Maraton de Rezero', 'Alto', 'Completo'),
-(5, 5, 'cita', '2025-04-05 15:50:41', '2025-04-17 15:50:41', 'Dia de salida con mi novia', 'Alto', 'Completo'),
-(6, 6, 'Cocina', '2025-04-05 15:50:41', '2025-04-05 15:50:41', 'tomar clases de cocina', 'Medio', 'Completo'),
-(7, 7, 'ejercicios', '2025-04-01 08:22:15', '2025-04-30 08:22:15', '20 rep de abdomen serie de 4, y 20 flexiones serie de 4', 'Alto', 'Completo'),
-(8, 8, 'Videojuegos', '2025-04-05 15:22:08', '2025-04-10 15:22:08', 'Completar misioness diarias', 'Medio', 'Completo'),
-(9, 9, 'trabajo', '2025-04-05 15:22:08', '2025-04-05 15:22:08', 'Entregar documento a tiempo', 'Alto', 'Completo'),
-(10, 10, 'compras', '2025-04-05 15:50:41', '2025-04-05 15:50:41', 'Dia de compras', 'Bajo', 'Completo'),
-(11, 11, 'peliculas', '2025-04-02 08:50:46', '2025-04-03 08:50:46', 'Maraton de Harry potter', 'Medio', 'Incompleto'),
-(12, 12, 'Lavar', '2025-04-06 08:50:46', '2025-04-08 08:50:46', 'Lavar toda la ropa sucia', 'Medio', 'Incompleto'),
-(13, 13, 'oficio', '2025-04-15 08:22:15', '2025-04-20 08:22:15', 'Limpieza profunda', 'Medio', '');
+INSERT INTO `tareas` (`IDtarea`, `id_usuario`, `titulo`, `prioridad`, `fecha_limite`, `compartir_con`, `descripcion`, `estado`) VALUES
+(8, 24, 'Dashboart', 'alta', '2025-02-12', NULL, 'Creación primera tarea', 'pendiente'),
+(9, 24, 'gei', 'alta', '2026-03-04', NULL, 'gei el que lo lea', 'pendiente'),
+(13, 25, 'hello world', 'alta', '2025-04-04', NULL, 'errfe', 'completada'),
+(16, 20, 'Crear Modulo de vista de rutinas', 'alta', '2025-07-08', NULL, 'se harán las vistas del modulo de las rutinas basandonos en la base de datos y lo que se supone que deba hacer el modulo', 'completada'),
+(17, 20, 'Interfaz de Administrador Wim', 'alta', '2025-07-10', NULL, 'Se realizara la vista de la interfaz que tendra un usuario administrador en el sistema junto con una forma unica de ingreso', 'completada'),
+(18, 20, 'Creacion de vista de bandeja de entrada (Notificaciones)', 'alta', '2025-07-12', NULL, 'Realizacion de la vista de la bandeja de entrada y funcionabilidad', 'completada'),
+(19, 20, 'Actualizacion de pantallas .JSON a Mensajes emergentes', 'alta', '2025-07-11', NULL, 'Se ajustaran interfaces para evitar mostrar archivos .JSON', 'completada'),
+(21, 20, 'Pulir Software', 'media', '2025-07-13', NULL, 'Se deberan pulir detalles, botones, colores y filtros, configuraciones', 'en progreso'),
+(44, 20, 'Realizacion de reportes', 'alta', '2025-07-12', NULL, 'mañana hay exposicion', 'pendiente'),
+(57, 32, 'proyecto wime', 'alta', '2025-07-13', NULL, 'terminar pagina web', 'completada'),
+(60, 34, 'escribirle al pana miguel kkkk', 'alta', '2028-02-05', NULL, 'jsjsjsjjsjs hola', 'completada'),
+(62, 20, 'Revisar la actualizacion y eliminacion de las TyR', 'alta', '2025-08-06', NULL, 'Revisar el archivo .js', 'completada'),
+(64, 20, 'hola mundo', 'alta', '2028-05-04', NULL, 'hola mundo', 'pendiente');
 
 -- --------------------------------------------------------
 
@@ -265,17 +254,25 @@ CREATE TABLE `usuario` (
   `FechaRegistro` datetime NOT NULL,
   `EmailUsuario` varchar(50) NOT NULL,
   `ContrasenaUsuario` varchar(225) NOT NULL,
-  `Edad` int(11) NOT NULL
+  `Edad` int(11) NOT NULL,
+  `tipo` varchar(255) DEFAULT NULL,
+  `estado` varchar(255) DEFAULT NULL,
+  `ultimo_login` datetime(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`IDusuario`, `NombreUsuario`, `FechaRegistro`, `EmailUsuario`, `ContrasenaUsuario`, `Edad`) VALUES
-(19, 'HelloWorld', '2025-06-30 22:58:02', 'helloworld@gmail.com', '$2y$10$H6W2owhPnzL5QDxuYxCPFuKMPIpL026Z22WpRP83p7bXjCJcF4ymm', 23),
-(20, 'Miguel Ibarvo', '2025-07-01 01:40:11', 'mixagg6@gmail.com', '$2y$10$ZmCJAykvmGduB/T40TETmOUqoLDU4O8U3uvyH896NwYm9q0xkEem.', 19),
-(21, 'cu', '2025-07-02 03:39:03', 'hu@gmail.com', '$2y$10$B0yJ5c0kLKo0YQMY3ky8Iep.CCVYDnugN4GI1tW6EW6WRqDcAX0L2', 13);
+INSERT INTO `usuario` (`IDusuario`, `NombreUsuario`, `FechaRegistro`, `EmailUsuario`, `ContrasenaUsuario`, `Edad`, `tipo`, `estado`, `ultimo_login`) VALUES
+(20, 'Miguel Ibarvo', '2025-07-01 01:40:11', 'mixagg6@gmail.com', '$2y$10$ZmCJAykvmGduB/T40TETmOUqoLDU4O8U3uvyH896NwYm9q0xkEem.', 19, 'Corriente', 'Activo', '2025-10-25 15:38:56.000000'),
+(24, 'Kevinlop25', '2025-07-06 16:18:21', 'kevinlop2524@gmail.com', '$2y$10$go3HnFnHKbKChP3p7HVOw.kFZban/eUpPfMFLdvb5NK37HuWJOaa2', 18, 'Corriente', 'Inactivo', NULL),
+(25, 'jordan', '2025-07-06 23:13:34', 'hello@gmail.com', '$2y$10$F1JcwXO2xUwwmqAmlaMPjOeF2yjomgLdbW7r2me9Id/yPuUeRxrqe', 19, 'Corriente', 'Inactivo', NULL),
+(29, 'Miguel Ibarvo', '2025-07-10 06:46:00', 'mixagg7@gmail.com', 'nigga', 19, 'Administrador', 'Activo', NULL),
+(31, 'Prueba01', '2025-07-13 07:02:28', 'Miguel@gmailcom', 'ngga', 19, 'Corriente', 'Inactivo', NULL),
+(32, 'padme', '2025-07-13 14:02:06', 'evaarroyo862@gmail.com', '$2y$10$RPoiIdjXcEDh2UebIf4HIuqgMjcs8WkjGGFy2v0cL9QTKs8GtKQ7W', 18, 'Corriente', 'Inactivo', NULL),
+(33, 'andrea', '2025-07-13 14:05:48', 'paula.barbosa.0524@gmail.com', '$2y$10$UIDeblbQr79z1eVSOi4yDOjVgRQiGm72jw0Ebqih.AlMEbAslv2/m', 19, 'Corriente', 'Inactivo', NULL),
+(34, 'tomas', '2025-08-05 02:34:17', 'tomas@gmail.com', '$2y$10$c7pLA7eb8NCV6f.j.tKIP.hG29VkuME4R0tvPymSrVPgOp1JWuUnm', 20, 'Corriente', 'Activo', '2025-08-04 19:34:43.000000');
 
 --
 -- Índices para tablas volcadas
@@ -292,8 +289,8 @@ ALTER TABLE `categoria`
 -- Indices de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  ADD PRIMARY KEY (`IDnotificaciones`),
-  ADD UNIQUE KEY `IDusuario` (`IDusuario`,`IDTarea`,`IDRutina`);
+  ADD PRIMARY KEY (`IDnotificacion`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `progresotarea`
@@ -310,18 +307,18 @@ ALTER TABLE `rolespermisos`
   ADD KEY `IDUsuario` (`IDUsuario`);
 
 --
--- Indices de la tabla `rutina`
+-- Indices de la tabla `rutinas`
 --
-ALTER TABLE `rutina`
+ALTER TABLE `rutinas`
   ADD PRIMARY KEY (`IDRutina`),
-  ADD UNIQUE KEY `UDusuario` (`IDusuarios`),
-  ADD UNIQUE KEY `IDusuario` (`IDusuarios`);
+  ADD KEY `Id_usuario` (`IDusuarios`) USING BTREE;
 
 --
--- Indices de la tabla `tarea`
+-- Indices de la tabla `tareas`
 --
-ALTER TABLE `tarea`
-  ADD PRIMARY KEY (`IDTarea`);
+ALTER TABLE `tareas`
+  ADD PRIMARY KEY (`IDtarea`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `usuario`
@@ -337,7 +334,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `IDnotificaciones` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `IDnotificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT de la tabla `progresotarea`
@@ -346,67 +343,22 @@ ALTER TABLE `progresotarea`
   MODIFY `IDprogreso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT de la tabla `rutina`
+-- AUTO_INCREMENT de la tabla `rutinas`
 --
-ALTER TABLE `rutina`
-  MODIFY `IDRutina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+ALTER TABLE `rutinas`
+  MODIFY `IDRutina` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT de la tabla `tarea`
+-- AUTO_INCREMENT de la tabla `tareas`
 --
-ALTER TABLE `tarea`
-  MODIFY `IDTarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+ALTER TABLE `tareas`
+  MODIFY `IDtarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `IDusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `categoria`
---
-ALTER TABLE `categoria`
-  ADD CONSTRAINT `categoria_ibfk_1` FOREIGN KEY (`IDCategoria`) REFERENCES `tarea` (`IDTarea`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `categoria_ibfk_2` FOREIGN KEY (`IDCategoria`) REFERENCES `rutina` (`IDRutina`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `notificaciones`
---
-ALTER TABLE `notificaciones`
-  ADD CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`IDnotificaciones`) REFERENCES `usuario` (`IDusuario`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `notificaciones_ibfk_2` FOREIGN KEY (`IDnotificaciones`) REFERENCES `tarea` (`IDTarea`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `notificaciones_ibfk_3` FOREIGN KEY (`IDnotificaciones`) REFERENCES `rutina` (`IDRutina`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `progresotarea`
---
-ALTER TABLE `progresotarea`
-  ADD CONSTRAINT `progresotarea_ibfk_1` FOREIGN KEY (`IDprogreso`) REFERENCES `tarea` (`IDTarea`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `progresotarea_ibfk_2` FOREIGN KEY (`IDprogreso`) REFERENCES `rutina` (`IDRutina`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `rolespermisos`
---
-ALTER TABLE `rolespermisos`
-  ADD CONSTRAINT `rolespermisos_ibfk_1` FOREIGN KEY (`IDRoles`) REFERENCES `usuario` (`IDusuario`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `rolespermisos_ibfk_2` FOREIGN KEY (`IDUsuario`) REFERENCES `usuario` (`IDusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `rutina`
---
-ALTER TABLE `rutina`
-  ADD CONSTRAINT `rutina_ibfk_1` FOREIGN KEY (`IDRutina`) REFERENCES `usuario` (`IDusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `tarea`
---
-ALTER TABLE `tarea`
-  ADD CONSTRAINT `tarea_ibfk_1` FOREIGN KEY (`IDTarea`) REFERENCES `usuario` (`IDusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+  MODIFY `IDusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

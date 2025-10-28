@@ -18,7 +18,7 @@ import com.example.Wime_java.service.NotificacionService;
 
 @RestController
 @RequestMapping("/api/notificaciones")
-@CrossOrigin(origins = "http://localhost:5500") // ajusta el puerto si usas otro en frontend
+@CrossOrigin(origins = "http://localhost:8080") // ajusta el puerto si usas otro en frontend
 public class NotificacionController {
 
     @Autowired
