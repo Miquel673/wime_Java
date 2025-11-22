@@ -38,7 +38,10 @@ public class Usuario {
     @Column(name = "ultimo_login")
     private LocalDateTime ultimoLogin;
 
-    // 🔹 Constructores
+    // Guarda la URL relativa que usará el frontend (ej: "/uploads/fotos_perfil/usuario_20_...jpg")
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+
     public Usuario() {}
 
     public Usuario(String nombreUsuario, String emailUsuario, String contrasenaUsuario, String tipo, String estado, LocalDateTime ultimoLogin) {
@@ -49,6 +52,7 @@ public class Usuario {
         this.estado = estado;
         this.ultimoLogin = ultimoLogin;
     }
+
 
     // 🔹 Getters y Setters
     public Integer getIdUsuario() {
@@ -106,6 +110,8 @@ public class Usuario {
     public void setUltimoLogin(LocalDateTime ultimoLogin) {
         this.ultimoLogin = ultimoLogin;
     }
+
+    
 
     // 🔹 toString()
     @Override

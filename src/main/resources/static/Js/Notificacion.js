@@ -86,7 +86,7 @@ async function eliminarNotificaciones(idUsuario) {
 }
 
 
-// 🧩 Renderizar las notificaciones en pantalla
+// 🧩 Renderizar las notificaciones en pantalla (más recientes primero y con estilo)
 function renderNotificaciones(notificaciones) {
   const contenedor = document.getElementById("listaNotificaciones");
   contenedor.innerHTML = "";
@@ -96,29 +96,29 @@ function renderNotificaciones(notificaciones) {
     return;
   }
 
-  // 🔹 Ordenar las notificaciones por fecha (más recientes primero)
+  // 🔹 Ordenar las notificaciones: más recientes primero
   notificaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-  // 🔹 Crear los elementos visuales
+  // 🔹 Renderizar cada notificación
   notificaciones.forEach(n => {
     const item = document.createElement("div");
     item.classList.add("notificacion");
+    if (!n.leida) item.classList.add("no-leida"); // Fondo especial si no está leída
 
     item.innerHTML = `
-      <strong>${n.tipo}</strong>
-      <p>${n.mensaje}</p>
-      <small>${new Date(n.fecha).toLocaleString()}</small>
-      <p style="color:${n.leida ? "green" : "red"};">
+      <div class="d-flex justify-content-between align-items-center">
+        <strong>${n.tipo}</strong>
+        <small>${new Date(n.fecha).toLocaleString()}</small>
+      </div>
+      <p class="mb-1">${n.mensaje}</p>
+      <p class="estado ${n.leida ? "leida" : "pendiente"}">
         ${n.leida ? "Leída" : "No leída"}
       </p>
-      <hr>
     `;
 
     contenedor.appendChild(item);
   });
 }
-
-
 
 // 🟢 Pedir permiso de notificación al navegador
 function solicitarPermisoNotificaciones() {

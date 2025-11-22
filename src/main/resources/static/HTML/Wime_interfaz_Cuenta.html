@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png">
 
   <!-- Estilos propios -->
-  <link rel="stylesheet" href="/Css/Wime_SideBar.css">
+
   <link rel="stylesheet" href="/Css/wime_interfaz_cuenta.css">
   <script src="/Js/TemaConfig.js"></script>
 
@@ -22,29 +22,29 @@
 </head>
 
 <body>
-  <!-- Botón hamburguesa (solo móviles) -->
-  <button class="toggle-sidebar d-md-none" onclick="toggleSidebar()">
-    <i class="bi bi-list"></i>
-  </button>
+    <!-- Botón menú móvil -->
+    <button class="toggle-sidebar d-md-none" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
 
-  <div id="sidebar-container"></div>
+    <!-- Sidebar dinámico -->
+    <div id="sidebar-container"></div>
 
-  <script>
-    function toggleSidebar() {
-      document.body.classList.toggle('sidebar-visible');
-    }
+    <script>
+      function toggleSidebar() {
+        document.body.classList.toggle('sidebar-visible');
+      }
 
-    // Cargar la barra lateral
-    fetch('/HTML/Wime_SideBar.html')
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById("sidebar-container").innerHTML = html;
-        if (typeof window.inicializarCalendario === "function") {
-          window.inicializarCalendario();
-        }
-      });
-  </script>
-
+      // Cargar sidebar desde /HTML/
+      fetch('/HTML/Wime_SideBar.html')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('sidebar-container').innerHTML = html;
+          if (typeof inicializarCalendario === "function") {
+            inicializarCalendario();
+          }
+        });
+    </script>
   <!-- Contenido principal -->
   <main class="main-content">
     <div class="d-flex justify-content-between mb-3 text-bg-primary p-3">
@@ -52,10 +52,16 @@
       <div id="fecha-actual">Cargando Fecha...</div>
     </div>
 
-    <div class="d-flex align-items-center gap-3 mb-4">
-      <img src="/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg" 
-           alt="Avatar" class="rounded-circle bg-secondary"
-           style="width: 60px; height: 60px;">
+    <img id="fotoPerfil" 
+     src="/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg" 
+     alt="Avatar" class="rounded-circle bg-secondary"
+     style="width: 60px; height: 60px;">
+
+
+
+
+
+
 
       <!-- Aquí traemos el usuario desde la sesión en Java -->
       <h1 class="fs-4 text-primary-emphasis" id="usuario-nombre">Bienvenido, ...</h1>
@@ -63,7 +69,7 @@
 
     <div class="d-flex flex-wrap gap-3">
       <div class="bg-white border p-3 rounded shadow-sm" style="width: 300px;">
-        <a href="../Login.html" 
+        <a href="./Wime_interfaz_Tablero.html" 
            class="btn btn-outline-primary w-100 mb-2">Mi tablero</a>
 
         <button class="btn btn-primary w-100 my-2" data-bs-toggle="modal" data-bs-target="#modalNuevo">
@@ -140,8 +146,9 @@
   <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
   
 
-  <!-- Script para fecha -->
+ 
   <script>
+
     document.addEventListener("DOMContentLoaded", () => {
       const hoy = new Date();
       const dia = String(hoy.getDate()).padStart(2, '0');
@@ -276,6 +283,38 @@
     }
   })
   .catch(err => console.error("Error cargando estadísticas:", err));
+
+
+
+async function cargarFotoPerfil() {
+  const idUsuario = localStorage.getItem("idUsuario");
+
+  if (!idUsuario) {
+    console.warn("⚠️ No se encontró el ID del usuario.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/usuarios/${idUsuario}/foto`);
+    if (!response.ok) throw new Error("Error al obtener la foto");
+
+    const data = await response.json();
+    console.log("🧠 Respuesta del servidor:", data);
+
+    const fotoPerfil = data.fotoPerfil;
+    if (fotoPerfil && fotoPerfil.trim() !== "") {
+      document.getElementById("fotoPerfil").src = fotoPerfil;
+    } else {
+      console.warn("⚠️ No se encontró la ruta de la foto en la respuesta.");
+    }
+
+  } catch (error) {
+    console.error("❌ Error al cargar la foto del perfil:", error);
+  }
+}
+
+cargarFotoPerfil();
+  
 
 </script>
 </body>

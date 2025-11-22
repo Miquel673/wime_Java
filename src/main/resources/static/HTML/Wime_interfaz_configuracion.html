@@ -34,11 +34,34 @@
       </div>
     </section>
 
+    
+
+
     <!-- 👤 Enlace a configuración avanzada -->
     <section class="config-section">
       <h2>Cuenta</h2>
-      <button id="btnCuenta">Actualizar datos personales</button>
+
+      <div class="perfil-container text-center">
+  <img id="fotoPerfil"
+       src="/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg"
+       alt="Foto de perfil"
+       class="rounded-circle border border-2"
+       style="width: 120px; height: 120px; object-fit: cover;">
+
+  <div class="mt-3">
+    <input type="file" id="inputFoto" accept="image/*" hidden>
+    <button id="btnSubirFoto" class="btn btn-primary btn-sm">Cambiar foto</button>
+    <button id="btnEliminarFoto" class="btn btn-outline-danger btn-sm">Eliminar foto</button>
+  </div>
+</div>
+
+<br>
+
+  <div>
+    <button id="btnCuenta">Actualizar datos personales</button>
+  </div>
     </section>
+
   </div>
 
   <script src="/Js/ConfiguracionUsuario.js"></script>

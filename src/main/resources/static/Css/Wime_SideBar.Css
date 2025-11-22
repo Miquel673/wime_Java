@@ -124,9 +124,9 @@ body.sidebar-visible .sidebar {
 
 /* ENLACES DE PIE */
 .footer-links {
-  margin-top: 30px;
+  margin-top: 20px;
   border-top: 1px solid #ccc;
-  padding-top: 10px;
+  padding-top: 250px;
 }
 
 /* BOTÓN HAMBURGUESA */

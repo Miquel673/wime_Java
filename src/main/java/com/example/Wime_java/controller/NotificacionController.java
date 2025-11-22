@@ -3,7 +3,6 @@ package com.example.Wime_java.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,7 @@ import com.example.Wime_java.service.NotificacionService;
 
 @RestController
 @RequestMapping("/api/notificaciones")
-@CrossOrigin(origins = "http://localhost:8080") // ajusta el puerto si usas otro en frontend
+
 public class NotificacionController {
 
     @Autowired

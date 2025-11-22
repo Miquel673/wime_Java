@@ -61,3 +61,121 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+
+// 📸 Gestión de foto de perfil
+const API_BASE = "http://localhost:8080/api/usuarios";
+const idUsuario = sessionStorage.getItem("idUsuario"); // asegúrate que esté en sesión
+const fotoPerfil = document.getElementById("fotoPerfil");
+const inputFoto = document.getElementById("inputFoto");
+const btnSubir = document.getElementById("btnSubirFoto");
+const btnEliminar = document.getElementById("btnEliminarFoto");
+
+// 🟢 Mostrar foto actual
+async function cargarFotoPerfil() {
+  try {
+    const response = await fetch(`${API_BASE}/${idUsuario}/foto`);
+    const data = await response.json();
+    if (data.success) {
+      fotoPerfil.src = data.urlFoto;
+      console.log("📸 Foto cargada:", data.urlFoto);
+    } else {
+      console.warn("⚠️ No se encontró foto:", data.message);
+    }
+  } catch (error) {
+    console.error("❌ Error al cargar foto:", error);
+  }
+}
+
+// 🟡 Subir nueva foto
+async function subirFoto(file) {
+  const idUsuario = sessionStorage.getItem("idUsuario");
+
+  if (!idUsuario) {
+    console.error("⚠️ No se encontró idUsuario en sessionStorage");
+    alert("No se ha identificado el usuario. Inicia sesión nuevamente.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("idUsuario", idUsuario);
+
+  console.log("📤 Enviando FormData:", [...formData.entries()]);
+  
+  try {
+    const response = await fetch("http://localhost:8080/api/usuarios/subir-foto", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      console.log("✅ Foto subida correctamente:", data.urlFoto);
+
+      const avatarImg = document.getElementById("foto-perfil");
+      if (avatarImg) {
+        avatarImg.src = data.urlFoto.startsWith("http")
+          ? data.urlFoto
+          : `http://localhost:8080/${data.urlFoto}`;
+      }
+    } else {
+      console.error("❌ Error del servidor:", data.message);
+    }
+  } catch (error) {
+    console.error("❌ Error al subir la foto:", error);
+  }
+}
+
+// 🔴 Eliminar foto
+async function eliminarFoto() {
+  if (!confirm("¿Seguro que deseas eliminar la foto de perfil?")) return;
+  try {
+    const response = await fetch(`${API_BASE}/${idUsuario}/eliminar-foto`, {
+      method: "DELETE"
+    });
+
+    if (response.ok) {
+      alert("🗑️ Foto eliminada.");
+      cargarFotoPerfil();
+    } else {
+      console.error("❌ Error al eliminar la foto:", response.status);
+    }
+  } catch (error) {
+    console.error("❌ Error en la eliminación:", error);
+  }
+}
+
+// 🎯 Listeners
+btnSubir.addEventListener("click", () => inputFoto.click());
+inputFoto.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) subirFoto(file);
+});
+btnEliminar.addEventListener("click", eliminarFoto);
+
+// 🚀 Inicializar
+document.addEventListener("DOMContentLoaded", cargarFotoPerfil);
+
+
+
+async function cargarDatosUsuario(idUsuario) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/usuarios/${idUsuario}`, {
+      credentials: "include"
+    });
+    const data = await response.json();
+
+    const avatarImg = document.getElementById("foto-perfil");
+    if (data.fotoPerfil && avatarImg) {
+      avatarImg.src = data.fotoPerfil.startsWith("http")
+        ? data.fotoPerfil
+        : `http://localhost:8080/${data.fotoPerfil}`;
+    }
+  } catch (error) {
+    console.error("❌ Error al cargar los datos del usuario:", error);
+  }
+}
+
