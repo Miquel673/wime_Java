@@ -22,7 +22,7 @@ body {
   
   .main {
     width: 26cm;
-    margin: auto;
+
 
   }
   
@@ -132,4 +132,19 @@ body {
   margin-bottom: 10px;
   font-size: 1.1rem;
   text-align: center;
+}
+#Main {
+    margin-left: 263px;
+  }
+
+
+/* VERSIÓN MÓVIL */
+@media (max-width: 720px) {
+  #Main {
+    margin-left: 0px;
+    box-sizing: 0%;
+    
+  }
+
+
 }

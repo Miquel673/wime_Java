@@ -14,17 +14,24 @@ img[alt="Avatar"]:hover {
   box-shadow: 0 0 8px rgba(0,0,0,0.2);
 }
 
-
 @media (min-width: 768px) {
   .main-content {
     margin-left: 260px !important;
     margin-right: 25px !important;
+    
+
   }
+
+    #prueba{
+      height: 300px;
+      width: 100%;
+    }
 }
 
 /* --- Estilo para lista de notificaciones --- */
 #listaNotificaciones {
-  max-height: 300px; /* límite de altura visible */
+  margin-top: 10px;
+  max-height: 500px; /* límite de altura visible */
   overflow-y: auto;  /* permite hacer scroll vertical */
   padding-right: 8px; /* espacio para evitar que el scroll tape texto */
   scrollbar-width: thin; /* scrollbar más delgado (para Firefox) */
@@ -33,7 +40,7 @@ img[alt="Avatar"]:hover {
 
 /* Scrollbar personalizado para navegadores basados en WebKit (Chrome, Edge, etc.) */
 #listaNotificaciones::-webkit-scrollbar {
-  width: 6px;
+  width: px;
 }
 #listaNotificaciones::-webkit-scrollbar-thumb {
   background-color: #0d6efd;
@@ -73,3 +80,4 @@ img[alt="Avatar"]:hover {
   color: red;
   font-weight: 500;
 }
+
