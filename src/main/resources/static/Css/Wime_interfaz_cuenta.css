@@ -1,0 +1,83 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Personalización adicional */
+img[alt="Avatar"] {
+  object-fit: cover;
+  border: 2px solid #dee2e6;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+img[alt="Avatar"]:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px !important;
+    margin-right: 25px !important;
+    
+
+  }
+
+    #prueba{
+      height: 300px;
+      width: 100%;
+    }
+}
+
+/* --- Estilo para lista de notificaciones --- */
+#listaNotificaciones {
+  margin-top: 10px;
+  max-height: 500px; /* límite de altura visible */
+  overflow-y: auto;  /* permite hacer scroll vertical */
+  padding-right: 8px; /* espacio para evitar que el scroll tape texto */
+  scrollbar-width: thin; /* scrollbar más delgado (para Firefox) */
+  scrollbar-color: #0d6efd #f8f9fa; /* color primario del tema */
+}
+
+/* Scrollbar personalizado para navegadores basados en WebKit (Chrome, Edge, etc.) */
+#listaNotificaciones::-webkit-scrollbar {
+  width: px;
+}
+#listaNotificaciones::-webkit-scrollbar-thumb {
+  background-color: #0d6efd;
+  border-radius: 10px;
+}
+#listaNotificaciones::-webkit-scrollbar-track {
+  background-color: #f8f9fa;
+}
+
+
+.notificacion {
+  background-color: #dee2e6;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  animation: fadeIn 0.3s ease;
+  transition: background-color 0.3s ease;
+
+    border-left: 4px solid #0d6efd;
+}
+
+/* 🌟 Para notificaciones no leídas */
+.notificacion.no-leida {
+  background-color: #e9f4ff;
+  border-left: 4px solid #0d6efd;
+}
+
+/* ✅ Estado de lectura */
+.estado.leida {
+  color: green;
+  font-weight: 500;
+}
+
+.estado.pendiente {
+  color: red;
+  font-weight: 500;
+}
+

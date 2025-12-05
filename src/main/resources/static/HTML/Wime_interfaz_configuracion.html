@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración - Wime</title>
+  <link rel="stylesheet" href="/Css/Wime_interfaz_configuracion.css">
+</head>
+<body>
+  <div class="config-container">
+    <h1>⚙️ Configuración de Usuario</h1>
+
+    <!-- 🌓 Cambiar tema -->
+    <section class="config-section">
+      <h2>Tema de la interfaz</h2>
+      <div class="theme-toggle">
+        <label>
+          <input type="checkbox" id="themeSwitch">
+          <span class="slider"></span>
+        </label>
+        <p id="themeLabel">Modo claro</p>
+      </div>
+    </section>
+
+    <!-- 🔔 Notificaciones -->
+    <section class="config-section">
+      <h2>Notificaciones</h2>
+      <div class="notif-toggle">
+        <label>
+          <input type="checkbox" id="notifSwitch">
+          <span class="slider"></span>
+        </label>
+        <p id="notifLabel">Notificaciones activadas</p>
+      </div>
+    </section>
+
+    
+
+
+    <!-- 👤 Enlace a configuración avanzada -->
+    <section class="config-section">
+      <h2>Cuenta</h2>
+
+      <div class="perfil-container text-center">
+  <img id="fotoPerfil"
+       src="/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg"
+       alt="Foto de perfil"
+       class="rounded-circle border border-2"
+       style="width: 120px; height: 120px; object-fit: cover;">
+
+  <div class="mt-3">
+    <input type="file" id="inputFoto" accept="image/*" hidden>
+    <button id="btnSubirFoto" class="btn btn-primary btn-sm">Cambiar foto</button>
+    <button id="btnEliminarFoto" class="btn btn-outline-danger btn-sm">Eliminar foto</button>
+  </div>
+</div>
+
+<br>
+
+  <div>
+    <button id="btnCuenta">Actualizar datos personales</button>
+  </div>
+    </section>
+
+  </div>
+
+  <script src="/Js/ConfiguracionUsuario.js"></script>
+</body>
+</html>

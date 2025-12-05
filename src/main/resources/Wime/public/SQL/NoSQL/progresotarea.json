@@ -1,0 +1,18 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"wine"},
+{"type":"table","name":"progresotarea","database":"wine","data":
+[
+{"IDprogreso":"4","IDTarea":"4","IDRutina":"4","NombreUsuario":"Katerin","FechaReporte":"2025-04-15","TiempoReporte":"2025-04-01","Porcentaje":"50","EstadoTarea":"Incompleto","EstadoRutina":"Completo"},
+{"IDprogreso":"5","IDTarea":"5","IDRutina":"5","NombreUsuario":"Rin","FechaReporte":"2025-04-01","TiempoReporte":"2025-04-05","Porcentaje":"50","EstadoTarea":"Incompleto","EstadoRutina":"Completo"},
+{"IDprogreso":"6","IDTarea":"6","IDRutina":"6","NombreUsuario":"Yukio","FechaReporte":"2025-04-05","TiempoReporte":"2025-04-01","Porcentaje":"50","EstadoTarea":"Completo","EstadoRutina":"Incompleto"},
+{"IDprogreso":"7","IDTarea":"7","IDRutina":"7","NombreUsuario":"John","FechaReporte":"2025-04-22","TiempoReporte":"2025-04-30","Porcentaje":"0","EstadoTarea":"Incompleto","EstadoRutina":"Incompleto"},
+{"IDprogreso":"8","IDTarea":"8","IDRutina":"8","NombreUsuario":"Serafina","FechaReporte":"2025-04-02","TiempoReporte":"2025-04-16","Porcentaje":"50","EstadoTarea":"Completo","EstadoRutina":"Incompleto"},
+{"IDprogreso":"9","IDTarea":"9","IDRutina":"9","NombreUsuario":"Arlo","FechaReporte":"2025-04-28","TiempoReporte":"2025-03-05","Porcentaje":"50","EstadoTarea":"Completo","EstadoRutina":"Incompleto"},
+{"IDprogreso":"10","IDTarea":"10","IDRutina":"10","NombreUsuario":"Remi","FechaReporte":"2025-04-01","TiempoReporte":"2025-03-04","Porcentaje":"50","EstadoTarea":"Completo","EstadoRutina":"Incompleto"},
+{"IDprogreso":"11","IDTarea":"11","IDRutina":"11","NombreUsuario":"Blyke","FechaReporte":"2025-04-16","TiempoReporte":"2025-04-01","Porcentaje":"50","EstadoTarea":"Completo","EstadoRutina":"Incompleto"},
+{"IDprogreso":"12","IDTarea":"12","IDRutina":"12","NombreUsuario":"Subaru","FechaReporte":"2025-04-25","TiempoReporte":"2025-04-02","Porcentaje":"100","EstadoTarea":"Completo","EstadoRutina":"Completo"},
+{"IDprogreso":"13","IDTarea":"13","IDRutina":"13","NombreUsuario":"Reinhard ","FechaReporte":"2025-04-29","TiempoReporte":"2025-04-15","Porcentaje":"0","EstadoTarea":"Incompleto","EstadoRutina":"Incompleto"}
+]
+}
+]

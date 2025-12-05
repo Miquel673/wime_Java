@@ -1,0 +1,18 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"wine"},
+{"type":"table","name":"notificaciones","database":"wine","data":
+[
+{"IDnotificaciones":"4","IDusuario":"4","IDTarea":"4","IDRutina":"4","NombreTarea":"anime","NombreRutina":"Ejercicio","Mensaje":"Un paso a la vez es suficiente, siempre que no te detengas","FechaHora":"2025-04-24 13:30:00"},
+{"IDnotificaciones":"5","IDusuario":"5","IDTarea":"5","IDRutina":"5","NombreTarea":"cita","NombreRutina":"practicar","Mensaje":"El trabajo duro es inútil si no crees en ti mismo","FechaHora":"2025-04-05 17:39:02"},
+{"IDnotificaciones":"6","IDusuario":"6","IDTarea":"6","IDRutina":"6","NombreTarea":"Cocina","NombreRutina":"ingles","Mensaje":"No importa cuán lento vayas, mientras no te detengas","FechaHora":"2025-04-25 10:42:32"},
+{"IDnotificaciones":"7","IDusuario":"7","IDTarea":"7","IDRutina":"7","NombreTarea":"Ejercicio","NombreRutina":"limpieza","Mensaje":"Incluso si no tienes talento, puedes superar a alguien que lo tiene si trabajas lo suficiente","FechaHora":"2025-04-05 17:39:02"},
+{"IDnotificaciones":"8","IDusuario":"8","IDTarea":"8","IDRutina":"8","NombreTarea":"videojuegos","NombreRutina":"codigo","Mensaje":"No hay atajos para llegar a lo más alto. ¡Tienes que escalar paso a paso!","FechaHora":"2025-04-05 17:39:02"},
+{"IDnotificaciones":"9","IDusuario":"9","IDTarea":"9","IDRutina":"9","NombreTarea":"Trabajo","NombreRutina":"Conducir","Mensaje":"Las pequeñas victorias también son victorias. Celebra cada una de ellas","FechaHora":"2025-04-05 17:45:19"},
+{"IDnotificaciones":"10","IDusuario":"10","IDTarea":"10","IDRutina":"10","NombreTarea":"compras","NombreRutina":"anime","Mensaje":"No hay nada que no puedas hacer si te lo propones","FechaHora":"2025-04-05 17:45:19"},
+{"IDnotificaciones":"11","IDusuario":"11","IDTarea":"11","IDRutina":"11","NombreTarea":"peliculas","NombreRutina":"caminata","Mensaje":"Los errores son la prueba de que lo estás intentando","FechaHora":"2025-04-05 17:45:19"},
+{"IDnotificaciones":"12","IDusuario":"12","IDTarea":"12","IDRutina":"12","NombreTarea":"Lavar","NombreRutina":"trabajo","Mensaje":"¡Mientras no me rinda, no ha terminado!","FechaHora":"2025-04-05 17:45:19"},
+{"IDnotificaciones":"13","IDusuario":"13","IDTarea":"13","IDRutina":"13","NombreTarea":"oficio","NombreRutina":"bicicleta","Mensaje":"La fuerza no siempre se mide en poder… a veces se trata de no rendirse.","FechaHora":"2025-04-05 17:45:19"}
+]
+}
+]

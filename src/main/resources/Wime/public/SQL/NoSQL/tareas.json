@@ -1,0 +1,18 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"wine"},
+{"type":"table","name":"tarea","database":"wine","data":
+[
+{"IDTarea":"4","IDusuario":"4","NombreTarea":"anime","FechaAsignacion":"2025-04-01 15:22:08","FechaFin":"2025-04-12 15:22:08","Descripcion":"Maraton de Rezero","Prioridad":"Alto","Estado":"Completo"},
+{"IDTarea":"5","IDusuario":"5","NombreTarea":"cita","FechaAsignacion":"2025-04-05 15:50:41","FechaFin":"2025-04-17 15:50:41","Descripcion":"Dia de salida con mi novia","Prioridad":"Alto","Estado":"Completo"},
+{"IDTarea":"6","IDusuario":"6","NombreTarea":"Cocina","FechaAsignacion":"2025-04-05 15:50:41","FechaFin":"2025-04-05 15:50:41","Descripcion":"tomar clases de cocina","Prioridad":"Medio","Estado":"Completo"},
+{"IDTarea":"7","IDusuario":"7","NombreTarea":"ejercicios","FechaAsignacion":"2025-04-01 08:22:15","FechaFin":"2025-04-30 08:22:15","Descripcion":"20 rep de abdomen serie de 4, y 20 flexiones serie de 4","Prioridad":"Alto","Estado":"Completo"},
+{"IDTarea":"8","IDusuario":"8","NombreTarea":"Videojuegos","FechaAsignacion":"2025-04-05 15:22:08","FechaFin":"2025-04-10 15:22:08","Descripcion":"Completar misioness diarias","Prioridad":"Medio","Estado":"Completo"},
+{"IDTarea":"9","IDusuario":"9","NombreTarea":"trabajo","FechaAsignacion":"2025-04-05 15:22:08","FechaFin":"2025-04-05 15:22:08","Descripcion":"Entregar documento a tiempo","Prioridad":"Alto","Estado":"Completo"},
+{"IDTarea":"10","IDusuario":"10","NombreTarea":"compras","FechaAsignacion":"2025-04-05 15:50:41","FechaFin":"2025-04-05 15:50:41","Descripcion":"Dia de compras","Prioridad":"Bajo","Estado":"Completo"},
+{"IDTarea":"11","IDusuario":"11","NombreTarea":"peliculas","FechaAsignacion":"2025-04-02 08:50:46","FechaFin":"2025-04-03 08:50:46","Descripcion":"Maraton de Harry potter","Prioridad":"Medio","Estado":"Incompleto"},
+{"IDTarea":"12","IDusuario":"12","NombreTarea":"Lavar","FechaAsignacion":"2025-04-06 08:50:46","FechaFin":"2025-04-08 08:50:46","Descripcion":"Lavar toda la ropa sucia","Prioridad":"Medio","Estado":"Incompleto"},
+{"IDTarea":"13","IDusuario":"13","NombreTarea":"oficio","FechaAsignacion":"2025-04-15 08:22:15","FechaFin":"2025-04-20 08:22:15","Descripcion":"Limpieza profunda","Prioridad":"Medio","Estado":""}
+]
+}
+]

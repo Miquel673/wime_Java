@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wime | Iniciar Sesión</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/Css/Wime_interfaz_Login.css" />
+  <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png" />
+  <script src="/Js/Wime_Script_Login.js" defer></script>
+</head>
+
+<body>
+  <div class="login-container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card-login d-flex flex-md-row flex-column w-100 shadow-lg rounded overflow-hidden" style="max-width: 1000px;">
+
+      <!-- Carrusel -->
+      <div class="login-left col-md-6 p-0 d-none d-md-block">
+        <div id="carouselLogin" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="5000">
+          <div class="carousel-inner h-100">
+            <div class="carousel-item active h-100">
+              <img src="/IMG/pruebaWime/City.jpeg" class="d-block w-100 h-100 object-fit-cover" alt="Imagen 1">
+            </div>
+            <div class="carousel-item h-100">
+              <img src="/IMG/pruebaWime/ReallyGood.jpeg" class="d-block w-100 h-100 object-fit-cover" alt="Imagen 2">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="login-right col-md-6 bg-white p-4 p-md-5">
+        <div class="text-end mb-3">
+          <a href="./index.html" class="btn btn-sm btn-outline-secondary">Volver</a>
+        </div>
+
+        <div class="text-center mb-4">
+          <img src="/IMG/Logo_Wime.png" width="80" alt="Logo" class="mb-3" />
+          <h2>Bienvenido</h2>
+          <p class="text-muted">Ingresa a tu cuenta</p>
+        </div>
+
+        <form id="form-login" method="POST">
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" id="email" name="email" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="contrasena" class="form-label">Contraseña</label>
+            <input type="password" id="contrasena" name="contrasena" class="form-control" required />
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+          </div>
+
+          <div id="error-msg" class="text-danger mt-2"></div>
+        </form>
+
+        <hr class="my-4" />
+        <div class="text-center mb-3">O inicia sesión con</div>
+        <div class="d-grid gap-2">
+          <button class="btn btn-outline-danger">Google</button>
+          <button class="btn btn-outline-primary">Facebook</button>
+          <button class="btn btn-dark">Microsoft</button>
+        </div>
+        <a href="./Register.html" class="d-block text-info">
+          <small>¿Aún no tienes una cuenta?</small>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast para mensajes -->
+  <div id="mensaje-flotante" class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 d-none" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="texto-toast">prueba!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="ocultarToast()" aria-label="Cerrar"></button>
+    </div>
+  </div>
+
+  <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

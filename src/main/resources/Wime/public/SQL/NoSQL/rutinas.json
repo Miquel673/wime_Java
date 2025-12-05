@@ -1,0 +1,18 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"wine"},
+{"type":"table","name":"rutina","database":"wine","data":
+[
+{"IDRutina":"4","IDusuarios":"4","NombreRutina":"Ejercicio","FechaAsignacion":"2025-04-01 08:55:23","FechaFin":"2025-04-08 08:55:23","Fechacompletorutina":"2025-04-07 10:47:27","Prioridad":"Alto","Descripcion":"Ejercitar mi cuerpo","Estado":"Completo"},
+{"IDRutina":"5","IDusuarios":"5","NombreRutina":"practicar","FechaAsignacion":"2025-04-01 08:55:23","FechaFin":"2025-04-05 08:55:23","Fechacompletorutina":"2025-04-15 10:53:40","Prioridad":"Alto","Descripcion":"tomar una hora al dia pra practicar codigo","Estado":"Incompleto"},
+{"IDRutina":"6","IDusuarios":"6","NombreRutina":"ingles","FechaAsignacion":"2025-04-01 08:55:23","FechaFin":"2025-04-19 08:55:23","Fechacompletorutina":"2025-04-09 10:53:40","Prioridad":"Medio","Descripcion":"tomar clase de ingles","Estado":"Completo"},
+{"IDRutina":"7","IDusuarios":"7","NombreRutina":"limpieza","FechaAsignacion":"2025-04-01 08:55:23","FechaFin":"2025-04-15 08:55:23","Fechacompletorutina":"2025-04-18 10:53:40","Prioridad":"Medio","Descripcion":"limpiar mi cuarto todo los dias","Estado":"Incompleto"},
+{"IDRutina":"8","IDusuarios":"8","NombreRutina":"codigo","FechaAsignacion":"2025-04-05 15:53:59","FechaFin":"2025-04-09 15:53:59","Fechacompletorutina":null,"Prioridad":"Medio","Descripcion":"mejorar mi conicimiento de JS","Estado":"Completo"},
+{"IDRutina":"9","IDusuarios":"9","NombreRutina":"Conducir","FechaAsignacion":"2025-04-30 09:01:56","FechaFin":"2025-04-03 09:01:56","Fechacompletorutina":null,"Prioridad":"Medio","Descripcion":"tomar clases de conducir","Estado":"Completo"},
+{"IDRutina":"10","IDusuarios":"10","NombreRutina":"anime","FechaAsignacion":"2025-05-01 09:01:56","FechaFin":"2025-04-14 09:01:56","Fechacompletorutina":null,"Prioridad":"Bajo","Descripcion":"leer todo el manga de One piece","Estado":"Completo"},
+{"IDRutina":"11","IDusuarios":"11","NombreRutina":"caminata","FechaAsignacion":"2025-04-05 16:00:05","FechaFin":"2025-04-10 16:00:05","Fechacompletorutina":null,"Prioridad":"Medio","Descripcion":"salir a caminar","Estado":"Completo"},
+{"IDRutina":"12","IDusuarios":"12","NombreRutina":"trabajo","FechaAsignacion":"2025-04-05 16:00:05","FechaFin":"2025-04-12 16:00:05","Fechacompletorutina":null,"Prioridad":"Alto","Descripcion":"trabajar horas extras","Estado":"Completo"},
+{"IDRutina":"13","IDusuarios":"13","NombreRutina":"bicicleta","FechaAsignacion":"2025-04-05 16:00:05","FechaFin":"2025-04-10 16:00:05","Fechacompletorutina":null,"Prioridad":"Bajo","Descripcion":"andar en bicicleta ","Estado":"Completo"}
+]
+}
+]

@@ -1,0 +1,19 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"wine"},
+{"type":"table","name":"usuario","database":"wine","data":
+[
+{"IDusuario":"4","NombreUsuario":"Katerin","FechaRegistro":"2025-04-05 02:16:11","EmailUsuario":"KaterinBejaran@emaile.com","ContraseñaUsiario":"80805","Edad":"17"},
+{"IDusuario":"5","NombreUsuario":"Rin","FechaRegistro":"2025-04-11 19:50:30","EmailUsuario":"RinOkumura@email.com","ContraseñaUsiario":"1234567","Edad":"18"},
+{"IDusuario":"6","NombreUsuario":"Yukio","FechaRegistro":"2025-04-01 08:07:21","EmailUsuario":"YukioOkumura@gmail.com","ContraseñaUsiario":"L4m2p8T9r","Edad":"18"},
+{"IDusuario":"7","NombreUsuario":"John","FechaRegistro":"2025-04-02 08:07:21","EmailUsuario":"John123@gmail.com","ContraseñaUsiario":"z9K1e7B5w","Edad":"19"},
+{"IDusuario":"8","NombreUsuario":"Serafina","FechaRegistro":"2025-04-03 08:07:21","EmailUsuario":"SerafinaAs@gmail.com","ContraseñaUsiario":"Q3v6n8M2a","Edad":"20"},
+{"IDusuario":"9","NombreUsuario":"Arlo","FechaRegistro":"2025-04-04 08:14:37","EmailUsuario":"ArloRey@gmail.com","ContraseñaUsiario":"t2R5x6Z8y","Edad":"18"},
+{"IDusuario":"10","NombreUsuario":"Remi","FechaRegistro":"2025-03-25 08:14:37","EmailUsuario":"RemiRayos@gmail.com","ContraseñaUsiario":"M9b1L3q7T","Edad":"16"},
+{"IDusuario":"11","NombreUsuario":"Blyke","FechaRegistro":"2025-04-06 08:14:37","EmailUsuario":"BlykeLaser@gmail.com","ContraseñaUsiario":"d6W7y3V1k","Edad":"17"},
+{"IDusuario":"12","NombreUsuario":"Subaru","FechaRegistro":"2025-04-05 15:14:26","EmailUsuario":"SubaruNatsuki@gmail.com","ContraseñaUsiario":"H2x9p4Z7m","Edad":"18"},
+{"IDusuario":"13","NombreUsuario":"Reinhard ","FechaRegistro":"2025-04-05 15:14:26","EmailUsuario":"ReinhardVanAstrea@gmail.com","ContraseñaUsiario":"f3Q6t8K2r","Edad":"20"},
+{"IDusuario":"14","NombreUsuario":"Administrador","FechaRegistro":"2025-04-13 16:34:44","EmailUsuario":"Administrador112@gmail.com","ContraseñaUsiario":"t2R5x6Z8y","Edad":"25"}
+]
+}
+]

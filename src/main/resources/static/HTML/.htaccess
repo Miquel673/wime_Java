@@ -1,0 +1,13 @@
+Options -Indexes
+RewriteEngine On
+
+# Solo redirigir si no es un archivo o carpeta existente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirige todo a index.php SOLO si estás usando un sistema de rutas tipo SPA
+
+
+# Errores personalizados
+ErrorDocument 404 /Views/auth/error404.php
+ErrorDocument 500 /public/HTML/error500.php

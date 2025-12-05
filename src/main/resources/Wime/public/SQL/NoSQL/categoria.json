@@ -1,0 +1,18 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"wine"},
+{"type":"table","name":"categoria","database":"wine","data":
+[
+{"IDCategoria":"4","IDusuario":"4","IDTarea":"4","IDRurtina":"4","NombreCategoria":"Dia a dia","DescripcionCategoria":null},
+{"IDCategoria":"5","IDusuario":"5","IDTarea":"5","IDRurtina":"5","NombreCategoria":"Mejorar","DescripcionCategoria":null},
+{"IDCategoria":"6","IDusuario":"6","IDTarea":"6","IDRurtina":"6","NombreCategoria":"ser Buen hermano","DescripcionCategoria":null},
+{"IDCategoria":"7","IDusuario":"7","IDTarea":"7","IDRurtina":"7","NombreCategoria":"No explotar","DescripcionCategoria":null},
+{"IDCategoria":"8","IDusuario":"8","IDTarea":"8","IDRurtina":"8","NombreCategoria":"Relajarme","DescripcionCategoria":null},
+{"IDCategoria":"9","IDusuario":"9","IDTarea":"9","IDRurtina":"9","NombreCategoria":"Ser el mejor","DescripcionCategoria":null},
+{"IDCategoria":"10","IDusuario":"10","IDTarea":"10","IDRurtina":"10","NombreCategoria":"Ayudar","DescripcionCategoria":null},
+{"IDCategoria":"11","IDusuario":"11","IDTarea":"11","IDRurtina":"11","NombreCategoria":"joker","DescripcionCategoria":null},
+{"IDCategoria":"12","IDusuario":"12","IDTarea":"12","IDRurtina":"12","NombreCategoria":"ser mas fuerte","DescripcionCategoria":null},
+{"IDCategoria":"13","IDusuario":"13","IDTarea":"13","IDRurtina":"13","NombreCategoria":"cosas que nunca hize","DescripcionCategoria":null}
+]
+}
+]
