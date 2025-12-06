@@ -1,5 +1,6 @@
 package com.example.Wime_java.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -29,18 +30,22 @@ public class Usuario {
     @Column(name = "ContrasenaUsuario", nullable = false, length = 255)
     private String contrasenaUsuario;
 
+    @Column(name = "Edad")
+    private Integer birthDay; // o int si era numérico
+
+
     @Column(name = "Tipo", nullable = false, length = 50)
-    private String tipo;
+    private String tipo = "Corriente";
 
     @Column(name = "Estado", nullable = false, length = 20)
-    private String estado;
+    private String estado = "Activo";
 
     @Column(name = "ultimo_login")
     private LocalDateTime ultimoLogin;
 
-    // Guarda la URL relativa que usará el frontend (ej: "/uploads/fotos_perfil/usuario_20_...jpg")
     @Column(name = "foto_perfil")
     private String fotoPerfil;
+
 
     public Usuario() {}
 

@@ -66,7 +66,7 @@
       <button type="submit" class="btn btn-primary">Registrarse</button>
       <button type="button" class="btn btn-outline-secondary" onclick="location.href='/index.html'">Cancelar</button>
     </div>
-  </form>
+</form>
 
 
         <hr class="my-4">
@@ -83,35 +83,37 @@
 
   <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
 
-  <script>
-    document.getElementById("form-registro").addEventListener("submit", async (e) => {
-  e.preventDefault();
+<script>
+document.getElementById("registroForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-  const usuario = {
-    nombreUsuario: document.getElementById("nombre").value,
-    emailUsuario: document.getElementById("email").value,
-    contrasenaUsuario: document.getElementById("contrasena").value
-  };
+    const email = document.getElementById("EmailUsuario").value;
+    const nombre = document.getElementById("NombreUsuario").value;
+    const pass = document.getElementById("ContrasenaUsuario").value;
+    const pass2 = document.getElementById("confirm_password").value;
+    const birth = document.getElementById("Birth_Day").value;
 
-  try {
-    const res = await fetch("http://localhost:8080/auth/Register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(usuario)
+    if (pass !== pass2) {
+        alert("Las contraseñas no coinciden");
+        return;
+    }
+
+    const datos = {
+        EmailUsuario: email,
+        NombreUsuario: nombre,
+        ContrasenaUsuario: pass,
+        Birth_Day: birth
+    };
+
+    const res = await fetch("/api/usuarios/registrar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
     });
 
     const data = await res.json();
-    if (data.success) {
-      alert("✅ Registro exitoso");
-      window.location.href = "login.html";
-    } else {
-      alert("⚠️ " + data.message);
-    }
-  } catch (err) {
-    console.error("❌ Error en la petición:", err);
-  }
+    alert(data.message);
 });
-
-  </script>
+</script>
 </body>
 </html>

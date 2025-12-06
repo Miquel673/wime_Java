@@ -8,4 +8,7 @@ import com.example.Wime_java.model.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByEmailUsuario(String emailUsuario);
+    boolean existsByEmailUsuario(String emailUsuario);
 }
+
+

@@ -4,16 +4,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,98 +26,125 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Wime_java.model.Usuario;
 import com.example.Wime_java.service.UsuarioService;
+import com.example.Wime_java.config.SecurityConfig;
+import com.example.Wime_java.security.*;
 
 @RestController
 @RequestMapping("/api/usuarios")
+
 public class UsuarioController {
+
 
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-    // Usaremos rutas absolutas solo para operaciones en disco; el frontend consumirá la URL relativa guardada en la BD.
+
+
+
+
+
     private static final String UPLOAD_DIR_FILESYSTEM = System.getProperty("user.dir") + "/uploads/fotos_perfil/";
-    private static final String UPLOAD_DIR_WEB = "/uploads/fotos_perfil/"; // ruta relativa para servir desde el frontend
+    private static final String UPLOAD_DIR_WEB = "/uploads/fotos_perfil/";
+
+    // ---------------------------------------------------------
+    // 🔹 REGISTRO DE USUARIO (Nuevo método)
+    // ---------------------------------------------------------
+@PostMapping("/registrar")
+public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos) {
+    try {
+        String email = datos.get("EmailUsuario");
+        String nombre = datos.get("NombreUsuario");
+        String contrasena = datos.get("ContrasenaUsuario");
+        String birthDayStr = datos.get("Birth_Day"); // formato yyyy-MM-dd
+
+        if (email == null || nombre == null || contrasena == null || birthDayStr == null) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Faltan datos obligatorios"));
+        }
+
+        LocalDate birthDay = LocalDate.parse(birthDayStr);
+        int edad = Period.between(birthDay, LocalDate.now()).getYears();
+
+        Usuario nuevoUsuario = new Usuario();
+        nuevoUsuario.setEmailUsuario(email);
+        nuevoUsuario.setNombreUsuario(nombre);
+        nuevoUsuario.setContrasenaUsuario(contrasena);
+        nuevoUsuario.setTipo("Corriente");
+        nuevoUsuario.setEstado("Activo");
+        nuevoUsuario.setUltimoLogin(null);
+        nuevoUsuario.setBirthDay(edad); // ⚠️ Aquí llenamos la columna obligatoria
+
+        // 🔹 Cifrar la contraseña
+        String contrasenaHash = passwordEncoder.encode(contrasena);
+        nuevoUsuario.setContrasenaUsuario(contrasenaHash);
+
+
+        Usuario creado = usuarioService.registrarUsuario(nuevoUsuario);
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "Usuario registrado correctamente",
+            "usuario", creado
+        ));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(Map.of("success", false, "message", e.getMessage()));
+    }
+}
+
 
     // 🔹 SUBIR O ACTUALIZAR FOTO DE PERFIL
-@PostMapping("/subir-foto")
-public ResponseEntity<?> subirFoto(
-        @RequestParam("file") MultipartFile file,
-        @RequestParam("idUsuario") Integer idUsuario) {
+    @PostMapping("/subir-foto")
+    public ResponseEntity<?> subirFoto(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("idUsuario") Integer idUsuario) {
 
-    // 🟢 Carpeta donde se guardarán las fotos
-    String UPLOAD_DIR_FILESYSTEM = System.getProperty("user.dir") + "/uploads/fotos_perfil/";
+        String UPLOAD_DIR_FILESYSTEM = System.getProperty("user.dir") + "/uploads/fotos_perfil/";
 
-    try {
-        // 1️⃣ Crear carpeta si no existe
-        Path directorio = Paths.get(UPLOAD_DIR_FILESYSTEM);
-        if (!Files.exists(directorio)) {
-            Files.createDirectories(directorio);
-            System.out.println("📁 Carpeta creada: " + directorio.toAbsolutePath());
+        try {
+            Path directorio = Paths.get(UPLOAD_DIR_FILESYSTEM);
+            if (!Files.exists(directorio)) {
+                Files.createDirectories(directorio);
+                System.out.println("📁 Carpeta creada: " + directorio.toAbsolutePath());
+            }
+
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    Map.of("success", false, "message", "El archivo está vacío o no se envió correctamente.")
+                );
+            }
+
+            Usuario usuario = usuarioService.guardarFoto(idUsuario, file);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("success", false, "message", "Usuario no encontrado"));
+            }
+
+            String url = usuario.getFotoPerfil() != null ? usuario.getFotoPerfil() : "";
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "urlFoto", url,
+                    "message", "Foto actualizada correctamente."
+            ));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "Error de E/S al guardar la foto: " + e.getMessage()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "Error inesperado: " + e.getMessage()));
         }
-
-        // 2️⃣ Verificar archivo válido
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body(
-                Map.of("success", false, "message", "El archivo está vacío o no se envió correctamente.")
-            );
-        }
-
-        // 3️⃣ Llamar al servicio para guardar la foto
-        Usuario usuario = usuarioService.guardarFoto(idUsuario, file);
-        if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("success", false, "message", "Usuario no encontrado"));
-        }
-
-        // 4️⃣ Retornar la URL pública de la foto
-        String url = usuario.getFotoPerfil() != null ? usuario.getFotoPerfil() : "";
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "urlFoto", url,
-                "message", "Foto actualizada correctamente."
-        ));
-
-    } catch (IOException e) {
-        e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("success", false, "message", "Error de E/S al guardar la foto: " + e.getMessage()));
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("success", false, "message", "Error inesperado: " + e.getMessage()));
     }
-}
 
-@GetMapping("/usuarios/{idUsuario}/foto")
-public ResponseEntity<Map<String, String>> obtenerFotoPerfil(@PathVariable int idUsuario) {
-    try {
-        String rutaFoto = usuarioService.obtenerRutaFoto(idUsuario);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("fotoPerfil", 
-            (rutaFoto != null && !rutaFoto.isEmpty())
-                ? rutaFoto
-                : "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg"
-        );
-
-        return ResponseEntity.ok(response);
-    } catch (Exception e) {
-        e.printStackTrace();
-        Map<String, String> response = new HashMap<>();
-        response.put("fotoPerfil", "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-}
-
-
-    // 🔹 OBTENER URL DE LA FOTO DEL USUARIO (devuelve JSON con urlFoto)
+    // 🔹 OBTENER FOTO DEL USUARIO
     @GetMapping("/{idUsuario}/foto")
     public ResponseEntity<Map<String, String>> obtenerFotoPerfil(@PathVariable Integer idUsuario) {
         try {
             String rutaFoto = usuarioService.obtenerRutaFoto(idUsuario);
-
-            System.out.println("🧩 Obteniendo foto para usuario ID " + idUsuario + ": " + rutaFoto);
 
             Map<String, String> response = new HashMap<>();
             response.put("fotoPerfil",
@@ -130,7 +162,7 @@ public ResponseEntity<Map<String, String>> obtenerFotoPerfil(@PathVariable int i
         }
     }
 
-    // 🔹 ELIMINAR FOTO DE PERFIL (RESTABLECER AVATAR POR DEFECTO)
+    // 🔹 ELIMINAR FOTO
     @DeleteMapping("/{idUsuario}/eliminar-foto")
     public ResponseEntity<?> eliminarFoto(@PathVariable Integer idUsuario) {
         try {

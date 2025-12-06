@@ -26,6 +26,15 @@ public class UsuarioService {
     // Ruta relativa guardada en BD para ser servida por el frontend
     private static final String UPLOAD_DIR_WEB = "/uploads/fotos_perfil/";
 
+    public Usuario registrarUsuario(Usuario usuario) {
+    usuario.setEstado("Activo");
+    usuario.setTipo("Usuario");
+    usuario.setUltimoLogin(null);
+
+    return usuarioRepository.save(usuario);
+}
+
+
     // 🔹 LOGIN DE USUARIO (tu implementación original)
     public Optional<Usuario> login(String email, String contrasena) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByEmailUsuario(email);
