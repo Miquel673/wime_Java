@@ -45,7 +45,7 @@ public class EmailService {
         helper.setText(htmlContent, true);
         helper.setTo(to);
         helper.setSubject(subject);
-        helper.setFrom("mixagg6@gmail.com");
+        helper.setFrom("scrumm516@gmail.com");
         
         //ClassPathResource logo = new ClassPathResource("../static/images/wimeLogo.png");
         //helper.addInline("wimeLogo", logo);
