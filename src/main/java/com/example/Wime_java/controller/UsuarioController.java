@@ -7,10 +7,10 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,9 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Wime_java.model.Usuario;
+import com.example.Wime_java.service.EmailService;
 import com.example.Wime_java.service.UsuarioService;
-import com.example.Wime_java.config.SecurityConfig;
-import com.example.Wime_java.security.*;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -39,10 +38,8 @@ public class UsuarioController {
     private UsuarioService usuarioService;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
-
-
-
+    @Autowired
+    private EmailService emailService;
 
 
     private static final String UPLOAD_DIR_FILESYSTEM = System.getProperty("user.dir") + "/uploads/fotos_perfil/";
@@ -57,7 +54,7 @@ public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos
         String email = datos.get("EmailUsuario");
         String nombre = datos.get("NombreUsuario");
         String contrasena = datos.get("ContrasenaUsuario");
-        String birthDayStr = datos.get("Birth_Day"); // formato yyyy-MM-dd
+        String birthDayStr = datos.get("Birth_Day");
 
         if (email == null || nombre == null || contrasena == null || birthDayStr == null) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Faltan datos obligatorios"));
@@ -73,23 +70,32 @@ public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos
         nuevoUsuario.setTipo("Corriente");
         nuevoUsuario.setEstado("Activo");
         nuevoUsuario.setUltimoLogin(null);
-        nuevoUsuario.setBirthDay(edad); // ⚠️ Aquí llenamos la columna obligatoria
+        nuevoUsuario.setBirthDay(edad);
 
-        // 🔹 Cifrar la contraseña
+        // Cifrar contraseña
         String contrasenaHash = passwordEncoder.encode(contrasena);
         nuevoUsuario.setContrasenaUsuario(contrasenaHash);
 
-
         Usuario creado = usuarioService.registrarUsuario(nuevoUsuario);
+
+        // 🔹 Enviar correo al usuario
+        try {
+            String asunto = "Registro exitoso en Wime";
+            String mensaje = "Hola " + nombre + ", tu correo ha sido registrado exitosamente en Wime.";
+            emailService.sendMassEmail(List.of(email), asunto, mensaje);
+        } catch (Exception ex) {
+            System.out.println("⚠️ No se pudo enviar el correo: " + ex.getMessage());
+        }
 
         return ResponseEntity.ok(Map.of(
             "success", true,
             "message", "Usuario registrado correctamente",
             "usuario", creado
         ));
+
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body(Map.of("success", false, "message", e.getMessage()));
+                .body(Map.of("success", false, "message", e.getMessage()));
     }
 }
 

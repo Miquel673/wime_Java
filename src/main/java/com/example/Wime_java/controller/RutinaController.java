@@ -8,11 +8,18 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Wime_java.model.Rutina;
-import com.example.Wime_java.repository.RutinaRepository;
 import com.example.Wime_java.repository.NotificacionRepository;
+import com.example.Wime_java.repository.RutinaRepository;
 import com.example.Wime_java.service.NotificacionService;
 import com.example.Wime_java.service.RutinaService;
 
@@ -78,38 +85,42 @@ public class RutinaController {
         return response;
     }
 
-    // ✅ Crear rutina con notificación
-    @PostMapping("/crear")
-    public ResponseEntity<Map<String, Object>> crearRutina(@RequestBody Rutina rutina, HttpSession session) {
+// ✅ Crear rutina con sesión
+@PostMapping("/crear")
+public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession session) {
+    try {
+        // 1. Obtener el id del usuario logueado
         Long idUsuario = (Long) session.getAttribute("id_usuario");
-
         if (idUsuario == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("success", false, "message", "❌ Sesión no iniciada"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "success", false,
+                "message", "No hay usuario logueado"
+            ));
         }
 
+        // 2. Asignar el usuario a la rutina
         rutina.setIdUsuario(idUsuario);
-        rutina.setEstado("pendiente");
 
-        try {
-            rutinaService.guardarRutina(rutina);
-
-            // 🔔 Notificación automática
-            String titulo = "Nueva rutina creada";
-            String mensaje = "Se ha creado la rutina: " + rutina.getNombreRutina();
-            notificacionService.crearNotificacion(idUsuario, titulo, mensaje);
-
-            return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "message", "✅ Rutina creada con éxito"
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "success", false,
-                    "message", "❌ Error al guardar rutina"
-            ));
+        // 3. Asignar valores por defecto
+        if (rutina.getEstado() == null || rutina.getEstado().isBlank()) {
+            rutina.setEstado("pendiente");
         }
+
+        // 4. Guardar la rutina
+        rutinaRepository.save(rutina);
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "Rutina creada correctamente"
+        ));
+
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body(Map.of(
+            "success", false,
+            "message", "Error al crear la rutina: " + e.getMessage()
+        ));
     }
+}
 
     // ✅ Listar rutinas del usuario logueado
     @GetMapping("/listar")

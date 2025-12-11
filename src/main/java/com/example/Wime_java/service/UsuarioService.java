@@ -169,4 +169,10 @@ public Usuario guardarFoto(Integer idUsuario, MultipartFile file) throws IOExcep
         usuarioRepository.save(usuario);
         return true;
     }
+
+
+    public Usuario getUsuarioActual() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUsuarioActual'");
+    }
 }

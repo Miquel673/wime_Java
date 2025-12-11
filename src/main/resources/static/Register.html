@@ -84,6 +84,14 @@
   <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+  function validarContrasena(pass) {
+    // Mínimo 8 caracteres, una mayúscula, un número y un carácter especial
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+    return regex.test(pass);
+}
+
 document.getElementById("registroForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
@@ -93,8 +101,15 @@ document.getElementById("registroForm").addEventListener("submit", async functio
     const pass2 = document.getElementById("confirm_password").value;
     const birth = document.getElementById("Birth_Day").value;
 
+    // Validación de contraseñas iguales
     if (pass !== pass2) {
         alert("Las contraseñas no coinciden");
+        return;
+    }
+
+    // Validación de seguridad
+    if (!validarContrasena(pass)) {
+        alert("La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.");
         return;
     }
 
@@ -112,8 +127,15 @@ document.getElementById("registroForm").addEventListener("submit", async functio
     });
 
     const data = await res.json();
-    alert(data.message);
+    // 🔹 Si el registro fue exitoso, redirige al login
+    if (data.success) {
+        alert("Registro exitoso. Serás redirigido al inicio de sesión.");
+        window.location.href = "/Login.html";  
+    } else {
+        alert(data.message);
+    }
 });
+
 </script>
 </body>
 </html>

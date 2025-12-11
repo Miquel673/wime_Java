@@ -112,3 +112,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
   */
  });
+
+// ---------------- Carga Masiva de Datos CSV ---------------- //
+
+// EXPORTAR CSV
+document.getElementById("btn-export").addEventListener("click", () => {
+    const tipo = document.getElementById("tipo-reporte").value;
+
+    if (!tipo) {
+        alert("Selecciona un tipo de reporte");
+        return;
+    }
+
+    // Descarga directa del archivo
+    window.location.href = `/import-export/export/${tipo}`;
+});
+
+
+// IMPORTAR CSV
+document.getElementById("btn-import").addEventListener("click", async () => {
+    const tipo = document.getElementById("tipo-reporte").value;
+    const fileInput = document.getElementById("file-import");
+    const file = fileInput.files[0];
+
+    if (!tipo) {
+        alert("Selecciona un tipo de reporte");
+        return;
+    }
+
+    if (!file) {
+        alert("Selecciona un archivo CSV para importar");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const res = await fetch(`/import-export/import/${tipo}`, {
+            method: "POST",
+            body: formData
+        });
+
+        const msg = await res.text();
+        alert(msg);
+
+        // Limpia el input de archivo para evitar confusiones
+        fileInput.value = "";
+
+    } catch (error) {
+        alert("Ocurrió un error al importar los datos");
+        console.error(error);
+    }
+});

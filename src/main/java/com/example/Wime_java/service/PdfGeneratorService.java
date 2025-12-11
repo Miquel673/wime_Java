@@ -22,51 +22,50 @@ import com.itextpdf.layout.element.Table;
 public class PdfGeneratorService {
 
     // 📊 Reporte de estadísticas globales
-    public ByteArrayInputStream generarPdf(EstadisticasReporte reporte) {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            PdfWriter writer = new PdfWriter(out);
-            PdfDocument pdf = new PdfDocument(writer);
-            Document document = new Document(pdf);
+    public ByteArrayInputStream generarpdf(List<Tarea> tareas) {
+    try {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(out);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
 
-            PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+        document.add(new Paragraph("📄 Reporte de Tareas")
+                .setFont(font)
+                .setBold()
+                .setFontSize(18));
 
-            document.add(new Paragraph("📑 Reporte de Estadísticas")
-                    .setFont(font)
-                    .setBold()
-                    .setFontSize(18));
+        float[] columnWidths = {150F, 100F, 100F, 120F};
+        Table table = new Table(columnWidths);
 
-            float[] columnWidths = {200F, 100F};
-            Table table = new Table(columnWidths);
+        // Encabezados
+        table.addCell("Título");
+        table.addCell("Prioridad");
+        table.addCell("Estado");
+        table.addCell("Fecha límite");
 
-            // Tareas
-            table.addCell("Tareas Completadas");
-            table.addCell(String.valueOf(reporte.getTareasCompletadas()));
+        // Datos
+        for (Tarea tarea : tareas) {
+            table.addCell(tarea.getTitulo() != null ? tarea.getTitulo() : "N/A");
+            table.addCell(tarea.getPrioridad() != null ? tarea.getPrioridad() : "N/A");
+            table.addCell(tarea.getEstado() != null ? tarea.getEstado() : "N/A");
 
-            table.addCell("Tareas en Proceso");
-            table.addCell(String.valueOf(reporte.getTareasEnProceso()));
+            String fecha = tarea.getFechaLimite() != null
+                    ? tarea.getFechaLimite().toString()
+                    : "N/A";
 
-            table.addCell("Tareas Pendientes");
-            table.addCell(String.valueOf(reporte.getTareasPendientes()));
-
-            // Rutinas
-            table.addCell("Rutinas Completadas");
-            table.addCell(String.valueOf(reporte.getRutinasCompletadas()));
-
-            table.addCell("Rutinas en Proceso");
-            table.addCell(String.valueOf(reporte.getRutinasEnProceso()));
-
-            table.addCell("Rutinas Pendientes");
-            table.addCell(String.valueOf(reporte.getRutinasPendientes()));
-
-            document.add(table);
-            document.close();
-
-            return new ByteArrayInputStream(out.toByteArray());
-        } catch (Exception e) {
-            throw new RuntimeException("❌ Error al generar PDF: " + e.getMessage(), e);
+            table.addCell(fecha);
         }
+
+        document.add(table);
+        document.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
+    } catch (Exception e) {
+        throw new RuntimeException("❌ Error al generar PDF: " + e.getMessage(), e);
     }
+}
+
 
     // ✅ Reporte detallado de Tareas
     public ByteArrayInputStream generarReporteTareas(List<Tarea> tareas) {

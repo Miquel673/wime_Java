@@ -81,6 +81,14 @@
         <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
 
+    <dependency>
+        <groupId>com.opencsv</groupId>
+        <artifactId>opencsv</artifactId>
+        <version>5.9</version>
+    </dependency>
+
+
+
 
     <!-- 📄 iText7 para generación de PDFs -->
     <dependency>

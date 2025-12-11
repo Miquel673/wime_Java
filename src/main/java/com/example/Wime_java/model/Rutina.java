@@ -44,6 +44,6 @@ public class Rutina {
     @Column(name = "Estado", nullable = false, length = 50)
     private String estado;
 
-    @Column(name = "Frecuencia", length = 50)
+    @Column(name = "Frecuencia", nullable = false)
     private String frecuencia;
 }
