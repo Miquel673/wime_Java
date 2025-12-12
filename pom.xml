@@ -112,6 +112,49 @@
 </dependency>
 
 
+<!-- JAVA MAIL API -->
+<!-- GOOGLE OAUTH2 CLIENT -->
+<dependency>
+    <groupId>com.google.oauth-client</groupId>
+    <artifactId>google-oauth-client</artifactId>
+    <version>1.34.1</version>
+</dependency>
+
+<dependency>
+    <groupId>com.google.oauth-client</groupId>
+    <artifactId>google-oauth-client-jetty</artifactId>
+    <version>1.34.1</version>
+</dependency>
+
+<!-- GOOGLE CALENDAR API -->
+<dependency>
+    <groupId>com.google.apis</groupId>
+    <artifactId>google-api-services-calendar</artifactId>
+    <version>v3-rev411-1.25.0</version>
+</dependency>
+
+<!-- GOOGLE HTTP CLIENT -->
+<dependency>
+    <groupId>com.google.http-client</groupId>
+    <artifactId>google-http-client</artifactId>
+    <version>1.43.3</version>
+</dependency>
+
+<dependency>
+    <groupId>com.google.http-client</groupId>
+    <artifactId>google-http-client-gson</artifactId>
+    <version>1.43.3</version>
+</dependency>
+
+<!-- JAKARTA SERVLET -->
+<dependency>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <scope>provided</scope>
+</dependency>
+
+
+
 </dependencies>
 
 
