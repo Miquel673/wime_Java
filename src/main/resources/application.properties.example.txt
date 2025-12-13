@@ -1,0 +1,2 @@
+google.oauth.client.id=TU_CLIENT_ID
+google.oauth.client.secret=TU_CLIENT_SECRET
