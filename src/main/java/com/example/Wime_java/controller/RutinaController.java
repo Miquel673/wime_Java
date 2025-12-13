@@ -43,47 +43,52 @@ public class RutinaController {
 
     // ✅ Cambiar estado de rutina
     @PutMapping("/{id}/estado")
-    public Map<String, Object> cambiarEstadoRutina(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> body,
-            HttpSession session) {
+public ResponseEntity<Map<String, Object>> cambiarEstadoRutina(
+        @PathVariable Long id,
+        @RequestBody Map<String, String> body,
+        HttpSession session) {
 
-        Map<String, Object> response = new HashMap<>();
-
-        Long idUsuario = (Long) session.getAttribute("id_usuario");
-        if (idUsuario == null) {
-            response.put("success", false);
-            response.put("message", "❌ Sesión no iniciada");
-            return response;
-        }
-
-        String nuevoEstado = body.get("estado");
-        if (nuevoEstado == null || nuevoEstado.isEmpty()) {
-            response.put("success", false);
-            response.put("message", "⚠️ Faltan datos");
-            return response;
-        }
-
-        Optional<Rutina> rutinaOpt = rutinaRepository.findById(id);
-        if (rutinaOpt.isEmpty() || !rutinaOpt.get().getIdUsuario().equals(idUsuario)) {
-            response.put("success", false);
-            response.put("message", "⚠️ Rutina no encontrada o no pertenece al usuario");
-            return response;
-        }
-
-        Rutina rutina = rutinaOpt.get();
-        rutina.setEstado(nuevoEstado);
-        rutinaRepository.save(rutina);
-
-        // 🔔 Crear notificación
-        String tituloNotif = "Rutina actualizada";
-        String mensajeNotif = "La rutina '" + rutina.getNombreRutina() + "' cambió su estado a: " + nuevoEstado;
-        notificacionService.crearNotificacion(idUsuario, tituloNotif, mensajeNotif);
-
-        response.put("success", true);
-        response.put("message", "✅ Estado de la rutina actualizado");
-        return response;
+    Long idUsuario = (Long) session.getAttribute("id_usuario");
+    if (idUsuario == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+            "success", false,
+            "message", "❌ Sesión no iniciada"
+        ));
     }
+
+    String nuevoEstado = body.get("estado");
+    if (nuevoEstado == null || nuevoEstado.isBlank()) {
+        return ResponseEntity.badRequest().body(Map.of(
+            "success", false,
+            "message", "⚠️ Estado inválido"
+        ));
+    }
+
+    Optional<Rutina> rutinaOpt = rutinaRepository.findById(id);
+    if (rutinaOpt.isEmpty() || !rutinaOpt.get().getIdUsuario().equals(idUsuario)) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+            "success", false,
+            "message", "⚠️ Rutina no encontrada o no pertenece al usuario"
+        ));
+    }
+
+    try {
+        Rutina actualizada = rutinaService.actualizarEstado(id, nuevoEstado);
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "✅ Estado actualizado correctamente",
+            "estado", actualizada.getEstado()
+        ));
+
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body(Map.of(
+            "success", false,
+            "message", "❌ Error al actualizar estado: " + e.getMessage()
+        ));
+    }
+}
+
 
 // ✅ Crear rutina con sesión
 @PostMapping("/crear")

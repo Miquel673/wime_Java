@@ -72,4 +72,27 @@ public class RutinaService {
             }
         }
     }
+
+public Rutina actualizarEstado(Long id, String nuevoEstado) {
+
+    Optional<Rutina> rutinaOpt = rutinaRepository.findById(id);
+
+    if (rutinaOpt.isEmpty()) {
+        throw new IllegalArgumentException("⚠️ Rutina no encontrada");
+    }
+
+    // 🔧 NORMALIZACIÓN
+    nuevoEstado = nuevoEstado.toLowerCase().replace("_", " ");
+
+    if (!nuevoEstado.equals("pendiente") &&
+        !nuevoEstado.equals("en progreso") &&
+        !nuevoEstado.equals("completada")) {
+        throw new IllegalArgumentException("⚠️ Estado inválido: " + nuevoEstado);
+    }
+
+    Rutina rutina = rutinaOpt.get();
+    rutina.setEstado(nuevoEstado);
+
+    return rutinaRepository.save(rutina);
+}
 }

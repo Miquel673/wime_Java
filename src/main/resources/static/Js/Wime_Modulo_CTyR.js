@@ -168,7 +168,7 @@ function getColorPorPrioridad(prioridad) {
 function getColorPorEstado(estado) {
   switch (estado?.toLowerCase()) {
     case "pendiente": return "secondary";
-    case "en progreso": return "warning";
+    case "en_progreso": return "warning";
     case "completada": return "success";
     default: return "dark";
   }
@@ -248,6 +248,27 @@ async function eliminarRutina(id) {
     cargarRutinas();
   }
 }
+
+function cambiarEstadoRutina(id, nuevoEstado) {
+  fetch(`/api/rutinas/${id}/estado`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ estado: nuevoEstado })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        cargarRutinas();
+      } else {
+        alert(data.message || "❌ Error al cambiar el estado de la rutina.");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("❌ Error interno al actualizar el estado.");
+    });
+}
+
 
 // ------------------------
 // TABS VISUALIZACIÓN

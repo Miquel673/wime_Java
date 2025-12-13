@@ -10,4 +10,5 @@ public interface TareaRepository extends JpaRepository<Tarea, Long> {
     Long countByIdUsuarioAndEstado(Long idUsuario, String estado); // 👈 nuevo
 
     public List<Tarea> findByIdUsuario(Long idUsuario); // 👈 trae todas las tareas de ese usuario
+    List<Tarea> findByIdTareaIn(List<Long> ids);
 }

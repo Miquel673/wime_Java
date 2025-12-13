@@ -1,13 +1,12 @@
 package com.example.Wime_java.controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +21,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Wime_java.model.Tarea;
+import com.example.Wime_java.model.TareaCompartida;
+import com.example.Wime_java.model.Usuario;
 import com.example.Wime_java.repository.TareaRepository;
+import com.example.Wime_java.repository.UsuarioRepository;
 import com.example.Wime_java.service.EmailService;
 import com.example.Wime_java.service.NotificacionService;
 import com.example.Wime_java.service.TareaService;
+import com.example.Wime_java.repository.TareaCompartidaRepository;
+
+
 
 import jakarta.servlet.http.HttpSession;
+
 
 @RestController
 @RequestMapping("/api/tareas")
@@ -44,6 +50,14 @@ public class TareaController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+        private TareaCompartidaRepository tareaCompartidaRepository;
+
+        @Autowired
+        private UsuarioRepository usuarioRepository;
+
+
 
 
     // ✅ Cambiar estado de tarea
@@ -108,31 +122,53 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         @RequestBody Map<String, Object> datos,
         HttpSession session) {
 
-    Long idUsuario = (Long) session.getAttribute("id_usuario");
+    // ------------------------------------
+    // 0️⃣ Validar sesión
+    // ------------------------------------
+    Long idUsuarioSesion = (Long) session.getAttribute("id_usuario");
 
-    if (idUsuario == null) {
+    if (idUsuarioSesion == null) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                 "success", false,
                 "message", "❌ Sesión no iniciada"
         ));
     }
 
-    Tarea tarea = new Tarea();
-    tarea.setIdUsuario(idUsuario);
-    tarea.setTitulo((String) datos.get("titulo"));
-    tarea.setPrioridad((String) datos.get("prioridad"));
-    tarea.setDescripcion((String) datos.get("descripcion"));
-    tarea.setEstado("pendiente");
-
-    // Fecha
-    LocalDate fechaLimite = LocalDate.parse((String) datos.get("fechaLimite"));
-    tarea.setFechaLimite(fechaLimite);
-
     try {
-        // ----------------------------
-        // 1️⃣ Obtener correos del front
-        // ----------------------------
-        String correosTexto = (String) datos.get("compartirCon"); // 👈 IMPORTANTE
+        // ------------------------------------
+        // 1️⃣ Crear la tarea
+        // ------------------------------------
+        Tarea tarea = new Tarea();
+        tarea.setIdUsuario(idUsuarioSesion);
+        tarea.setTitulo((String) datos.get("titulo"));
+        tarea.setPrioridad((String) datos.get("prioridad"));
+        tarea.setDescripcion((String) datos.get("descripcion"));
+
+        if (datos.get("fechaLimite") != null) {
+            LocalDate fechaLimite = LocalDate.parse((String) datos.get("fechaLimite"));
+            tarea.setFechaLimite(fechaLimite);
+        }
+
+        // ------------------------------------
+        // 2️⃣ Guardar tarea
+        // ------------------------------------
+        Tarea tareaGuardada = tareaService.guardarTarea(tarea);
+        Long idTarea = tareaGuardada.getIdTarea();
+
+        // ------------------------------------
+        // 3️⃣ Registrar creador en tarea_compartida
+        // ------------------------------------
+        TareaCompartida creador = new TareaCompartida();
+        creador.setIdTarea(idTarea);
+        creador.setIdUsuario(idUsuarioSesion);
+        creador.setRol(TareaCompartida.Rol.CREADOR);
+
+        tareaCompartidaRepository.save(creador);
+
+        // ------------------------------------
+        // 4️⃣ Obtener correos a compartir
+        // ------------------------------------
+        String correosTexto = (String) datos.get("compartirCon");
         System.out.println("📌 Correos recibidos: " + correosTexto);
 
         List<String> destinatarios = new ArrayList<>();
@@ -146,30 +182,60 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
 
         System.out.println("📩 Correos detectados: " + destinatarios);
 
-        // ----------------------------
-        // 2️⃣ Guardar la tarea
-        // ----------------------------
-        tareaService.guardarTarea(tarea);
+        // ------------------------------------
+        // 5️⃣ Registrar usuarios compartidos
+        // ------------------------------------
+        if (!destinatarios.isEmpty()) {
 
-        // ----------------------------
-        // 3️⃣ Notificación interna
-        // ----------------------------
+            List<Usuario> usuariosEncontrados =
+                    usuarioRepository.findByEmailUsuarioIn(destinatarios);
+
+            for (Usuario usuario : usuariosEncontrados) {
+
+                Long idUsuarioCompartido =
+                        usuario.getIdUsuario().longValue();
+
+                boolean yaExiste =
+                        tareaCompartidaRepository
+                                .existsByIdTareaAndIdUsuario(idTarea, idUsuarioCompartido);
+
+                if (!yaExiste) {
+                TareaCompartida compartida = new TareaCompartida();
+                compartida.setIdTarea(idTarea);
+                compartida.setIdUsuario(idUsuarioCompartido);
+                compartida.setRol(TareaCompartida.Rol.COMPARTIDA);
+
+                tareaCompartidaRepository.save(compartida);
+                }
+
+            }
+        }
+
+        // ------------------------------------
+        // 6️⃣ Notificación interna
+        // ------------------------------------
         notificacionService.crearNotificacion(
-                idUsuario,
+                idUsuarioSesion,
                 "Nueva tarea creada",
-                "Se ha creado la tarea: " + tarea.getTitulo()
+                "Se ha creado la tarea: " + tareaGuardada.getTitulo()
         );
 
-        // ----------------------------
-        // 4️⃣ Envío de correos HTML
-        // ----------------------------
+        // ------------------------------------
+        // 7️⃣ Envío de correos
+        // ------------------------------------
         if (!destinatarios.isEmpty()) {
-            String mensajeHTML = "El usuario ha compartido la tarea: " + tarea.getTitulo() + "\n" + "Descripción: " + tarea.getDescripcion()
-                    + "\n" + "\nFecha límite: " + tarea.getFechaLimite().toString()
-                    + "\n" + "\nPrioridad: " + tarea.getPrioridad();
-            emailService.sendMassEmail(destinatarios, "Nueva tarea compartida", mensajeHTML);
-        } else {
-            System.out.println("📭 No se enviaron correos — lista vacía.");
+            String mensajeHTML =
+                    "Se ha compartido una tarea contigo.<br><br>" +
+                    "<b>Título:</b> " + tareaGuardada.getTitulo() + "<br>" +
+                    "<b>Descripción:</b> " + tareaGuardada.getDescripcion() + "<br>" +
+                    "<b>Fecha límite:</b> " + tareaGuardada.getFechaLimite() + "<br>" +
+                    "<b>Prioridad:</b> " + tareaGuardada.getPrioridad();
+
+            emailService.sendMassEmail(
+                    destinatarios,
+                    "Nueva tarea compartida",
+                    mensajeHTML
+            );
         }
 
         return ResponseEntity.ok(Map.of(
@@ -186,24 +252,28 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
     }
 }
 
+
     // ✅ Listar tareas del usuario logueado
-    @GetMapping("/listar")
-    public ResponseEntity<Map<String, Object>> listarTareas(HttpSession session) {
-        Long idUsuario = (Long) session.getAttribute("id_usuario");
+@GetMapping("/listar")
+public ResponseEntity<Map<String, Object>> listarTareas(HttpSession session) {
 
-        if (idUsuario == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                    "success", false,
-                    "message", "❌ Sesión no iniciada"
-            ));
-        }
+    Long idUsuario = (Long) session.getAttribute("id_usuario");
 
-        List<Tarea> tareas = tareaService.obtenerTareasPorUsuario(idUsuario);
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "tareas", tareas
+    if (idUsuario == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "success", false,
+                "message", "❌ Sesión no iniciada"
         ));
     }
+
+    List<Tarea> tareas =
+            tareaService.obtenerTareasPorUsuario(idUsuario);
+
+    return ResponseEntity.ok(Map.of(
+            "success", true,
+            "tareas", tareas
+    ));
+}
 
     // ✅ Obtener tarea por ID (para editar)
     @GetMapping("/{id}")
@@ -277,7 +347,11 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
                 "success", true,
                 "message", "✅ Tarea actualizada correctamente"
         ));
+        
+        
     }
+
+    
 
     // ✅ Eliminar tarea
     @DeleteMapping("/eliminar/{id}")
