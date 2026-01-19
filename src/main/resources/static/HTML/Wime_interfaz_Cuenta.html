@@ -7,21 +7,18 @@
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css">
-
   <!-- Ícono -->
   <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png">
-
   <!-- Estilos propios -->
-
   <link rel="stylesheet" href="/Css/wime_interfaz_cuenta.css">
   <script src="/Js/TemaConfig.js"></script>
-
-
   <!-- Íconos Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
 </head>
 
 <body>
+
     <!-- Botón menú móvil -->
     <button class="toggle-sidebar d-md-none" onclick="toggleSidebar()">
       <i class="bi bi-list"></i>
@@ -45,9 +42,12 @@
           }
         });
     </script>
+
   <!-- Contenido principal -->
   <main class="main-content">
-    <div class="d-flex justify-content-between mb-3 text-bg-primary p-3">
+
+
+    <div class="d-flex justify-content-between mb-3 text-bg-primary p-3 rounded-bottom">
       <span></span>
       <div id="fecha-actual">Cargando Fecha...</div>
     </div>
@@ -56,12 +56,6 @@
      src="/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg" 
      alt="Avatar" class="rounded-circle bg-secondary"
      style="width: 60px; height: 60px;">
-
-
-
-
-
-
 
       <!-- Aquí traemos el usuario desde la sesión en Java -->
       <h1 class="fs-4 text-primary-emphasis" id="usuario-nombre">Bienvenido, ...</h1>
@@ -145,6 +139,8 @@
   <script src="/Js/Notificacion.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/JS/ConfiguracionUsuario.js"></script>
+  <script src="/JS/TemaConfig.js"></script>
   
 
  
@@ -287,36 +283,44 @@
 
 
 
-async function cargarFotoPerfil() {
-  const idUsuario = localStorage.getItem("idUsuario");
+  document.addEventListener("DOMContentLoaded", () => {
 
-  if (!idUsuario) {
-    console.warn("⚠️ No se encontró el ID del usuario.");
-    return;
-  }
+  async function cargarFotoPerfil() {
+    const idUsuario = sessionStorage.getItem("idUsuario");
+    const img = document.getElementById("fotoPerfil");
 
-  try {
-    const response = await fetch(`http://localhost:8080/usuarios/${idUsuario}/foto`);
-    if (!response.ok) throw new Error("Error al obtener la foto");
-
-    const data = await response.json();
-    console.log("🧠 Respuesta del servidor:", data);
-
-    const fotoPerfil = data.fotoPerfil;
-    if (fotoPerfil && fotoPerfil.trim() !== "") {
-      document.getElementById("fotoPerfil").src = fotoPerfil;
-    } else {
-      console.warn("⚠️ No se encontró la ruta de la foto en la respuesta.");
+    if (!idUsuario || !img) {
+      console.warn("⚠️ No se pudo cargar la foto (idUsuario o img inexistente)");
+      return;
     }
 
-  } catch (error) {
-    console.error("❌ Error al cargar la foto del perfil:", error);
-  }
-}
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/usuarios/${idUsuario}/foto`,
+        { credentials: "include" }
+      );
 
-cargarFotoPerfil();
-  
+      if (!response.ok) {
+        throw new Error("Error HTTP al obtener la foto");
+      }
+
+      const data = await response.json();
+      console.log("📸 Foto recibida:", data);
+
+      img.src = data.fotoPerfil
+        ? data.fotoPerfil + `?t=${Date.now()}` // evita caché
+        : "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg";
+
+    } catch (error) {
+      console.error("❌ Error cargando la foto del perfil:", error);
+      img.src = "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg";
+    }
+  }
+
+  cargarFotoPerfil();
+});
 
 </script>
+
 </body>
 </html>

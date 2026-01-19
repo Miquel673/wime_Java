@@ -23,14 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.Wime_java.model.Tarea;
 import com.example.Wime_java.model.TareaCompartida;
 import com.example.Wime_java.model.Usuario;
+import com.example.Wime_java.repository.TareaCompartidaRepository;
 import com.example.Wime_java.repository.TareaRepository;
 import com.example.Wime_java.repository.UsuarioRepository;
 import com.example.Wime_java.service.EmailService;
 import com.example.Wime_java.service.NotificacionService;
 import com.example.Wime_java.service.TareaService;
-import com.example.Wime_java.repository.TareaCompartidaRepository;
-
-
 
 import jakarta.servlet.http.HttpSession;
 
@@ -225,11 +223,12 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         // ------------------------------------
         if (!destinatarios.isEmpty()) {
             String mensajeHTML =
-                    "Se ha compartido una tarea contigo.<br><br>" +
-                    "<b>Título:</b> " + tareaGuardada.getTitulo() + "<br>" +
-                    "<b>Descripción:</b> " + tareaGuardada.getDescripcion() + "<br>" +
-                    "<b>Fecha límite:</b> " + tareaGuardada.getFechaLimite() + "<br>" +
-                    "<b>Prioridad:</b> " + tareaGuardada.getPrioridad();
+                    "Se ha compartido una tarea contigo. \n" +
+                    //"Usuario: " + session.getAttribute("NombreUsuario") +
+                    "Título: " + tareaGuardada.getTitulo() + "\n" +
+                    "Descripción: " + tareaGuardada.getDescripcion() + "\n" +
+                    "Fecha límite: " + tareaGuardada.getFechaLimite() + "\n" +
+                    "Prioridad: " + tareaGuardada.getPrioridad();
 
             emailService.sendMassEmail(
                     destinatarios,

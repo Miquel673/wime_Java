@@ -10,33 +10,6 @@
   <div class="config-container">
     <h1>⚙️ Configuración de Usuario</h1>
 
-    <!-- 🌓 Cambiar tema -->
-    <section class="config-section">
-      <h2>Tema de la interfaz</h2>
-      <div class="theme-toggle">
-        <label>
-          <input type="checkbox" id="themeSwitch">
-          <span class="slider"></span>
-        </label>
-        <p id="themeLabel">Modo claro</p>
-      </div>
-    </section>
-
-    <!-- 🔔 Notificaciones -->
-    <section class="config-section">
-      <h2>Notificaciones</h2>
-      <div class="notif-toggle">
-        <label>
-          <input type="checkbox" id="notifSwitch">
-          <span class="slider"></span>
-        </label>
-        <p id="notifLabel">Notificaciones activadas</p>
-      </div>
-    </section>
-
-    
-
-
     <!-- 👤 Enlace a configuración avanzada -->
     <section class="config-section">
       <h2>Cuenta</h2>
@@ -55,15 +28,23 @@
   </div>
 </div>
 
-<br>
+  <label for="nombreUsuario">Nombre de usuario</label>
+  <input
+    type="text"
+    id="nombreUsuario"
+    class="form-control"
+    placeholder="Tu nombre"
+  >
 
-  <div>
-    <button id="btnCuenta">Actualizar datos personales</button>
-  </div>
+  <button id="btnGuardarNombre" class="btn btn-success mt-2">
+    💾 Guardar cambios
+  </button>
+
+  <p id="msgNombre" class="mt-2"></p>
+
     </section>
 
-  </div>
-
   <script src="/Js/ConfiguracionUsuario.js"></script>
+  <script src="/Js/Tema.js"></script>
 </body>
 </html>

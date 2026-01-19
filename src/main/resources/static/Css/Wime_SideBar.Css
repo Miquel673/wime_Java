@@ -1,60 +1,76 @@
-/* --- CONFIGURACIÓN GENERAL DE LA SIDEBAR --- */
+:root {
+  --bg-main: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-soft: #f0f0f0;
+  --text-main: #212529;
+  --text-soft: #495057;
+  --border-main: #dee2e6;
+  --primary: #4A90E2;
+}
+
+body.dark-mode {
+  --bg-main: #121212;
+  --bg-card: #1e1e1e;
+  --bg-soft: #2a2a2a;
+  --text-main: #eaeaea;
+  --text-soft: #b5b5b5;
+  --border-main: #333;
+  --primary: #4dabf7;
+}
+
 body .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   width: 250px;
   height: 100vh;
-  background: linear-gradient(180deg, #ffffff, #f0f0f0);
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(
+    180deg,
+    var(--bg-card),
+    var(--bg-soft)
+  );
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
   padding: 20px;
-  z-index: 1000;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-
-  overflow-y: none;
+  z-index: 5;
+  transform: translateX(0%);
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 body.sidebar-visible .sidebar {
   transform: translateX(0);
 }
 
-/* TÍTULO WIME */
 .sidebar h2 {
   font-size: 24px;
-  color: #4A90E2;
+  color: var(--primary);
   margin-bottom: 30px;
   text-align: center;
   font-weight: bold;
-  border-bottom: 2px solid #4A90E2;
+  border-bottom: 2px solid var(--primary);
   padding-bottom: 10px;
 }
 
-/* ENLACES DE NAVEGACIÓN */
 .sidebar a {
   display: block;
   padding: 10px 15px;
   margin: 8px 0;
   text-decoration: none;
-  color: #333;
+  color: var(--text-main);
   border-radius: 8px;
-  transition: background 0.3s, color 0.3s;
+  transition: background 0.3s ease, color 0.3s ease;
   font-weight: 500;
 }
 
 .sidebar a:hover:not(#Wime_Nombre) {
-  background-color: #4A90E2;
-  color: white;
+  background-color: var(--primary);
+  color: #fff;
 }
 
-/* CALENDARIO */
-/* Calendario compacto para barra lateral */
 #calendario {
   margin-top: 20px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-card);
   border-radius: 8px;
   padding: 10px;
-  font-size: 5px;
 }
 
 #encabezado-calendario {
@@ -63,20 +79,21 @@ body.sidebar-visible .sidebar {
   align-items: center;
   font-weight: bold;
   margin-bottom: 10px;
+  color: var(--text-main);
 }
 
 #encabezado-calendario button {
   padding: 3px 8px;
   font-size: 14px;
   border-radius: 5px;
-  border: 1px solid #4a90e2;
-  background-color: white;
-  color: #4a90e2;
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  color: var(--primary);
   transition: 0.2s ease;
 }
 
 #encabezado-calendario button:hover {
-  background-color: #4a90e2;
+  background-color: var(--primary);
   color: white;
 }
 
@@ -86,6 +103,7 @@ body.sidebar-visible .sidebar {
   text-align: center;
   font-weight: 500;
   margin-bottom: 6px;
+  color: var(--text-soft);
 }
 
 #dias {
@@ -97,85 +115,46 @@ body.sidebar-visible .sidebar {
 .dia {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background-color: var(--bg-soft);
+  border: 1px solid var(--border-main);
   border-radius: 5px;
   font-size: 0.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: var(--text-main);
 }
 
 .dia.hoy {
-  background-color: #4a90e2;
+  background-color: var(--primary);
   color: white;
   font-weight: bold;
 }
 
-.dia.vacio {
-  background: transparent;
-  border: none;
-}
-
+.dia.vacio,
 .empty {
   background: transparent;
   border: none;
 }
 
-/* ENLACES DE PIE */
 .footer-links {
   margin-top: 5px;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--border-main);
   padding-top: 15px;
 }
 
-/* BOTÓN HAMBURGUESA */
 .toggle-sidebar {
   position: fixed;
   top: 10px;
   left: 10px;
   z-index: 1100;
-  background-color: #4A90E2;
+  background-color: var(--primary);
   color: white;
   border: none;
   padding: 8px 12px;
   font-size: 20px;
   border-radius: 6px;
   cursor: pointer;
-  transition: left 0.3s ease;
-}
-
-/* VERSIÓN DE ESCRITORIO */
-@media (min-width: 768px) {
-  body .sidebar {
-    transform: translateX(0);
-  }
-
-  .main-content {
-    margin-left: 250px;
-  }
-
-  .toggle-sidebar {
-    display: none;
-  }
-}
-
-/* VERSIÓN MÓVIL */
-@media (max-width: 767px) {
-  .main-content {
-    margin-left: 0;
-  }
-
-  body.sidebar-visible .main-content {
-    margin-left: 0;
-  }
-
-  .toggle-sidebar {
-    display: block;
-  }
-
-  .toggle-sidebar.sidebar-visible {
-    left: 260px;
-  }
+  transition: background 0.3s ease, left 0.3s ease;
 }
 

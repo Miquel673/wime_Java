@@ -32,7 +32,15 @@ public class UsuarioService {
     usuario.setUltimoLogin(null);
 
     return usuarioRepository.save(usuario);
-}
+    }
+    
+    public Usuario actualizarUsuario(Usuario usuario) {
+    return usuarioRepository.save(usuario);
+    }
+    
+
+
+
 
 
     // 🔹 LOGIN DE USUARIO (tu implementación original)

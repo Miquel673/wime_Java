@@ -1,181 +1,173 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const themeSwitch = document.getElementById("themeSwitch");
-  const notifSwitch = document.getElementById("notifSwitch");
   const themeLabel = document.getElementById("themeLabel");
-  const notifLabel = document.getElementById("notifLabel");
-  const btnCuenta = document.getElementById("btnCuenta");
 
-  // 🔹 Cargar preferencias guardadas
-  const temaGuardado = localStorage.getItem("tema") || "claro";
-  const notificacionesActivas = localStorage.getItem("notificaciones") === "true";
+  if (themeSwitch && themeLabel) {
+    const temaGuardado = localStorage.getItem("tema") || "claro";
 
-  // Aplicar el tema
-  if (temaGuardado === "oscuro") {
-    document.body.classList.add("dark-mode");
-    themeSwitch.checked = true;
-    themeLabel.textContent = "Modo oscuro";
+    if (temaGuardado === "oscuro") {
+      document.body.classList.add("dark-mode");
+      themeSwitch.checked = true;
+      themeLabel.textContent = "Modo oscuro";
+    }
+
+    themeSwitch.addEventListener("change", () => {
+      const oscuro = themeSwitch.checked;
+      document.body.classList.toggle("dark-mode", oscuro);
+      themeLabel.textContent = oscuro ? "Modo oscuro" : "Modo claro";
+      localStorage.setItem("tema", oscuro ? "oscuro" : "claro");
+    });
   }
 
-  // Aplicar estado de notificaciones
-  notifSwitch.checked = notificacionesActivas;
-  notifLabel.textContent = notificacionesActivas
+});
+
+const notifSwitch = document.getElementById("notifSwitch");
+const notifLabel = document.getElementById("notifLabel");
+
+if (notifSwitch && notifLabel) {
+  const estado = localStorage.getItem("notificaciones") === "true";
+  notifSwitch.checked = estado;
+  notifLabel.textContent = estado
     ? "Notificaciones activadas"
     : "Notificaciones desactivadas";
 
-  // 🌓 Cambiar tema
-  themeSwitch.addEventListener("change", () => {
-    if (themeSwitch.checked) {
-      document.body.classList.add("dark-mode");
-      themeLabel.textContent = "Modo oscuro";
-      localStorage.setItem("tema", "oscuro");
-    } else {
-      document.body.classList.remove("dark-mode");
-      themeLabel.textContent = "Modo claro";
-      localStorage.setItem("tema", "claro");
-    }
-  });
-
-  // 🔔 Activar o desactivar notificaciones
   notifSwitch.addEventListener("change", async () => {
-    if (notifSwitch.checked) {
-      localStorage.setItem("notificaciones", "true");
-      notifLabel.textContent = "Notificaciones activadas";
-      if ("Notification" in window) {
-        const permiso = await Notification.requestPermission();
-        if (permiso === "granted") {
-          new Notification("🔔 Notificaciones activadas", {
-            body: "Recibirás alertas de nuevas tareas o rutinas.",
-            icon: "/img/logo.png",
-          });
-        }
+    const activo = notifSwitch.checked;
+    localStorage.setItem("notificaciones", activo);
+    notifLabel.textContent = activo
+      ? "Notificaciones activadas"
+      : "Notificaciones desactivadas";
+
+    if (activo && "Notification" in window) {
+      const permiso = await Notification.requestPermission();
+      if (permiso === "granted") {
+        new Notification("🔔 Notificaciones activadas");
       }
-    } else {
-      localStorage.setItem("notificaciones", "false");
-      notifLabel.textContent = "Notificaciones desactivadas";
     }
   });
-
-  // 👤 Ir a configuración de cuenta
-  btnCuenta.addEventListener("click", () => {
-    window.location.href = "config_cuenta.html"; // aquí irá la interfaz de cambio de nombre/contraseña
-  });
-});
-
-
-
-// 📸 Gestión de foto de perfil
-const API_BASE = "http://localhost:8080/api/usuarios";
-const idUsuario = sessionStorage.getItem("idUsuario"); // asegúrate que esté en sesión
-const fotoPerfil = document.getElementById("fotoPerfil");
-const inputFoto = document.getElementById("inputFoto");
-const btnSubir = document.getElementById("btnSubirFoto");
-const btnEliminar = document.getElementById("btnEliminarFoto");
-
-// 🟢 Mostrar foto actual
-async function cargarFotoPerfil() {
-  try {
-    const response = await fetch(`${API_BASE}/${idUsuario}/foto`);
-    const data = await response.json();
-    if (data.success) {
-      fotoPerfil.src = data.urlFoto;
-      console.log("📸 Foto cargada:", data.urlFoto);
-    } else {
-      console.warn("⚠️ No se encontró foto:", data.message);
-    }
-  } catch (error) {
-    console.error("❌ Error al cargar foto:", error);
-  }
 }
 
-// 🟡 Subir nueva foto
-async function subirFoto(file) {
+document.addEventListener("DOMContentLoaded", () => {
+
   const idUsuario = sessionStorage.getItem("idUsuario");
 
+  const fotoPerfil = document.getElementById("fotoPerfil");
+  const inputFoto = document.getElementById("inputFoto");
+  const btnSubirFoto = document.getElementById("btnSubirFoto");
+  const btnEliminarFoto = document.getElementById("btnEliminarFoto");
+
+  const nombreInput = document.getElementById("nombreUsuario");
+  const btnGuardarNombre = document.getElementById("btnGuardarNombre");
+  const msgNombre = document.getElementById("msgNombre");
+
   if (!idUsuario) {
-    console.error("⚠️ No se encontró idUsuario en sessionStorage");
-    alert("No se ha identificado el usuario. Inicia sesión nuevamente.");
+    console.warn("⚠️ Usuario no autenticado");
     return;
   }
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("idUsuario", idUsuario);
+  /* ======================
+     FOTO DE PERFIL
+  ====================== */
 
-  console.log("📤 Enviando FormData:", [...formData.entries()]);
-  
-  try {
-    const response = await fetch("http://localhost:8080/api/usuarios/subir-foto", {
-      method: "POST",
-      body: formData,
-      credentials: "include"
-    });
+  async function cargarFotoPerfil() {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/usuarios/${idUsuario}/foto`,
+        { credentials: "include" }
+      );
 
-    const data = await response.json();
+      const data = await res.json();
+      fotoPerfil.src = data.fotoPerfil + `?t=${Date.now()}`;
 
-    if (data.success) {
-      console.log("✅ Foto subida correctamente:", data.urlFoto);
+    } catch (e) {
+      console.error("❌ Error cargando foto", e);
+    }
+  }
 
-      const avatarImg = document.getElementById("foto-perfil");
-      if (avatarImg) {
-        avatarImg.src = data.urlFoto.startsWith("http")
-          ? data.urlFoto
-          : `http://localhost:8080/${data.urlFoto}`;
+  btnSubirFoto.addEventListener("click", () => inputFoto.click());
+
+  inputFoto.addEventListener("change", async () => {
+    const file = inputFoto.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("idUsuario", idUsuario);
+
+    const res = await fetch(
+      "http://localhost:8080/api/usuarios/subir-foto",
+      {
+        method: "POST",
+        body: formData,
+        credentials: "include"
       }
-    } else {
-      console.error("❌ Error del servidor:", data.message);
+    );
+
+    const data = await res.json();
+    if (data.success) {
+      fotoPerfil.src = data.urlFoto + `?t=${Date.now()}`;
     }
-  } catch (error) {
-    console.error("❌ Error al subir la foto:", error);
-  }
-}
+  });
 
-// 🔴 Eliminar foto
-async function eliminarFoto() {
-  if (!confirm("¿Seguro que deseas eliminar la foto de perfil?")) return;
-  try {
-    const response = await fetch(`${API_BASE}/${idUsuario}/eliminar-foto`, {
-      method: "DELETE"
-    });
+  btnEliminarFoto.addEventListener("click", async () => {
+    if (!confirm("¿Eliminar foto de perfil?")) return;
 
-    if (response.ok) {
-      alert("🗑️ Foto eliminada.");
-      cargarFotoPerfil();
-    } else {
-      console.error("❌ Error al eliminar la foto:", response.status);
+    await fetch(
+      `http://localhost:8080/api/usuarios/${idUsuario}/eliminar-foto`,
+      { method: "DELETE", credentials: "include" }
+    );
+
+    fotoPerfil.src =
+      "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg";
+  });
+
+  /* ======================
+     NOMBRE DE USUARIO
+  ====================== */
+
+  async function cargarNombre() {
+    const res = await fetch(
+      "http://localhost:8080/api/auth/check-session",
+      { credentials: "include" }
+    );
+
+    const data = await res.json();
+    if (data.active) {
+      nombreInput.value = data.usuario;
     }
-  } catch (error) {
-    console.error("❌ Error en la eliminación:", error);
   }
-}
 
-// 🎯 Listeners
-btnSubir.addEventListener("click", () => inputFoto.click());
-inputFoto.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (file) subirFoto(file);
+  btnGuardarNombre.addEventListener("click", async () => {
+    const nuevoNombre = nombreInput.value.trim();
+
+    if (!nuevoNombre) {
+      msgNombre.textContent = "⚠️ El nombre no puede estar vacío";
+      msgNombre.style.color = "red";
+      return;
+    }
+
+    const res = await fetch(
+      `http://localhost:8080/api/usuarios/${idUsuario}/actualizar-nombre`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ nombre: nuevoNombre })
+      }
+    );
+
+    const data = await res.json();
+    if (data.success) {
+      msgNombre.textContent = "✅ Nombre actualizado";
+      msgNombre.style.color = "green";
+    } else {
+      msgNombre.textContent = data.message;
+      msgNombre.style.color = "red";
+    }
+  });
+
+  /* INIT */
+  cargarFotoPerfil();
+  cargarNombre();
 });
-btnEliminar.addEventListener("click", eliminarFoto);
-
-// 🚀 Inicializar
-document.addEventListener("DOMContentLoaded", cargarFotoPerfil);
-
-
-
-async function cargarDatosUsuario(idUsuario) {
-  try {
-    const response = await fetch(`http://localhost:8080/api/usuarios/${idUsuario}`, {
-      credentials: "include"
-    });
-    const data = await response.json();
-
-    const avatarImg = document.getElementById("foto-perfil");
-    if (data.fotoPerfil && avatarImg) {
-      avatarImg.src = data.fotoPerfil.startsWith("http")
-        ? data.fotoPerfil
-        : `http://localhost:8080/${data.fotoPerfil}`;
-    }
-  } catch (error) {
-    console.error("❌ Error al cargar los datos del usuario:", error);
-  }
-}
-

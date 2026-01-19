@@ -48,6 +48,45 @@ public class UsuarioController {
     // ---------------------------------------------------------
     // 🔹 REGISTRO DE USUARIO (Nuevo método)
     // ---------------------------------------------------------
+
+    // 🔹 ACTUALIZAR NOMBRE DE USUARIO
+@PostMapping("/{idUsuario}/actualizar-nombre")
+public ResponseEntity<?> actualizarNombre(
+        @PathVariable Integer idUsuario,
+        @RequestBody Map<String, String> body) {
+
+    try {
+        String nuevoNombre = body.get("nombre");
+
+        if (nuevoNombre == null || nuevoNombre.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", "El nombre no puede estar vacío"));
+        }
+
+        Usuario usuario = usuarioService.obtenerPorId(idUsuario);
+        if (usuario == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", "Usuario no encontrado"));
+        }
+
+        usuario.setNombreUsuario(nuevoNombre);
+        usuarioService.actualizarUsuario(usuario);
+
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Nombre actualizado correctamente",
+                "nombre", nuevoNombre
+        ));
+
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("success", false, "message", e.getMessage()));
+    }
+}
+
+
+    
 @PostMapping("/registrar")
 public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos) {
     try {

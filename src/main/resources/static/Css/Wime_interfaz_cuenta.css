@@ -1,83 +1,105 @@
-body {
-  font-family: Arial, sans-serif;
+:root {
+  --bg-main: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-soft: #dee2e6;
+  --text-main: #2e3031;
+  --border-main: #dee2e6;
+  --primary: #27508c;
 }
 
-/* Personalización adicional */
+body.dark-mode .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+body.dark-mode .text-bg-primary {
+  background-color: #27508c !important;
+}
+
+body.dark-mode {
+  --bg-main: #121212;
+  --bg-card: #1e1e1e;
+  --bg-soft: #2a2a2a;
+  --text-main: #2e3031;
+  --border-main: #2e3031;
+  --primary: #27508c;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 img[alt="Avatar"] {
   object-fit: cover;
-  border: 2px solid #dee2e6;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid var(--border-main);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
 }
 
 img[alt="Avatar"]:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
 }
 
-@media (min-width: 768px) {
-  .main-content {
-    margin-left: 260px !important;
-    margin-right: 25px !important;
-    
-
-  }
-
-    #prueba{
-      height: 300px;
-      width: 100%;
-    }
+body.dark-mode img[alt="Avatar"]:hover {
+  box-shadow: 0 0 10px rgba(255,255,255,0.15);
 }
 
-/* --- Estilo para lista de notificaciones --- */
+.main-content {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  margin-left: 255px;
+  margin-right: 5px;
+}
+
 #listaNotificaciones {
   margin-top: 10px;
-  max-height: 500px; /* límite de altura visible */
-  overflow-y: auto;  /* permite hacer scroll vertical */
-  padding-right: 8px; /* espacio para evitar que el scroll tape texto */
-  scrollbar-width: thin; /* scrollbar más delgado (para Firefox) */
-  scrollbar-color: #0d6efd #f8f9fa; /* color primario del tema */
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--bg-main);
 }
 
-/* Scrollbar personalizado para navegadores basados en WebKit (Chrome, Edge, etc.) */
 #listaNotificaciones::-webkit-scrollbar {
-  width: px;
+  width: 6px;
 }
+
 #listaNotificaciones::-webkit-scrollbar-thumb {
-  background-color: #0d6efd;
+  background-color: var(--primary);
   border-radius: 10px;
 }
+
 #listaNotificaciones::-webkit-scrollbar-track {
-  background-color: #f8f9fa;
+  background-color: var(--bg-main);
 }
 
-
 .notificacion {
-  background-color: #dee2e6;
-  border: 1px solid #dee2e6;
+  background-color: var(--bg-soft);
+  border: 1px solid var(--border-main);
   border-radius: 8px;
   padding: 10px 5px;
   margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   animation: fadeIn 0.3s ease;
-  transition: background-color 0.3s ease;
-
-    border-left: 4px solid #0d6efd;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  border-left: 4px solid var(--primary);
+  color: var(--text-main);
 }
 
-/* 🌟 Para notificaciones no leídas */
 .notificacion.no-leida {
-  background-color: #e9f4ff;
-  border-left: 4px solid #0d6efd;
+  background-color: rgba(13,110,253,0.12);
+  border-left: 4px solid var(--primary);
 }
 
-/* ✅ Estado de lectura */
 .estado.leida {
-  color: green;
+  color: #4caf50;
   font-weight: 500;
 }
 
 .estado.pendiente {
-  color: red;
+  color: #ff6b6b;
   font-weight: 500;
 }
 
