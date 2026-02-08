@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración - Wime</title>
+  <link rel="stylesheet" href="/Css/Wime_interfaz_configuracion.css">
+</head>
+<body>
+  <div class="config-container">
+    <h1>⚙️ Configuración de Usuario</h1>
+
+    <!-- 👤 Enlace a configuración avanzada -->
+    <section class="config-section">
+      <h2>Cuenta</h2>
+
+      <div class="perfil-container text-center">
+  <img id="fotoPerfil"
+       src="/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg"
+       alt="Foto de perfil"
+       class="rounded-circle border border-2"
+       style="width: 120px; height: 120px; object-fit: cover;">
+
+  <div class="mt-3">
+    <input type="file" id="inputFoto" accept="image/*" hidden>
+    <button id="btnSubirFoto" class="btn btn-primary btn-sm">Cambiar foto</button>
+    <button id="btnEliminarFoto" class="btn btn-outline-danger btn-sm">Eliminar foto</button>
+  </div>
+</div>
+
+  <label for="nombreUsuario">Nombre de usuario</label>
+  <input
+    type="text"
+    id="nombreUsuario"
+    class="form-control"
+    placeholder="Tu nombre"
+  >
+
+  <button id="btnGuardarNombre" class="btn btn-success mt-2">
+    💾 Guardar cambios
+  </button>
+
+  <p id="msgNombre" class="mt-2"></p>
+
+    </section>
+
+  <script src="/Js/ConfiguracionUsuario.js"></script>
+  <script src="/Js/Tema.js"></script>
+</body>
+</html>

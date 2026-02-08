@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Wime - Notificación</title>
+</head>
+
+<body style="margin:0; padding:0; background:#f4f6f9; font-family: Arial, sans-serif;">
+
+    <div style="max-width:600px; margin:40px auto; background:white; padding:30px; 
+                border-radius:16px; box-shadow:0 6px 15px rgba(0,0,0,0.1);">
+
+        <!-- LOGO -->
+        <div style="text-align:center; margin-bottom:20px;">
+            <img src="cid:wimeLogo" alt="Wime Logo" style="width:160px;" />
+        </div>
+
+        <!-- TITULO -->
+        <h2 style="color:#3b3f5c; text-align:center; margin-bottom:10px;"
+            th:text="${titulo}">
+        </h2>
+
+        <!-- MENSAJE -->
+        <p style="font-size:16px; color:#333; line-height:1.6; white-space:pre-line;"
+            th:text="${mensaje}">
+        </p>
+
+        <div style="text-align:center; margin-top:25px;">
+            <a href="http://localhost:8080/HTML/Wime_interfaz_Tablero.html"
+               style="background:#4b70f5; color:white; padding:12px 20px; text-decoration:none;
+               border-radius:8px; font-weight:bold;">
+                Abrir en Wime
+            </a>
+        </div>
+
+        <p style="text-align:center; color:#888; font-size:12px; margin-top:30px;">
+            Este correo fue generado automáticamente por Wime.
+        </p>
+
+    </div>
+
+</body>
+</html>

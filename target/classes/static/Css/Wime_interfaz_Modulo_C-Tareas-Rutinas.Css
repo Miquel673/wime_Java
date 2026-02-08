@@ -1,0 +1,65 @@
+
+  html {
+    box-sizing: content-box;
+    width: 100%;
+  }
+
+
+  @media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px !important;
+    margin-right: 25px !important;
+  }
+}
+
+  body {
+    left: 500px;
+    margin: 0;
+    display: flex;
+    height: 85vh;
+    z-index: 10;
+  }
+
+  .menu-item {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .main {
+    position: absolute;
+    left: 40vh;
+    flex: 1;
+    padding: 20px;
+  }
+  .form-section {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 20px;
+  }
+  .form-section input,
+  .form-section textarea,
+  .form-section button {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+  }
+  .prioridad {
+    display: flex;
+    gap: 10px;
+  }
+  .prioridad label {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+
+  #mensaje-flotante {
+  z-index: 9999;
+  background-color: #28a745;
+}

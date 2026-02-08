@@ -1,0 +1,150 @@
+:root {
+  --color-bg: #f9f9f9;
+  --color-text: #333;
+  --color-primary: #007bff;
+  --color-card: #fff;
+}
+
+body.dark-mode {
+  --color-bg: #1e1e1e;
+  --color-text: #f2f2f2;
+  --color-card: #2a2a2a;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Segoe UI", sans-serif;
+  transition: background 0.3s, color 0.3s;
+  margin: 0;
+  padding: 2rem;
+}
+  
+  .main {
+    width: 26cm;
+
+
+  }
+  
+  .titulo {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .tab {
+    padding: 10px 20px;
+    background-color: #e0e0e0;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+  }
+  
+  .tab:hover {
+    background-color: #ccc;
+  }
+  
+  .tab.active {
+    background-color: #4285f4;
+    color: white;
+  }
+  
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .search {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter {
+    margin-left: 10px;
+}
+
+#filter {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.task-item {
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.task-details {
+    margin-bottom: 10px;
+}
+
+.task-details span {
+    margin-right: 10px;
+}
+
+.task-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.task-fields label {
+    font-weight: bold;
+}
+
+.task-fields select,
+.task-fields textarea,
+.task-details input[type="date"] {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.titulo-tarea {
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+#Main {
+    margin-left: 263px;
+  }
+
+
+/* VERSIÓN MÓVIL */
+@media (max-width: 720px) {
+  #Main {
+    margin-left: 0px;
+    box-sizing: 0%;
+    
+  }
+
+
+}

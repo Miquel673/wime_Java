@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Rutina</title>
+  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container py-5">
+    <h2 class="mb-4">Editar Rutina</h2>
+
+    <form id="form-editar-rutina">
+      <input type="hidden" name="idRutina" value="">
+
+      <!-- Nombre -->
+      <div class="mb-3">
+        <label class="form-label">Nombre de la Rutina</label>
+        <input type="text" name="nombreRutina" class="form-control" required>
+      </div>
+
+      <!-- Prioridad -->
+      <div class="mb-3">
+        <label class="form-label">Prioridad</label>
+        <select name="prioridad" class="form-select" required>
+          <option value="alta">Alta</option>
+          <option value="media">Media</option>
+          <option value="baja">Baja</option>
+        </select>
+      </div>
+
+      <!-- Frecuencia -->
+      <div class="mb-3">
+        <label class="form-label">Frecuencia</label>
+        <select name="frecuencia" class="form-select" required>
+          <option value="diaria">Diaria</option>
+          <option value="semanal">Semanal</option>
+          <option value="mensual">Mensual</option>
+          <option value="unica">Única</option>
+        </select>
+      </div>
+
+      <!-- Fecha de Fin -->
+      <div class="mb-3">
+        <label class="form-label">Fecha de Fin</label>
+        <input type="date" name="fechaFin" class="form-control" required>
+      </div>
+
+      <!-- Estado -->
+      <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select name="estado" class="form-select" required>
+          <option value="pendiente">Pendiente</option>
+          <option value="en_proceso">En Proceso</option>
+          <option value="completada">Completada</option>
+        </select>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <textarea name="descripcion" class="form-control" rows="4"></textarea>
+      </div>
+
+      <!-- Botones -->
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="/HTML/Wime_interfaz_Tablero.html" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/Js/Wime_Editar_Rutinas.js"></script>
+</body>
+</html>

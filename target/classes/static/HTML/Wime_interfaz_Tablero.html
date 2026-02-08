@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Wime</title>
+
+  <!-- Librerías externas -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css">
+
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="/Css/Wime_interfaz_Tablero.css">
+  <link rel="stylesheet" href="/Css/Wime_SideBar.css">
+
+  <!-- Ícono -->
+  <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png">
+</head>
+
+<body>
+  <header>
+    <!-- Botón menú móvil -->
+    <button class="toggle-sidebar d-md-none" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Sidebar dinámico -->
+    <div id="sidebar-container"></div>
+
+    <script>
+      function toggleSidebar() {
+        document.body.classList.toggle('sidebar-visible');
+      }
+
+      // Cargar sidebar desde /HTML/
+      fetch('/HTML/Wime_SideBar.html')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('sidebar-container').innerHTML = html;
+          if (typeof inicializarCalendario === "function") {
+            inicializarCalendario();
+          }
+        });
+    </script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalNuevo" tabindex="-1" aria-labelledby="modalNuevoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalNuevoLabel">¿Qué deseas crear?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body d-flex flex-column gap-2">
+            <a href="/HTML/Wime_interfaz_Modulo_CTareas.html" class="btn btn-primary">Crear Tarea</a>
+            <a href="/HTML/Wime_interfaz_Modulo_CRutinas.html" class="btn btn-success">Crear Rutina</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main" id="Main">
+    <h1 class="titulo">Tablero</h1>
+    <div class="tabs">
+      <div class="tab active" data-tipo="tareas">Tareas</div>
+      <div class="tab" data-tipo="rutinas">Rutinas</div>
+    </div>
+
+    <div class="top-bar d-flex gap-3 align-items-center flex-wrap">
+      <input type="text" placeholder="🔍 Buscar" class="form-control" id="busqueda" style="max-width: 300px;">
+      <button class="btn btn-primary">
+        <a class="link-offset-2 link-underline link-underline-opacity-0 text-light"
+           href="#" id="nuevoBtn" data-bs-toggle="modal" data-bs-target="#modalNuevo">
+           Nuevo
+        </a>
+      </button>
+    </div>
+
+    <select id="filtro-estado" class="form-select" style="max-width: 200px;">
+      <option value="">Todos los estados</option>
+      <option value="pendiente">Pendiente</option>
+      <option value="en progreso">En progreso</option>
+      <option value="completada">Completada</option>
+    </select>
+
+    <div  id="contenido">
+      <div id="contenedor-tareas" class="row row-cols-1 row-cols-md-2 g-4 mt-3"></div>
+      <div id="contenedor-rutinas" class="row row-cols-1 row-cols-md-2 g-4 mt-3" style="display: none;"></div>
+    </div>
+  </main>
+
+  <!-- Contenedor global de toasts -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+
+  <!-- Scripts -->
+  <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/Js/Wime_Modulo_CTyR.js"></script>
+  <script src="/Js/calendario.js"></script>
+  <script src="/Js/Filtros.js"></script>
+  <script src="/Js/TemaConfig.js"></script>
+  
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch("http://localhost:8080/api/auth/check-session", {
+      method: "GET",
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.active) {
+          console.log("✅ Sesión activa:", data.usuario);
+          // Opcional: mostrar el nombre del usuario en el tablero
+          const titulo = document.querySelector(".titulo");
+          if (titulo) {
+            titulo.innerText = `Tablero de ${data.usuario}`;
+          }
+        } else {
+          console.warn("⚠️ No hay sesión activa, redirigiendo...");
+          window.location.href = "../Login.html";
+        }
+      })
+      .catch(err => {
+        console.error("❌ Error verificando sesión:", err);
+        window.location.href = "../Login.html";
+      });
+  });
+
+  // 1) Función que se encarga de inicializar comportamientos del sidebar
+  function initSidebarFeatures(container) {
+    console.log("initSidebarFeatures: inicializando...");
+
+    // 1.a - Vincular logout
+    const logoutBtn = container.querySelector('#logout-btn') || container.querySelector('.sidebar-footer button');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', cerrarSesion);
+      console.log('✔️ logout listener attached');
+    } else {
+      console.warn('⚠️ logout button no encontrado dentro del sidebar.');
+    }
+
+    // 1.b - Inicializar calendario si existe la función (la carga de calendario.js debe estar presente)
+    if (typeof inicializarCalendario === 'function') {
+      try {
+        inicializarCalendario();
+        console.log('✔️ Calendario inicializado desde sidebar.');
+      } catch (e) {
+        console.warn('⚠️ Error inicializando calendario:', e);
+      }
+    }
+
+    // aquí puedes vincular más botones/funciones del sidebar si las tienes
+  }
+
+  // 2) Función de logout (robusta, con logs y manejo de errores)
+  async function cerrarSesion() {
+    console.log('🔐 cerrarSesion: iniciando request de logout...');
+    try {
+      // Usa ruta RELATIVA si el frontend se sirve desde el mismo origen (recomendado).
+      const resp = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include' // <- imprescindible para que mande la cookie JSESSIONID
+      });
+
+      console.log('🔐 cerrarSesion: fetch completado, status=', resp.status);
+
+      // intenta parsear JSON (puede fallar si backend devuelve vacío)
+      let data = null;
+      try { data = await resp.json(); } catch(e) { /* no JSON */ }
+
+      console.log('🔐 cerrarSesion: body=', data);
+
+      if (resp.ok && data && data.success) {
+        console.log('✅ Sesión cerrada correctamente en el backend. Redirigiendo...');
+        // redirige al login (ruta EN TU static/HTML — adapta el nombre exacto)
+        window.location.href = '../Login.html';
+      } else if (resp.ok && data && !data.success) {
+        alert('No se pudo cerrar sesión: ' + (data.message || 'error desconocido'));
+      } else {
+        alert('Error cerrando sesión. Status: ' + resp.status);
+      }
+    } catch (err) {
+      console.error('❌ Error al llamar a /api/auth/logout:', err);
+      alert('Error de conexión al cerrar sesión.');
+    }
+  }
+
+  // 3) Cargar el sidebar y luego inicializar
+  fetch('/HTML/Wime_SideBar.html')
+    .then(r => r.text())
+    .then(html => {
+      const container = document.getElementById('sidebar-container');
+      container.innerHTML = html;
+
+      // IMPORTANTE: ejecutar init tras insertar el HTML
+      initSidebarFeatures(container);
+
+      // Si el sidebar trae <script> inline que quieres ejecutar, tienes 2 opciones:
+      //  - mover esos scripts a archivos .js y cargarlos en la página padre,
+      //  - o ejecutar manualmente los <script> insertados (no recomendado).
+    })
+    .catch(err => {
+      console.error('❌ Error cargando sidebar:', err);
+    });
+</script>
+
+</body>
+</html>  
