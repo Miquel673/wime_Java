@@ -202,7 +202,7 @@ public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos
         } catch (Exception e) {
             e.printStackTrace();
             Map<String, String> response = new HashMap<>();
-            response.put("fotoPerfil", "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg");
+            response.put("fotoPerfil", "/IMG/EmptyAvatar.jpeg");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

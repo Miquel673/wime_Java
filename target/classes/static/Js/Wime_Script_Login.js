@@ -58,8 +58,12 @@ document.addEventListener("DOMContentLoaded", function () {
             rolUsuario
           });
 
-
-          
+          // 👇 Redirección según el rol
+          if (rolUsuario === "Administrador") {
+            window.location.href = "/Admin/HTML/Wime_interfaz_Tablero_admin.html";
+          } else {
+            window.location.href = "/HTML/Wime_interfaz_Tablero.html";
+          }
 
         } else {
           mostrarToast(data.message || "Usuario o contraseña incorrectos", false);
@@ -85,7 +89,7 @@ function mostrarToast(mensaje, esExito = true, redirigir = false) {
   setTimeout(() => {
     toast.classList.add("d-none");
     if (redirigir && esExito) {
-      window.location.href = "/HTML/Wime_interfaz_Tablero.html";
+      window.location.href = "../HTML/Wime_interfaz_Tablero.html";
     }
   }, 2500);
 }
