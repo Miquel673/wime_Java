@@ -87,7 +87,7 @@ public class GoogleOAuthCallbackController {
             usuario = new Usuario();
             usuario.setEmailUsuario(emailGoogle);
             usuario.setNombreUsuario(nombreGoogle);
-            usuario.setBirthDay(0); // o 18 o lo que quiera
+            //usuario.setBirthDay(0); // o 18 o lo que quiera
             usuario.setContrasenaUsuario("GOOGLE_USER"); // Contraseña dummy
             usuario.setEstado("Activo");
             usuario.setTipo("Corriente");
@@ -107,6 +107,6 @@ public class GoogleOAuthCallbackController {
 
 
         // 5. Redirigir al tablero
-        return new RedirectView("/HTML/Wime_interfaz_Tablero.html");
+        return new RedirectView("../../HTML/Interfaces/Wime_interfaz_Tablero.html");
     }
 }

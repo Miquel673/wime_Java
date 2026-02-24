@@ -482,7 +482,7 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`IDusuario`, `NombreUsuario`, `FechaRegistro`, `EmailUsuario`, `ContrasenaUsuario`, `Edad`, `tipo`, `estado`, `ultimo_login`, `foto_perfil`) VALUES
-(20, 'Miquel_673', '2025-07-01 01:40:11', 'mixagg6@gmail.com', '$2y$10$ZmCJAykvmGduB/T40TETmOUqoLDU4O8U3uvyH896NwYm9q0xkEem.', 19, 'Corriente', 'Activo', '2026-01-24 02:10:55.000000', 'http://localhost:8080/uploads/fotos_perfil/usuario_20_1769220639549_493.webp'),
+(20, 'Miquel_673', '2025-07-01 01:40:11', 'mixagg6@gmail.com', '$2y$10$ZmCJAykvmGduB/T40TETmOUqoLDU4O8U3uvyH896NwYm9q0xkEem.', 19, 'Corriente', 'Activo', '2026-01-24 02:10:55.000000', '/uploads/fotos_perfil/usuario_20_1769220639549_493.webp'),
 (24, 'Kevinlop25', '2025-07-06 16:18:21', 'kevinlop2524@gmail.com', '$2y$10$go3HnFnHKbKChP3p7HVOw.kFZban/eUpPfMFLdvb5NK37HuWJOaa2', 18, 'Corriente', 'Inactivo', '2025-12-13 15:24:08.000000', NULL),
 (25, 'jordan', '2025-07-06 23:13:34', 'hello@gmail.com', '$2y$10$F1JcwXO2xUwwmqAmlaMPjOeF2yjomgLdbW7r2me9Id/yPuUeRxrqe', 19, 'Corriente', 'Inactivo', NULL, NULL),
 (29, 'Miguel Ibarvo', '2025-07-10 06:46:00', 'mixagg7@gmail.com', 'nigga', 19, 'Administrador', 'Activo', NULL, NULL),
@@ -493,7 +493,7 @@ INSERT INTO `usuario` (`IDusuario`, `NombreUsuario`, `FechaRegistro`, `EmailUsua
 (39, 'Yeinner19', '2025-12-06 10:40:39', 'yeinnerramirez417@gmail.com', '$2a$10$MPUJuCAARqg5yRwS7BoyZu8slNnTPeiW6aoebt1nEm1QfuTrIRy9m', 18, 'Usuario', 'Activo', '2025-12-06 15:42:27.000000', NULL),
 (40, 'MCuervo', '2025-12-06 11:01:42', 'patriciacc@gmail.com', '$2a$10$attHrGQi7XvuiB4C10Eb7.mk1aE56JCTGKDzVQZxUwka9Tnmd1Yuy', 0, 'Usuario', 'Activo', '2025-12-06 16:02:24.000000', NULL),
 (43, 'mig ib', '2025-12-12 00:06:33', 'migi00823@gmail.com', 'GOOGLE_USER', 0, 'Corriente', 'Activo', '2025-12-13 11:53:22.000000', NULL),
-(44, 'FurrryJordan', '2026-01-27 21:19:16', 'FurryloveMiguel@gmail.com', '$2a$10$787Pt7KD4t77kWhk9HkQNu71do2KNUNc3fRpNgPOxXQfpOaYjWkCe', 5, 'Usuario', 'Activo', '2026-01-28 02:43:08.000000', 'http://localhost:8080/uploads/fotos_perfil/usuario_44_1769568163000_peterDiva.png.png');
+(44, 'FurrryJordan', '2026-01-27 21:19:16', 'FurryloveMiguel@gmail.com', '$2a$10$787Pt7KD4t77kWhk9HkQNu71do2KNUNc3fRpNgPOxXQfpOaYjWkCe', 5, 'Usuario', 'Activo', '2026-01-28 02:43:08.000000', '/uploads/fotos_perfil/usuario_44_1769568163000_peterDiva.png.png');
 
 -- --------------------------------------------------------
 

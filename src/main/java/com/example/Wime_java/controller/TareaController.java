@@ -265,6 +265,9 @@ public ResponseEntity<Map<String, Object>> listarTareas(HttpSession session) {
         ));
     }
 
+    // 🔥 NUEVA LÓGICA AUTOMÁTICA
+    tareaService.actualizarTareasVencidas(idUsuario);
+
     List<Tarea> tareas =
             tareaService.obtenerTareasPorUsuario(idUsuario);
 

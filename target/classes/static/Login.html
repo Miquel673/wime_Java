@@ -7,9 +7,9 @@
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/Css/Wime_interfaz_Login.css" />
+  <link rel="stylesheet" href="./Css/Interfaces/Wime_interfaz_Login.Css" />
   <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png" />
-  <script src="/Js/Wime_Script_Login.js" defer></script>
+  <script src="./Js/Modules/Wime_Script_Login.js" defer></script>
 </head>
 
 <body>
@@ -77,13 +77,19 @@
     </div>
   </div>
 
-  <!-- Toast para mensajes -->
-  <div id="mensaje-flotante" class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 d-none" role="alert" aria-live="assertive" aria-atomic="true">
+
+<!-- Toast -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="mensaje-flotante" class="toast align-items-center text-white border-0" role="alert">
     <div class="d-flex">
-      <div class="toast-body" id="texto-toast">prueba!</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="ocultarToast()" aria-label="Cerrar"></button>
+      <div id="texto-toast" class="toast-body">
+        Mensaje aquí
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto"
+        onclick="ocultarToast()"></button>
     </div>
   </div>
+</div>
 
   <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
 </body>

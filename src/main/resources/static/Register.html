@@ -7,8 +7,11 @@
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/Css/Wime_interfaz_Registro_Usuario.css">
+  <link rel="stylesheet" href="./Css/Interfaces/Wime_interfaz_Registro_Usuario.Css">
   <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png" />
+
+    <script src="./Js/Modules/Wime_Script_Register.js" defer></script>
+
 
 </head>
 
@@ -81,61 +84,20 @@
     </div>
   </div>
 
+  <!-- Toast -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="registro-toast" class="toast align-items-center text-white border-0" role="alert">
+    <div class="d-flex">
+      <div id="registro-toast-texto" class="toast-body">
+        Mensaje aquí
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto"
+        onclick="ocultarToastRegistro()"></button>
+    </div>
+  </div>
+</div>
+
   <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-
-  function validarContrasena(pass) {
-    // Mínimo 8 caracteres, una mayúscula, un número y un carácter especial
-    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-    return regex.test(pass);
-}
-
-document.getElementById("registroForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const email = document.getElementById("EmailUsuario").value;
-    const nombre = document.getElementById("NombreUsuario").value;
-    const pass = document.getElementById("ContrasenaUsuario").value;
-    const pass2 = document.getElementById("confirm_password").value;
-    const birth = document.getElementById("Birth_Day").value;
-
-    // Validación de contraseñas iguales
-    if (pass !== pass2) {
-        alert("Las contraseñas no coinciden");
-        return;
-    }
-
-    // Validación de seguridad
-    if (!validarContrasena(pass)) {
-        alert("La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.");
-        return;
-    }
-
-    const datos = {
-        EmailUsuario: email,
-        NombreUsuario: nombre,
-        ContrasenaUsuario: pass,
-        Birth_Day: birth
-    };
-
-    const res = await fetch("/api/usuarios/registrar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos)
-    });
-
-    const data = await res.json();
-    // 🔹 Si el registro fue exitoso, redirige al login
-    if (data.success) {
-        alert("Registro exitoso. Serás redirigido al inicio de sesión.");
-        window.location.href = "/Login.html";  
-    } else {
-        alert(data.message);
-    }
-});
-
-</script>
 </body>
 </html>

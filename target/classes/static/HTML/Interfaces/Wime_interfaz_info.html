@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Wime | InfoApp</title>
+
+  <!-- Bootstrap completo -->
+  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css">
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="../../Css/Interfaces/Wime_interfaz_Pagina-Principal.Css">
+
+  <!-- Ícono -->
+  <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png">
+</head>
+
+<body>
+<!-- ENCABEZADO -->
+ 
+<section class="encabezado bg-light" id="encabezado-principal">
+  
+  <div class="container py-3 d-flex align-items-center justify-content-between flex-wrap">
+    <div class="d-flex align-items-center">
+      <img class="me-3" src="/IMG/Logo_Wime.png" alt="Logo_Wime" style="width: 100px;">
+      <a href="../../index.html" class="text-decoration-none text-dark">
+        <h2 class="m-0">WIME</h2>
+      </a>
+    </div>
+    <div class="text-end">
+      <a href="/login.html" class="d-block text-dark">
+        <h5>Iniciar Sesión</h5>
+      </a>
+      <a href="#" class="d-block text-secondary">
+        <h6>Conocer más...</h6>
+      </a>
+      <a href="/Wime/public/HTML/Wime_interfaz_Registro.html" class="d-block text-info">
+        <small>¿Aún no tienes una cuenta?</small>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+
+  <!-- BIENVENIDA -->
+  <div class="container text-center espacio-encabezado">
+  <span class="titulo d-block fs-7 fw-bold">Bienvenido a Wime</span>
+  <span class="subtitulo d-block text-muted fs-5">Conoce nuestro programa</span>
+  <br>
+</div>
+
+
+  <!-- CUERPO DE LA PÁGINA -->
+  <section class="cuerpo_Pagina">
+    <section class="contenedor-info container my-5 text-center">
+
+      
+        <p>La procrastinación es una problemática actual que puede convertirse en un obstáculo para muchas personas. A menudo, este comportamiento lleva a retrasar tareas y actividades de forma innecesaria, impulsado por la falta de motivación, lo que resulta en una significativa pérdida de productividad.</p>
+
+        <p>Si se desarrolla un sistema digital que permita a los usuarios organizar y gestionar sus tareas y rutinas de forma estructurada, con herramientas como recordatorios, prioridades y calendarios visuales, entonces se reducirá la procrastinación y se mejorará significativamente la productividad personal y profesional.</p>
+
+        <p>Este proyecto se delimita al desarrollo de un sistema digital orientado a la gestión de tareas y rutinas personales, enfocado en reducir la procrastinación y mejorar la productividad mediante la organización eficiente del tiempo. La solución está dirigida a usuarios individuales y pequeños equipos de trabajo que buscan estructurar sus actividades diarias, semanales y mensuales. El sistema incluirá funciones como la creación de tareas, establecimiento de prioridades, notificaciones, seguimiento de hábitos y un calendario visual.</p>
+
+    </section>
+
+    <!-- SEPARADOR -->
+    <div class="separator container my-4">
+      <hr>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <section class="Pie_Pagina bg-dark py-4">
+      <div class="container">
+        <div class="footer-content text-center text-light">
+          <h5>Contáctanos</h5>
+          <p>Teléfono: +57 (318) 157-2613</p>
+          <p>Email: scrumm516@gmail.com</p>
+          <a href="#" class="text-decoration-none text-info">Términos y condiciones</a>
+        </div>
+        <div class="footer-copy mt-3">
+          <p style="color: white;">&copy; 2025 Wime. Todos los derechos reservados.</p>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- SCRIPTS -->
+  <script>
+    document.querySelector('.subtitulo')?.addEventListener("click", function () {
+      document.getElementById("info_Box01")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+
+    window.addEventListener("load", ajustarEspacioEncabezado);
+  window.addEventListener("resize", ajustarEspacioEncabezado);
+
+  function ajustarEspacioEncabezado() {
+    const header = document.querySelector(".encabezado");
+    const espacio = document.querySelector(".espacio-encabezado");
+    if (header && espacio) {
+      const altura = header.offsetHeight;
+      espacio.style.marginTop = `${altura + 20}px`; // + extra espacio
+    }
+  }
+  </script>
+
+  <!-- Bootstrap JS -->
+<script src="/Wime/public/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

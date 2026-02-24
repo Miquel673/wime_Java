@@ -30,8 +30,8 @@ public class Usuario {
     @Column(name = "ContrasenaUsuario", nullable = false, length = 255)
     private String contrasenaUsuario;
 
-    @Column(name = "Edad")
-    private Integer birthDay; // o int si era numérico
+    /*@Column(name = "Edad")
+    private Integer birthDay; // o int si era numérico/* */
 
 
     @Column(name = "Tipo", nullable = false, length = 50)

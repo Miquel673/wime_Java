@@ -148,7 +148,7 @@ public Usuario guardarFoto(Integer idUsuario, MultipartFile file) throws IOExcep
     }
 
     // 🌐 Guardar ruta accesible desde el frontend
-    String urlAccesible = "http://localhost:8080/uploads/fotos_perfil/" + nombreArchivo;
+    String urlAccesible = "/uploads/fotos_perfil/" + nombreArchivo;
     usuario.setFotoPerfil(urlAccesible);
 
     // 💾 Actualizar usuario en la BD

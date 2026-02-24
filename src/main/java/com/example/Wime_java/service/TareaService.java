@@ -1,5 +1,6 @@
 package com.example.Wime_java.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -115,4 +116,31 @@ public class TareaService {
         tarea.setEstado(estadoNormalizado);
         return tareaRepository.save(tarea);
     }
+
+    public void actualizarTareasVencidas(Long idUsuario) {
+
+    LocalDate hoy = LocalDate.now();
+
+    List<Tarea> tareas = tareaRepository.findByIdUsuario(idUsuario);
+
+    for (Tarea tarea : tareas) {
+
+        if (tarea.getFechaLimite() == null) continue;
+
+        boolean estaVencida =
+                tarea.getFechaLimite().isBefore(hoy);
+
+        boolean noEsCompletada =
+                !"completada".equalsIgnoreCase(tarea.getEstado());
+
+        boolean noEsYaVencida =
+                !"vencida".equalsIgnoreCase(tarea.getEstado());
+
+        if (estaVencida && noEsCompletada && noEsYaVencida) {
+
+            tarea.setEstado("vencida");
+            tareaRepository.save(tarea);
+        }
+    }
+}
 }
