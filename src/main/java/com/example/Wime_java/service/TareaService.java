@@ -9,9 +9,14 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 import com.example.Wime_java.config.TareaConfig;
+import com.example.Wime_java.dto.TareaTableroDTO;
 import com.example.Wime_java.model.Tarea;
+import com.example.Wime_java.model.TareaCompartida;
+import com.example.Wime_java.model.Usuario;
 import com.example.Wime_java.repository.TareaCompartidaRepository;
 import com.example.Wime_java.repository.TareaRepository;
+import com.example.Wime_java.repository.UsuarioRepository;
+
 
 @Service
 public class TareaService {
@@ -19,16 +24,78 @@ public class TareaService {
     private final TareaRepository tareaRepository;
     private final TareaCompartidaRepository tareaCompartidaRepository;
     private final TareaConfig tareaConfig;
+    private final UsuarioRepository usuarioRepository;
 
     public TareaService(
-            TareaRepository tareaRepository,
-            TareaCompartidaRepository tareaCompartidaRepository,
-            TareaConfig tareaConfig) {
+        TareaRepository tareaRepository,
+        TareaCompartidaRepository tareaCompartidaRepository,
+        TareaConfig tareaConfig,
+        UsuarioRepository usuarioRepository) {
 
-        this.tareaRepository = tareaRepository;
-        this.tareaCompartidaRepository = tareaCompartidaRepository;
-        this.tareaConfig = tareaConfig;
+    this.tareaRepository = tareaRepository;
+    this.tareaCompartidaRepository = tareaCompartidaRepository;
+    this.tareaConfig = tareaConfig;
+    this.usuarioRepository = usuarioRepository;
+}
+
+        // ==========================================================
+// 📌 LISTAR TAREAS PARA TABLERO (con info creador)
+// ==========================================================
+public List<TareaTableroDTO> obtenerTareasParaTablero(Long idUsuario) {
+
+    List<TareaCompartida> relaciones =
+            tareaCompartidaRepository.findByIdUsuario(idUsuario);
+
+    List<TareaTableroDTO> resultado = new java.util.ArrayList<>();
+
+    for (TareaCompartida relacion : relaciones) {
+
+        Tarea tarea = tareaRepository
+                .findById(relacion.getIdTarea())
+                .orElse(null);
+
+        if (tarea == null) continue;
+
+        TareaTableroDTO dto = new TareaTableroDTO();
+
+        dto.setIdTarea(tarea.getIdTarea());
+        dto.setTitulo(tarea.getTitulo());
+        dto.setDescripcion(tarea.getDescripcion());
+        dto.setEstado(tarea.getEstado());
+        dto.setPrioridad(tarea.getPrioridad());
+        dto.setFechaLimite(tarea.getFechaLimite());
+
+        // 🔎 Buscar creador
+        TareaCompartida creadorRelacion =
+                tareaCompartidaRepository
+                        .findByIdTarea(tarea.getIdTarea())
+                        .stream()
+                        .filter(r -> r.getRol() == TareaCompartida.Rol.CREADOR)
+                        .findFirst()
+                        .orElse(null);
+
+        if (creadorRelacion != null) {
+
+            Usuario creador = usuarioRepository
+                .findById(creadorRelacion.getIdUsuario().intValue())
+                .orElse(null);
+
+            if (creador != null) {
+                dto.setIdCreador(creador.getIdUsuario());
+                dto.setNombreCreador(creador.getNombreUsuario());
+                dto.setImagenPerfilCreador(creador.getFotoPerfil());       
+             }
+        }
+
+        dto.setEsCompartida(
+                relacion.getRol() == TareaCompartida.Rol.COMPARTIDA
+        );
+
+        resultado.add(dto);
     }
+
+    return resultado;
+}
 
     // ==========================================================
     // 📌 LISTAR TAREAS DEL USUARIO
@@ -117,7 +184,7 @@ public class TareaService {
         return tareaRepository.save(tarea);
     }
 
-    public void actualizarTareasVencidas(Long idUsuario) {
+public void actualizarTareasVencidas(Long idUsuario) {
 
     LocalDate hoy = LocalDate.now();
 
@@ -127,20 +194,20 @@ public class TareaService {
 
         if (tarea.getFechaLimite() == null) continue;
 
-        boolean estaVencida =
-                tarea.getFechaLimite().isBefore(hoy);
+        boolean estaVencida = tarea.getFechaLimite().isBefore(hoy);
 
         boolean noEsCompletada =
-                !"completada".equalsIgnoreCase(tarea.getEstado());
+                !"COMPLETADA".equalsIgnoreCase(tarea.getEstado());
 
         boolean noEsYaVencida =
-                !"vencida".equalsIgnoreCase(tarea.getEstado());
+                !"VENCIDA".equalsIgnoreCase(tarea.getEstado());
 
         if (estaVencida && noEsCompletada && noEsYaVencida) {
 
-            tarea.setEstado("vencida");
+            tarea.setEstado("VENCIDA");
             tareaRepository.save(tarea);
         }
     }
 }
+
 }

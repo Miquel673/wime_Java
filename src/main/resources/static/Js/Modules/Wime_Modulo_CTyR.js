@@ -3,7 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   showContent("tareas"); // Mostrar sección de tareas al inicio
   cargarTareas();
   cargarRutinas();
-});
+
+  }
+);
 
 // ------------------------
 // FUNCIONES DE CARGA
@@ -65,6 +67,19 @@ function mostrarTareas(tareas) {
 
   <div class="card shadow-sm h-100">
     <div class="card-body">
+
+          ${tarea.esCompartida ? `
+      <div class="d-flex align-items-center mb-2">
+        <img src="${tarea.imagenPerfilCreador || '/img/default.png'}"
+            class="rounded-circle me-2"
+            width="30" height="30">
+        <small class="text-muted">
+          Compartida por ${tarea.nombreCreador}
+        </small>
+      </div>
+      ` : ''}
+
+
       <h5 class="card-title titulo-tarea text-white bg-${getColorPorPrioridad(tarea.prioridad)}">${tarea.titulo}</h5>
       <p class="card-text"><strong>Prioridad:</strong> ${tarea.prioridad}</p>
       <p class="card-text"><strong>Fecha límite:</strong> ${tarea.fechaLimite || "N/A"}</p>
@@ -89,7 +104,16 @@ function mostrarTareas(tareas) {
         </div>
 
         <div class="d-flex justify-content-between">
-          <button class="btn btn-danger btn-sm btn-eliminar" data-id="${tarea.idTarea}">Eliminar</button>
+
+          ${tarea.esCompartida ? 
+          `<button class="btn btn-warning btn-sm btn-remover" data-id="${tarea.idTarea}">
+            Quitar de mi lista
+          </button>` 
+          : 
+          `<button class="btn btn-danger btn-sm btn-eliminar" data-id="${tarea.idTarea}">
+            Eliminar
+          </button>`} 
+                
           <button class="btn btn-sm btn-outline-secondary bg-primary text-light btn-editar" data-id="${tarea.idTarea}">Editar</button>
         </div>
       </div>
@@ -97,7 +121,7 @@ function mostrarTareas(tareas) {
   </div>
 `;
 
-if (tarea.estado === "vencida") {
+if (tarea.estado?.toLowerCase() === "vencida") {
     tarjeta.querySelector(".card").classList.add("vencida");
   }
 
@@ -198,31 +222,60 @@ function mostrarError(tipo, mensaje) {
 
 // Delegación de eventos para botones
 document.addEventListener("click", (e) => {
-  // ✅ Eliminar tarea
-  if (e.target.matches(".btn-eliminar")) {
-    const id = e.target.dataset.id;
+
+  // ✅ Eliminar tarea (creador)
+  const btnEliminar = e.target.closest(".btn-eliminar");
+  if (btnEliminar) {
+    const id = btnEliminar.dataset.id;
+
     if (!confirm("¿Estás seguro de eliminar esta tarea?")) return;
 
     fetch(`/api/tareas/eliminar/${id}`, { method: "DELETE" })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          alert(data.message); // 🔄 reemplazo temporal
-          setTimeout(() => cargarTareas(), 800);
+          cargarTareas();
         } else {
           alert(data.message);
         }
-      })
-      .catch(err => alert("❌ Error: " + err));
+      });
+    return;
   }
 
-  // ✅ Editar tarea (redirección con ID en la URL)
-if (e.target.matches(".btn-editar")) {
-  const id = e.target.dataset.id;
-  window.location.href = `/HTML/Modules/Wime_interfaz_Modulo_ETareas.html?id=${id}`;
-}
-});
+  // ✅ Quitar tarea compartida (receptor)
+  const btnRemover = e.target.closest(".btn-remover");
+  if (btnRemover) {
+    const id = btnRemover.dataset.id;
 
+    if (!confirm("¿Quitar esta tarea de tu lista?")) return;
+
+    fetch(`/api/tareas/remover-compartida/${id}`, {
+      method: "DELETE"
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        cargarTareas();
+      } else {
+        alert(data.message);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error interno.");
+    });
+
+    return;
+  }
+
+  // ✅ Editar tarea
+  const btnEditar = e.target.closest(".btn-editar");
+  if (btnEditar) {
+    const id = btnEditar.dataset.id;
+    window.location.href = `/HTML/Modules/Wime_interfaz_Modulo_ETareas.html?id=${id}`;
+  }
+
+});
 
 async function cambiarEstadoTarea(id, nuevoEstado) {
   try {

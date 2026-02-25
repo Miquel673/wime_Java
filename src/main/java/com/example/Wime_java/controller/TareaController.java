@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.Wime_java.dto.TareaTableroDTO;
 import com.example.Wime_java.model.Tarea;
 import com.example.Wime_java.model.TareaCompartida;
 import com.example.Wime_java.model.Usuario;
@@ -252,30 +253,27 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
 }
 
 
-    // ✅ Listar tareas del usuario logueado
-@GetMapping("/listar")
-public ResponseEntity<Map<String, Object>> listarTareas(HttpSession session) {
+        @GetMapping("/listar")
+        public ResponseEntity<?> listarTareas(HttpSession session) {
 
-    Long idUsuario = (Long) session.getAttribute("id_usuario");
+        Long idUsuario = (Long) session.getAttribute("id_usuario");
 
-    if (idUsuario == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                "success", false,
-                "message", "❌ Sesión no iniciada"
+        if (idUsuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // 🔥 Primero actualiza vencidas
+        tareaService.actualizarTareasVencidas(idUsuario);
+
+        // 🔥 Luego lista con el nuevo método
+        List<TareaTableroDTO> tareas =
+                tareaService.obtenerTareasParaTablero(idUsuario);
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "tareas", tareas
         ));
-    }
-
-    // 🔥 NUEVA LÓGICA AUTOMÁTICA
-    tareaService.actualizarTareasVencidas(idUsuario);
-
-    List<Tarea> tareas =
-            tareaService.obtenerTareasPorUsuario(idUsuario);
-
-    return ResponseEntity.ok(Map.of(
-            "success", true,
-            "tareas", tareas
-    ));
-}
+        }
 
     // ✅ Obtener tarea por ID (para editar)
     @GetMapping("/{id}")
@@ -394,5 +392,39 @@ public ResponseEntity<Map<String, Object>> listarTareas(HttpSession session) {
 
         
     }
+
+    @DeleteMapping("/remover-compartida/{idTarea}")
+public ResponseEntity<?> removerCompartida(
+        @PathVariable Long idTarea,
+        HttpSession session) {
+
+    Long idUsuario = (Long) session.getAttribute("id_usuario");
+
+    if (idUsuario == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    TareaCompartida relacion =
+            tareaCompartidaRepository
+                    .findByIdTarea(idTarea)
+                    .stream()
+                    .filter(r -> r.getIdUsuario().equals(idUsuario))
+                    .findFirst()
+                    .orElse(null);
+
+    if (relacion == null ||
+        relacion.getRol() == TareaCompartida.Rol.CREADOR) {
+
+        return ResponseEntity.badRequest()
+                .body(Map.of("success", false));
+    }
+
+    tareaCompartidaRepository.delete(relacion);
+
+    return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "Tarea eliminada de tu lista"
+    ));
+}
     
 }

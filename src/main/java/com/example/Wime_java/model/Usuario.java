@@ -1,6 +1,5 @@
 package com.example.Wime_java.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -11,15 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Entity
-@Table(name = "usuario")
-@Data
-public class Usuario {
+    @Entity
+    @Table(name = "usuario")
+    @Data
+    public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDusuario")
-    private Integer idUsuario;
+    private Long idUsuario;  // 🔥 cambiar de Integer a Long
 
     @Column(name = "NombreUsuario", nullable = false, length = 100)
     private String nombreUsuario;
@@ -58,65 +57,6 @@ public class Usuario {
         this.ultimoLogin = ultimoLogin;
     }
 
-
-    // 🔹 Getters y Setters
-    public Integer getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(Integer idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
-    public String getEmailUsuario() {
-        return emailUsuario;
-    }
-
-    public void setEmailUsuario(String emailUsuario) {
-        this.emailUsuario = emailUsuario;
-    }
-
-    public String getContrasenaUsuario() {
-        return contrasenaUsuario;
-    }
-
-    public void setContrasenaUsuario(String contrasenaUsuario) {
-        this.contrasenaUsuario = contrasenaUsuario;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public LocalDateTime getUltimoLogin() {
-        return ultimoLogin;
-    }
-
-    public void setUltimoLogin(LocalDateTime ultimoLogin) {
-        this.ultimoLogin = ultimoLogin;
-    }
-
-    
 
     // 🔹 toString()
     @Override
