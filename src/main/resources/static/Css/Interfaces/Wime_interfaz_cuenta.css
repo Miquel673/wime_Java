@@ -1,3 +1,7 @@
+/* ======================================================
+   VARIABLES
+====================================================== */
+
 :root {
   --bg-main: #f8f9fa;
   --bg-card: #ffffff;
@@ -5,6 +9,21 @@
   --text-main: #2e3031;
   --border-main: #dee2e6;
   --primary: #27508c;
+
+  --radius: 12px;
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ======================================================
+   DARK MODE
+====================================================== */
+
+body.dark-mode {
+  --bg-main: #121212;
+  --bg-card: #1e1e1e;
+  --bg-soft: #2a2a2a;
+  --text-main: #e4e6eb; /* Mejor contraste */
+  --border-main: #3a3a3a;
 }
 
 body.dark-mode .bg-white {
@@ -12,56 +31,88 @@ body.dark-mode .bg-white {
 }
 
 body.dark-mode .text-bg-primary {
-  background-color: #27508c !important;
+  background-color: var(--primary) !important;
 }
 
-body.dark-mode {
-  --bg-main: #121212;
-  --bg-card: #1e1e1e;
-  --bg-soft: #2a2a2a;
-  --text-main: #2e3031;
-  --border-main: #2e3031;
-  --primary: #27508c;
-}
+/* ======================================================
+   BASE
+====================================================== */
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   background-color: var(--bg-main);
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-img[alt="Avatar"] {
-  object-fit: cover;
-  border: 2px solid var(--border-main);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
-}
-
-img[alt="Avatar"]:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 8px rgba(0,0,0,0.4);
-}
-
-body.dark-mode img[alt="Avatar"]:hover {
-  box-shadow: 0 0 10px rgba(255,255,255,0.15);
 }
 
 .main-content {
   background-color: var(--bg-main);
   color: var(--text-main);
   margin-left: 255px;
-  margin-right: 5px;
+  padding: 20px;
+  transition: margin 0.3s ease;
 }
+
+/* Responsive para sidebar */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+}
+
+/* ======================================================
+   AVATAR
+====================================================== */
+
+img[alt="Avatar"] {
+  object-fit: cover;
+  border: 2px solid var(--border-main);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+
+img[alt="Avatar"]:hover {
+  transform: scale(1.07);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+body.dark-mode img[alt="Avatar"]:hover {
+  box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+}
+
+/* ======================================================
+   TARJETAS
+====================================================== */
+
+.card,
+.bg-white {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover,
+.bg-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* ======================================================
+   NOTIFICACIONES
+====================================================== */
 
 #listaNotificaciones {
   margin-top: 10px;
-  max-height: 500px;
+  max-height: 400px;
   overflow-y: auto;
   padding-right: 8px;
+
   scrollbar-width: thin;
   scrollbar-color: var(--primary) var(--bg-main);
 }
 
+/* Scroll Chrome */
 #listaNotificaciones::-webkit-scrollbar {
   width: 6px;
 }
@@ -78,28 +129,68 @@ body.dark-mode img[alt="Avatar"]:hover {
 .notificacion {
   background-color: var(--bg-soft);
   border: 1px solid var(--border-main);
-  border-radius: 8px;
-  padding: 10px 5px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  animation: fadeIn 0.3s ease;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  border-radius: var(--radius);
+  padding: 12px 10px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-soft);
   border-left: 4px solid var(--primary);
-  color: var(--text-main);
+  animation: fadeIn 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.notificacion:hover {
+  transform: translateX(4px);
 }
 
 .notificacion.no-leida {
   background-color: rgba(13,110,253,0.12);
-  border-left: 4px solid var(--primary);
+}
+
+/* Estados */
+.estado {
+  font-weight: 500;
 }
 
 .estado.leida {
   color: #4caf50;
-  font-weight: 500;
 }
 
 .estado.pendiente {
   color: #ff6b6b;
-  font-weight: 500;
 }
 
+/* ======================================================
+   BOTONES
+====================================================== */
+
+.btn {
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Mejor tamaño en móvil */
+@media (max-width: 768px) {
+  .btn {
+    font-size: 1rem;
+    padding: 10px;
+  }
+}
+
+/* ======================================================
+   ANIMACIONES
+====================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

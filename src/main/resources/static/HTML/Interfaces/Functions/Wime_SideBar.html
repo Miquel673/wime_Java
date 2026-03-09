@@ -9,7 +9,7 @@
 </head>
 <body>
   <section class="sidebar">
-    <a href="../../../index.html" id="Wime_Nombre"><h2>WIME</h2></a>
+    <a href="#" id="Wime_Nombre"><h2>WIME</h2></a>
     <a href="./Wime_interfaz_BandejaEntrada.html" class="p-2 " style="width: 8px; height: 8px;">🔔</a>
     <a href="#" id="nuevoBtn" data-bs-toggle="modal" data-bs-target="#modalNuevo">Nuevo</a>
     <a href=".././Interfaces/Wime_interfaz_Tablero.html">Tablero</a>
@@ -56,7 +56,7 @@
       .then(data => {
         if (data.success) {
           console.log("✅ Sesión cerrada");
-          window.location.href = "../../../login.html";
+          window.location.href = "../../../Login.html";
         } else {
           console.error("⚠️ Error cerrando sesión:", data.message);
         }
