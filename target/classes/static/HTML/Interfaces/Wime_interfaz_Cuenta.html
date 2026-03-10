@@ -1,286 +1,208 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <!-- ================= META ================= -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WIME | Mi Perfil</title>
+  <title>Perfil Usuario | Wime</title>
 
-  <!-- ================= BOOTSTRAP ================= -->
-  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css">
-
-  <!-- ================= ICONOS ================= -->
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-  <!-- ================= ESTILOS PROPIOS ================= -->
-  <link rel="stylesheet" href="../../Css/Interfaces/Wime_interfaz_cuenta.css">
-  <script src="../../Js/Config-Services/TemaConfig.js"></script>
-
-  <!-- ================= FAVICON ================= -->
-  <link rel="icon" type="image/png" href="../../IMG/Logo_Wime.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../Css/Config/Wime_interfaz_configuracion.css">
 </head>
-
 <body>
 
-  <!-- ===================================================== -->
-  <!-- ===================== SIDEBAR ======================== -->
-  <!-- ===================================================== -->
+<div class="sidebar">
+  <h2 class="text-white text-center mt-4 fw-bold">WIME</h2>
+  <hr class="text-white mx-4 opacity-50">
+  
+  <nav class="px-3">
+    <a href="../Interfaces/Wime_interfaz_Cuenta.html" class="nav-btn"><i class="bi bi-grid-1x2 me-3"></i> Mi Tablero</a>
+    <a href="#" class="nav-btn active"><i class="bi bi-person-circle me-3"></i> Perfil</a>
+    
+    <button class="nav-btn border-0 bg-transparent text-white w-100 text-start" data-bs-toggle="modal" data-bs-target="#modalTarea">
+        <i class="bi bi-plus-circle me-3"></i> Nueva Tarea
+    </button>
+    <button class="nav-btn border-0 bg-transparent text-white w-100 text-start" data-bs-toggle="modal" data-bs-target="#modalRutina">
+        <i class="bi bi-calendar-plus me-3"></i> Nueva Rutina
+    </button>
+    <button class="nav-btn border-0 bg-transparent text-white w-100 text-start" data-bs-toggle="modal" data-bs-target="#modalNotif">
+        <i class="bi bi-bell me-3"></i> Notificaciones
+    </button>
+    
+    <hr class="text-white opacity-25">
+    <button id="logout-btn" class="nav-btn border-0 bg-transparent text-white w-100 text-start" onclick="cerrarSesion()">
+      <i class="bi bi-box-arrow-right me-3"></i> Cerrar Sesión
+    </button>
+  </nav>
 
-  <button class="toggle-sidebar d-md-none" onclick="toggleSidebar()">
-    <i class="bi bi-list"></i>
+  <div class="sidebar-calendar shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span id="monthDisplay" class="fw-bold text-white" style="font-size: 0.9rem;"></span>
+      <div class="text-white">
+        <i class="bi bi-chevron-left cursor-pointer" onclick="changeMonth(-1)"></i>
+        <i class="bi bi-chevron-right cursor-pointer ms-2" onclick="changeMonth(1)"></i>
+      </div>
+    </div>
+    <div class="cal-grid" id="calendarGrid"></div>
+  </div>
+</div>
+
+<div class="content">
+
+  <button id="themeToggle" class="theme-btn">
+    <i id="themeIcon" class="bi bi-sun"></i>
   </button>
 
-  <div id="sidebar-container"></div>
-
-
-  <!-- ===================================================== -->
-  <!-- ================= CONTENIDO PRINCIPAL =============== -->
-  <!-- ===================================================== -->
-
-  <main class="main-content container-fluid px-3 px-md-4 py-3">
-
-  <!-- Barra superior -->
-  <div class="d-flex justify-content-between align-items-center 
-              mb-3 text-bg-primary p-3 rounded-bottom flex-wrap gap-2">
-    <span></span>
-    <div id="fecha-actual" class="text-end w-100 w-md-auto">
-      Cargando Fecha...
-    </div>
-  </div>
-
-  <!-- Perfil centrado en móvil -->
-  <div class="text-center text-md-start mb-3">
-    <img id="fotoPerfil"
-         src="../../IMG/EmptyAvatar.jpeg"
-         alt="Avatar"
-         class="rounded-circle bg-secondary mb-2"
-         style="width: 80px; height: 80px; object-fit: cover;">
-
-    <h1 class="fs-5 fs-md-4 text-primary-emphasis" id="usuario-nombre">
-      Bienvenido, ...
-    </h1>
-  </div>
-
-  <!-- Layout adaptable -->
-  <div class="row g-3">
-
-    <!-- Columna lateral -->
-    <div class="col-12 col-md-4 col-lg-3">
-
-      <div class="bg-white border p-3 rounded shadow-sm h-100">
-
-        <a href="../Interfaces/Wime_interfaz_Tablero.html"
-           class="btn btn-outline-primary w-100 mb-2">
-           Mi tablero
-        </a>
-
-        <button class="btn btn-primary w-100 my-2"
-                data-bs-toggle="modal"
-                data-bs-target="#modalNuevo">
-          ➕ Crear
+  <div class="container-fluid d-flex justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+      
+      <div class="card p-4 mb-4 position-relative border-0 shadow">
+        <button type="button" class="btn-settings-icon" data-bs-toggle="modal" data-bs-target="#modalAjustesCuenta">
+            <i class="bi bi-gear-fill"></i>
         </button>
 
-        <div class="mt-3">
-          <div id="listaNotificaciones"></div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Panel principal -->
-    <div class="col-12 col-md-8 col-lg-9">
-
-      <div class="bg-white border p-3 rounded shadow-sm">
-
-        <h5 class="mb-3">Productividad:</h5>
-
-        <ul class="ps-3">
-          <li>Tareas Realizadas:
-            <strong id="tareas-completadas">0</strong>
-          </li>
-          <li>Rutinas Finalizadas:
-            <strong id="rutinas-finalizadas">0</strong>
-          </li>
-          <li>En proceso:
-            <strong id="en-proceso">0</strong>
-          </li>
-        </ul>
-
-        <div class="card shadow-sm my-4">
-          <div class="card-header bg-primary text-white text-center text-md-start">
-            <h5 class="mb-0">📊 Resumen de Actividades</h5>
-          </div>
-          <div class="card-body">
-            <canvas id="grafico-estadisticas" height="120"></canvas>
+        <div class="text-center mb-4">
+          <div class="profile-img-container shadow">
+            <img id="preview" src="https://ui-avatars.com/api/?name=Wime+User&background=random" class="profile-img" alt="Perfil">
           </div>
         </div>
 
-        <!-- Botones adaptables -->
-        <div class="d-flex flex-column flex-md-row gap-2">
-          <button class="btn btn-success w-100 w-md-auto">
-            📈 Progreso
+        <form>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Cambiar Foto</label>
+              <input type="file" class="form-control" id="imageInput">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Nombre</label>
+              <input type="text" class="form-control" placeholder="Escribe tu nombre">
+            </div>
+          </div>
+          <button type="button" class="btn btn-gradient w-100 py-2 mt-2 fw-bold rounded-pill">
+            Guardar Cambios
           </button>
-
-          <a href="./Functions/ReporteForm.html"
-             class="btn btn-secondary w-100 w-md-auto text-white text-decoration-none">
-            📋 Reporte
-          </a>
-        </div>
-
+        </form>
       </div>
-    </div>
 
-  </div>
-
-</main>
-
-
-  <!-- ===================================================== -->
-  <!-- ======================= MODAL ======================== -->
-  <!-- ===================================================== -->
-
-  <div class="modal fade" id="modalNuevo" tabindex="-1"
-       aria-labelledby="modalNuevoLabel" aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content">
-
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalNuevoLabel">
-            ¿Qué deseas crear?
-          </h5>
-          <button type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Cerrar">
-          </button>
+      <div class="card p-4 border-0 shadow">
+        <h5 class="fw-bold mb-4 d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-bar-chart-line me-2"></i>Rendimiento</span>
+            <span class="badge bg-primary rounded-pill" style="font-size: 0.7rem;">En vivo</span>
+        </h5>
+        
+        <div class="stats-container">
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+                <span class="fw-bold small">Tareas Completadas</span>
+                <span class="text-success small fw-bold">82%</span>
+            </div>
+            <div class="progreso"><div class="barra verde" style="width: 82%;"></div></div>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+                <span class="fw-bold small">Tarea en Progreso</span>
+                <span class="text-warning small fw-bold">45%</span>
+            </div>
+            <div class="progreso"><div class="barra amarillo" style="width: 45%;"></div></div>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+                <span class="fw-bold small">Tareas Fallidas</span>
+                <span class="text-danger small fw-bold">12%</span>
+            </div>
+            <div class="progreso"><div class="barra rojo" style="width: 12%;"></div></div>
+          </div>
         </div>
-
-        <div class="modal-body d-flex flex-column gap-2">
-          <a href="../Modules/Wime_interfaz_Modulo_CTareas.html"
-             class="btn btn-primary">Crear Tarea</a>
-
-          <a href="../Modules/Wime_interfaz_Modulo_CRutinas.html"
-             class="btn btn-success">Crear Rutina</a>
-        </div>
-
       </div>
+
     </div>
   </div>
+</div>
 
+<div class="modal fade" id="modalAjustesCuenta" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg p-4">
+            <div class="modal-header border-0 p-0 mb-3">
+                <h5 class="modal-title fw-bold">Ajustes de Seguridad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Nuevo Correo</label>
+                    <input type="email" class="form-control bg-transparent border-secondary rounded-pill px-4 py-2" placeholder="correo@ejemplo.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Nueva Contraseña</label>
+                    <input type="password" class="form-control bg-transparent border-secondary rounded-pill px-4 py-2" placeholder="••••••••">
+                </div>
+                <button type="button" class="btn btn-gradient w-100 py-3 fw-bold rounded-pill text-white mt-2" onclick="confirmarCambiosModal()">
+                    Actualizar Datos
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-  <!-- ===================================================== -->
-  <!-- ======================= SCRIPTS ====================== -->
-  <!-- ===================================================== -->
+<div class="modal fade" id="modalTarea" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg p-4">
+            <h4 class="fw-bold mb-4">Crear Nueva Tarea</h4>
+            <div class="mb-3">
+                <input type="text" class="form-control bg-transparent border-secondary rounded-pill px-4 py-2" placeholder="Nombre de la tarea">
+            </div>
+            <div class="mb-3">
+                <textarea class="form-control bg-transparent border-secondary px-4 py-2" placeholder="Descripción de la tarea" style="border-radius: 20px; height: 100px; resize: none;"></textarea>
+            </div>
+            <div class="mb-4">
+                <select class="form-select bg-transparent border-secondary rounded-pill px-4 py-2">
+                    <option selected disabled>Prioridad</option>
+                    <option>Alta</option>
+                    <option>Media</option>
+                    <option>Baja</option>
+                </select>
+            </div>
+            <button class="btn btn-gradient w-100 py-3 fw-bold rounded-pill text-white shadow">Guardar Tarea</button>
+        </div>
+    </div>
+</div>
 
-  <!-- Librerías -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
+<div class="modal fade" id="modalRutina" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg p-4">
+            <h4 class="fw-bold mb-4">Nueva Rutina Diaria</h4>
+            <div class="mb-3">
+                <input type="text" class="form-control bg-transparent border-secondary rounded-pill px-4 py-2" placeholder="Ej: Beber agua">
+            </div>
+            <div class="mb-3">
+                <textarea class="form-control bg-transparent border-secondary px-4 py-2" placeholder="Descripción de la rutina" style="border-radius: 20px; height: 80px; resize: none;"></textarea>
+            </div>
+            <div class="mb-4">
+                <input type="time" class="form-control bg-transparent border-secondary rounded-pill px-4 py-2">
+            </div>
+            <button class="btn btn-gradient w-100 py-3 fw-bold rounded-pill text-white shadow">Crear Rutina</button>
+        </div>
+    </div>
+</div>
 
-  <!-- Scripts propios -->
-  <script src="../../Js/Functions/calendario.js"></script>
-  <script src="../../Js/Functions/Estadisticas.js"></script>
-  <script src="../../Js/Functions/Notificacion.js"></script>
-  <script src="../../Js/Config-Services/ConfiguracionUsuario.js"></script>
+<div class="modal fade" id="modalNotif" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg p-4">
+            <h4 class="fw-bold mb-2">Notificaciones</h4>
+            <hr class="opacity-50 mb-4">
+            <div class="p-3 mb-2 d-flex align-items-center notification-item">
+                <i class="bi bi-check-circle text-success me-3 fs-4"></i>
+                <h6 class="m-0 fw-bold small">Tarea guardada: <span class="fw-normal">Interfaz Final</span></h6>
+            </div>
+            <div class="p-3 d-flex align-items-center notification-item">
+                <i class="bi bi-clock text-primary me-3 fs-4"></i>
+                <h6 class="m-0 fw-bold small">Rutina guardada: <span class="fw-normal">Cardio 20min</span></h6>
+            </div>
+        </div>
+    </div>
+</div>
 
-
-  <!-- ================= SCRIPT PRINCIPAL ================= -->
-  <script>
-
-    /* ================= TOGGLE SIDEBAR ================= */
-    function toggleSidebar() {
-      document.body.classList.toggle('sidebar-visible');
-    }
-
-    /* ================= INICIALIZACIÓN GENERAL ================= */
-    document.addEventListener("DOMContentLoaded", async () => {
-
-      mostrarFechaActual();
-      await verificarSesion();
-      cargarEstadisticas();
-      cargarFotoPerfil();
-      cargarSidebar();
-
-    });
-
-    /* ================= FUNCIONES ================= */
-
-    function mostrarFechaActual() {
-      const hoy = new Date();
-      const dia = String(hoy.getDate()).padStart(2, '0');
-      const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-      const anio = hoy.getFullYear();
-
-      document.getElementById("fecha-actual").textContent =
-        `Fecha actual: ${dia}/${mes}/${anio}`;
-    }
-
-    async function verificarSesion() {
-      try {
-        const res = await fetch("/api/auth/check-session", { credentials: "include" });
-        const data = await res.json();
-
-        if (data.active) {
-          document.getElementById("usuario-nombre").textContent =
-            `Bienvenido, ${data.usuario}`;
-        } else {
-          window.location.href = "../Login.html";
-        }
-      } catch {
-        window.location.href = "../Login.html";
-      }
-    }
-
-    async function cargarEstadisticas() {
-      try {
-        const res = await fetch("/api/estadisticas", { credentials: "include" });
-        const data = await res.json();
-
-        if (data.success) {
-          document.getElementById("tareas-completadas").textContent = data.tareas_completadas;
-          document.getElementById("rutinas-finalizadas").textContent = data.rutinas_finalizadas;
-          document.getElementById("en-proceso").textContent = data.en_proceso;
-        }
-      } catch (e) {
-        console.error("Error cargando estadísticas:", e);
-      }
-    }
-
-    async function cargarFotoPerfil() {
-      const idUsuario = sessionStorage.getItem("idUsuario");
-      const img = document.getElementById("fotoPerfil");
-
-      if (!idUsuario || !img) return;
-
-      try {
-        const response = await fetch(
-          `/api/usuarios/${idUsuario}/foto`,
-          { credentials: "include" }
-        );
-
-        const data = await response.json();
-
-        img.src = data.fotoPerfil
-          ? data.fotoPerfil + `?t=${Date.now()}`
-          : "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg";
-
-      } catch {
-        img.src = "/IMG/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpeg";
-      }
-    }
-
-    function cargarSidebar() {
-      fetch('./Functions/Wime_SideBar.html')
-        .then(r => r.text())
-        .then(html => {
-          document.getElementById('sidebar-container').innerHTML = html;
-        })
-        .catch(err => console.error("Error cargando sidebar:", err));
-    }
-
-  </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../Js/Config-Services/Config-Services/ConfiguracionUsuario.js"></script>
 
 </body>
 </html>

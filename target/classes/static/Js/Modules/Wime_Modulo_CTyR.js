@@ -13,17 +13,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarTareas() {
   try {
-    const response = await fetch("/api/tareas/listar");
-    const data = await response.json();
 
-    if (data.success) {
-      mostrarTareas(data.tareas);
-    } else {
-      console.error(data.message);
+    const response = await fetch("/api/tareas/listar", {
+      method: "GET",
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error("Error cargando tareas");
     }
 
+    const resultado = await response.json();
+
+    console.log("📌 Respuesta del backend (tareas):", resultado);
+
+    if (!resultado.success) {
+      console.warn("⚠️", resultado.message);
+      return;
+    }
+
+    const tareas = resultado.data;
+
+    mostrarTareas(tareas);
+
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error cargando tareas:", error);
   }
 }
 

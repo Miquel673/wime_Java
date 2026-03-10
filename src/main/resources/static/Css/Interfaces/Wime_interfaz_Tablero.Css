@@ -1,155 +1,174 @@
-:root {
-  --color-bg: #f9f9f9;
-  --color-text: #333;
-  --color-primary: #007bff;
-  --color-card: #fff;
+:root{
+
+    --primary: #4c66ef;
+    --secondary: #d882f0;
+
+    --wime-gradient: linear-gradient(
+        180deg,
+        var(--primary) 0%,
+        var(--secondary) 100%
+    );
+
+    --bg: #f4f6fb;
+    --text: #222;
+    --card: #ffffff;
+
+    --sidebar-w: 280px;
+
 }
 
-body.dark-mode {
-  --color-bg: #1e1e1e;
-  --color-text: #f2f2f2;
-  --color-card: #2a2a2a;
+body.dark {
+    --bg: #0a0a0c;
+    --text: #ececec;
+    --card: #161618;
 }
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: "Segoe UI", sans-serif;
-  transition: background 0.3s, color 0.3s;
-  margin: 0;
-  padding: 2rem;
+body { 
+    background-color: var(--bg) !important; 
+    color: var(--text);
+    font-family: 'Poppins', sans-serif; 
+    margin: 0; display: flex; overflow-x: hidden;
+    transition: background 0.4s ease;
 }
-  
-  .main {
-    width: 26cm;
 
+/* --- SIDEBAR --- */
+.sidebar {
+    width: var(--sidebar-w); height: 100vh; position: fixed;
+    left: 0; top: 0; background: var(--wime-gradient);
+    color: white; display: flex; flex-direction: column; z-index: 1100;
+    overflow-y: auto; scrollbar-width: none;
+}
+.sidebar::-webkit-scrollbar { display: none; }
+.sidebar h2 { font-weight: 800; text-align: center; padding: 30px 0 10px; margin: 0; letter-spacing: 2px; }
+.sidebar hr { border-top: 1px solid rgba(255,255,255,0.2); margin: 15px 25px; opacity: 1; }
 
-  }
-  
-  .titulo {
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .tab {
-    padding: 10px 20px;
-    background-color: #e0e0e0;
-    margin: 0 5px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-  }
-  
-  .tab:hover {
-    background-color: #ccc;
-  }
-  
-  .tab.active {
-    background-color: #4285f4;
+.sidebar nav { display: flex; flex-direction: column; padding: 10px 20px; gap: 5px; }
+.sidebar nav a, .sidebar .nav-btn {
+    color: white !important; text-decoration: none; display: flex; align-items: center;
+    padding: 12px 18px; border-radius: 15px; transition: 0.3s; font-weight: 500;
+    border: none; background: transparent; width: 100%; text-align: left;
+}
+.sidebar i { margin-right: 15px; font-size: 1.3rem; }
+.sidebar nav a:hover, .sidebar .nav-btn:hover, .nav-active { 
+    background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+}
+
+.sidebar-calendar {
+    margin: auto 20px 30px 20px; padding: 20px;
+    background: rgba(255, 255, 255, 0.15); border-radius: 25px;
+    backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 0.75rem; }
+.cal-today { background: white !important; color: var(--primary) !important; border-radius: 8px; font-weight: 800; }
+
+/* --- CONTENIDO --- */
+.main-content { margin-left: var(--sidebar-w); width: calc(100% - var(--sidebar-w)); padding: 40px; }
+
+.user-banner {
+    background: var(--wime-gradient); border-radius: 30px; padding: 35px;
+    color: white; display: flex; align-items: center; gap: 25px; margin-bottom: 30px;
+    box-shadow: 0 10px 20px rgba(76, 102, 239, 0.2);
+}
+#fotoPerfil { width: 90px; height: 90px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); object-fit: cover; }
+
+.performance-card {
+    background: var(--card) !important; border-radius: 30px; padding: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05); color: var(--text); margin-bottom: 40px;
+}
+.progreso { background: rgba(0,0,0,0.05); height: 12px; border-radius: 10px; overflow: hidden; margin-top: 8px; }
+body.dark .progreso { background: rgba(255,255,255,0.1); }
+.barra { height: 100%; transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 10px; }
+.barra.verde { background: #2ecc71; }
+.barra.amarillo { background: #f1c40f; }
+.barra.rojo { background: #e74c3c; }
+
+.item-card {
+    background: var(--card); padding: 18px 25px; border-radius: 20px;
+    margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05); transition: 0.3s;
+}
+.item-card:hover { transform: translateY(-5px); }
+.priority-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 12px; }
+
+/* Efecto de Tarea Completada */
+.item-completado { opacity: 0.55; filter: grayscale(0.5); }
+.item-completado h6 { text-decoration: line-through; }
+
+/* Descripción Itálica */
+.italic-desc { 
+    font-style: italic; font-size: 0.85rem; opacity: 0.7; 
+    display: block; margin-top: 4px; color: var(--text); 
+}
+
+/* --- BOTÓN TEMA --- */
+.theme-btn {
+    position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px;
+    border-radius: 50%; background: var(--wime-gradient); color: white;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 25px rgba(76, 102, 239, 0.4); z-index: 2000; transition: transform 0.3s ease;
+}
+#themeIcon { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); font-size: 1.8rem; }
+.rotate-effect { transform: rotate(360deg); }
+
+/* --- MODALES Y COMPARTIR --- */
+.modal-content { border-radius: 30px; border: none; background: var(--card); color: var(--text); padding: 20px; }
+.btn-wime { background: var(--wime-gradient); color: white; border: none; border-radius: 12px; padding: 10px; font-weight: 600; width: 100%; transition: 0.3s; }
+.btn-wime:hover { opacity: 0.9; transform: scale(1.01); }
+
+/* Sección Compartir */
+.share-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(0,0,0,0.1);
+}
+body.dark .share-section { border-top: 1px dashed rgba(255,255,255,0.1); }
+
+.input-destinatario {
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 8px 15px;
+}
+
+.btn-share {
+    background: transparent; color: var(--primary); border: 2px solid var(--primary);
+    border-radius: 12px; padding: 10px; font-weight: 600; width: 100%; transition: 0.3s;
+}
+.btn-share:hover { background: var(--primary); color: white !important; }
+
+body.dark .main-content h4, body.dark .main-content h5, body.dark .item-card h6,
+body.dark .performance-card b, body.dark .performance-card span:not(.badge) {
+    color: #ececec !important;
+}
+
+.wime-card{
+    border-radius: 14px;
+    border: none;
+    background: var(--card);
+    overflow: hidden;
+}
+
+.wime-card-header{
+    background: var(--wime-gradient);
     color: white;
-  }
-  
-  .top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .search {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    flex: 1;
-    min-width: 200px;
+    padding: 10px 14px;
+    font-weight: 600;
+    border-bottom: none;
 }
 
-.filter {
-    margin-left: 10px;
+.wime-card-body{
+    padding: 14px;
 }
 
-#filter {
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+.wime-card .badge{
+    font-size: 0.75rem;
 }
 
-.task-item {
-    background-color: white;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.wime-card{
+    transition: transform .15s ease, box-shadow .15s ease;
 }
 
-.task-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-.task-details {
-    margin-bottom: 10px;
-}
-
-.task-details span {
-    margin-right: 10px;
-}
-
-.task-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.task-fields label {
-    font-weight: bold;
-}
-
-.task-fields select,
-.task-fields textarea,
-.task-details input[type="date"] {
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 100%;
-}
-
-.titulo-tarea {
-  color: white;
-  padding: 8px 12px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-  text-align: center;
-}
-#Main {
-    margin-left: 340px;
-  }
-
-
-/* VERSIÓN MÓVIL */
-@media (max-width: 720px) {
-  #Main {
-    margin-left: 0px;
-    box-sizing: 0%;
-    
-  }
-
-
-}
-
-.card.vencida {
-  opacity: 0.6;
-  filter: grayscale(50%);
+.wime-card:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
 }

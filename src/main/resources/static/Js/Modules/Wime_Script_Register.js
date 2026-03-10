@@ -2,109 +2,86 @@
 // REGISTRO DE USUARIO - WIME
 // ======================================================
 
-// 🔹 1️⃣ Validación de contraseña
+// 🔹 Validación de contraseña
 function validarContrasena(pass) {
-    // Mínimo 8 caracteres, 1 mayúscula, 1 número y 1 símbolo
-    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    return regex.test(pass);
+  const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  return regex.test(pass);
 }
 
-// 🔹 2️⃣ Toast Bootstrap 5
-function mostrarToastRegistro(mensaje, esExito = true, redirigir = false) {
-    const toastEl = document.getElementById("registro-toast");
-    const texto = document.getElementById("registro-toast-texto");
-
-    if (!toastEl || !texto) {
-        console.error("Toast no encontrado en el HTML.");
-        return;
-    }
-
-    texto.textContent = mensaje;
-
-    toastEl.classList.remove("text-bg-success", "text-bg-danger");
-    toastEl.classList.add(esExito ? "text-bg-success" : "text-bg-danger");
-
-    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-    toast.show();
-
-    toastEl.addEventListener("hidden.bs.toast", function () {
-        if (redirigir && esExito) {
-            window.location.href = "/Login.html";
-        }
-    }, { once: true });
-}
-
-// 🔹 3️⃣ Evento principal
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.getElementById("registroForm");
+  const form = document.getElementById("registroForm");
 
-    if (!form) {
-        console.error("Formulario registroForm no encontrado.");
-        return;
+  if (!form) {
+    console.error("❌ Formulario registroForm no encontrado.");
+    return;
+  }
+
+  form.addEventListener("submit", async function (e) {
+
+    e.preventDefault();
+
+    const email = document.getElementById("EmailUsuario").value.trim();
+    const nombre = document.getElementById("NombreUsuario").value.trim();
+    const pass = document.getElementById("ContrasenaUsuario").value;
+    const pass2 = document.getElementById("confirm_password").value;
+
+    if (!email || !nombre || !pass || !pass2) {
+      mostrarToast("Todos los campos son obligatorios.", false);
+      return;
     }
 
-    form.addEventListener("submit", async function (e) {
-        e.preventDefault();
+    if (pass !== pass2) {
+      mostrarToast("Las contraseñas no coinciden.", false);
+      return;
+    }
 
-        const email = document.getElementById("EmailUsuario").value.trim();
-        const nombre = document.getElementById("NombreUsuario").value.trim();
-        const pass = document.getElementById("ContrasenaUsuario").value;
-        const pass2 = document.getElementById("confirm_password").value;
+    if (!validarContrasena(pass)) {
+      mostrarToast(
+        "La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.",
+        false
+      );
+      return;
+    }
 
-        // 🔹 Validaciones
-        if (!email || !nombre || !pass || !pass2) {
-            mostrarToastRegistro("Todos los campos son obligatorios.", false);
-            return;
-        }
+    const datos = {
+      emailUsuario: email,
+      nombreUsuario: nombre,
+      contrasenaUsuario: pass
+    };
 
-        if (pass !== pass2) {
-            mostrarToastRegistro("Las contraseñas no coinciden.", false);
-            return;
-        }
+    try {
 
-        if (!validarContrasena(pass)) {
-            mostrarToastRegistro(
-                "La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.",
-                false
-            );
-            return;
-        }
+      const res = await fetch("/api/usuarios/registro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+      });
 
-        // 🔹 Datos para el backend (coinciden con la entidad Usuario)
-        const datos = {
-            emailUsuario: email,
-            nombreUsuario: nombre,
-            contrasenaUsuario: pass
-        };
+      const data = await res.json();
 
-        try {
-            const res = await fetch("/api/usuarios/registro", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(datos)
-            });
+      if (!res.ok) {
+        mostrarToast(data.message || "Error en el registro.", false);
+        return;
+      }
 
-            const data = await res.json();
+      if (data.success) {
 
-            if (!res.ok) {
-                mostrarToastRegistro(data.message || "Error en el registro.", false);
-                return;
-            }
+        mostrarToast(
+          "Registro exitoso. Ahora puedes iniciar sesión.",
+          true,
+          "abrirLogin"
+        );
 
-            if (data.success) {
-                mostrarToastRegistro(
-                    "Registro exitoso. Redirigiendo al login...",
-                    true,
-                    true
-                );
-            } else {
-                mostrarToastRegistro(data.message, false);
-            }
+      } else {
+        mostrarToast(data.message, false);
+      }
 
-        } catch (error) {
-            console.error(error);
-            mostrarToastRegistro("Error de conexión con el servidor.", false);
-        }
-    });
+    } catch (error) {
+      console.error(error);
+      mostrarToast("Error de conexión con el servidor.", false);
+    }
+
+  });
+
 });
