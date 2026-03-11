@@ -172,3 +172,58 @@ body.dark .performance-card b, body.dark .performance-card span:not(.badge) {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,.08);
 }
+
+@keyframes estadoActualizado {
+    0%{
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+
+    40%{
+        transform: scale(1.03);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    100%{
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+}
+
+.animacion-estado{
+    animation: estadoActualizado 0.45s ease;
+}
+
+.tarea-completada{
+    opacity: 0.85;
+    transition: all .3s ease;
+}
+
+.tarea-completada .wime-card-header{
+    filter: grayscale(40%);
+}
+
+.vencida{
+    opacity: 0.55;
+    filter: grayscale(40%);
+    transition: all 0.3s ease;
+}
+
+.wime-card-compartida{
+    border-left: 4px solid #8b5cf6;
+}
+
+
+.btn-icon-eliminar{
+    background: transparent;
+    border: none;
+    color: #dc3545;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.btn-icon-eliminar:hover{
+    transform: scale(1.15);
+    color: #ff4d5a;
+}

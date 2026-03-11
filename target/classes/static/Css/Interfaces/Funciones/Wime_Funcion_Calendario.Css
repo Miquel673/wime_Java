@@ -1,0 +1,29 @@
+.cal-day {
+    position: relative;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.cal-indicators {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 3px;
+}
+
+.cal-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.cal-day:hover {
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+}
+
+.dot-completada { background: #28a745; }
+.dot-pendiente { background: #ffc107; }
+.dot-vencida { background: #dc3545; }

@@ -45,8 +45,13 @@ async function cargarItems(){
 
     try{
 
-        const resTareas = await fetch("/api/tareas/listar");
-        const resRutinas = await fetch("/api/rutinas/listar");
+        const resTareas = await fetch("/api/tareas/listar", {
+            credentials: "include"
+        });
+
+        const resRutinas = await fetch("/api/rutinas/listar", {
+            credentials: "include"
+        });
 
         const tareasJSON = await resTareas.json();
         const rutinasJSON = await resRutinas.json();
@@ -57,38 +62,43 @@ async function cargarItems(){
         const tareas = tareasJSON.tareas || [];
         const rutinas = rutinasJSON.rutinas || [];
 
-        // Dentro de cargarItems()
-    db = [
-    ...tareas.map(t => ({
-        id: t.idTarea ?? t.id,
-        tipo: "tarea",
-        titulo: t.titulo,
-        descripcion: t.descripcion,
-        prioridad: t.prioridad,
-        estado: t.estado,
-        fechaLimite: t.fechaLimite,
-        esCompartida: t.esCompartida,
-        nombreCreador: t.nombreCreador,
-        imagenPerfilCreador: t.imagenPerfilCreador
-    })),
+        db = [
 
-    ...rutinas.map(r => ({
-        id: r.idRutina ?? r.id,
-        tipo: "rutina",
-        titulo: r.titulo,
-        descripcion: r.descripcion,
-        prioridad: "verde",
-        estado: r.estado,
-        hora: r.hora
-    }))
-    ];
+            ...tareas.map(t => ({
+                id: t.idTarea ?? t.id,
+                tipo: "tarea",
+                titulo: t.titulo,
+                descripcion: t.descripcion,
+                prioridad: t.prioridad,
+                estado: t.estado,
+                fechaLimite: t.fechaLimite || null,
+                esCompartida: t.esCompartida || false,
+                nombreCreador: t.nombreCreador || null,
+                imagenPerfilCreador: t.imagenPerfilCreador || null
+            })),
+
+            ...rutinas.map(r => ({
+                id: r.idRutina ?? r.id,
+                tipo: "rutina",
+                titulo: r.nombreRutina ?? r.titulo,
+                descripcion: r.descripcion,
+                prioridad: "verde",
+                estado: r.estado,
+                hora: r.hora,
+                fechaLimite: null
+            }))
+
+        ];
+
         console.log("DB actual:", db);
 
         renderItems();
         updateStats();
 
     }catch(error){
+
         console.error("Error cargando items:", error);
+
     }
 
 }
@@ -128,31 +138,39 @@ function renderItems(){
 
     const tarjeta = document.createElement("div");
     tarjeta.className = "col mb-3";
+    
 
     if(item.tipo === "tarea"){
 
       tarjeta.innerHTML = `
 
-<div class="card shadow-sm h-100 wime-card">
+<div class="card shadow-sm h-100 wime-card" id="tarea-${item.id}">
+
+
 
   <div class="wime-card-header">
     ${item.titulo}
   </div>
 
+  
+
   <div class="wime-card-body">
 
-    ${item.esCompartida ? `
-      <div class="d-flex align-items-center mb-2">
-        <img src="${item.imagenPerfilCreador || 'https://ui-avatars.com/api/?name=' + item.nombreCreador}"
-          class="rounded-circle me-2"
-          width="30"
-          height="30">
+${item.esCompartida ? `
+<div class="d-flex align-items-center mb-2">
 
-        <small class="text-muted">
-          Compartida por ${item.nombreCreador || "Usuario"}
-        </small>
-      </div>
-    ` : ''}
+  <img src="${item.imagenPerfilCreador || 
+  'https://ui-avatars.com/api/?name=' + item.nombreCreador}"
+  class="rounded-circle me-2"
+  width="30"
+  height="30">
+
+  <small class="text-muted">
+    Compartida por ${item.nombreCreador || "Usuario"}
+  </small>
+
+</div>
+` : ''}
 
     <p class="card-text">
       <strong>Prioridad:</strong> ${item.prioridad || "N/A"}
@@ -166,15 +184,54 @@ function renderItems(){
       ${item.descripcion || "Sin descripción"}
     </p>
 
-    <span class="badge bg-${getColorPorEstado(item.estado)}">
-      ${item.estado || "Pendiente"}
-    </span>
+    <div class="dropdown mt-2">
 
-    <button class="btn btn-sm btn-outline-dark w-100 mt-2"
-      data-bs-toggle="collapse"
-      data-bs-target="#opciones-${item.id}">
-      ▼ Ver opciones
+    <button 
+        class="badge border-0 bg-${getColorPorEstado(item.estado)} dropdown-toggle"
+        style="font-size:0.9rem; cursor:pointer;"
+        data-bs-toggle="dropdown">
+
+        ${item.estado || "pendiente"}
+
     </button>
+    
+${item.esCompartida 
+  ? `<button class="btn btn-sm btn-outline-warning btn-remover" data-id="${item.id}" title="Quitar de mi lista">
+       <i class="bi bi-person-dash"></i>
+     </button>` 
+  : `<button class="btn-icon-eliminar btn-eliminar" data-id="${item.id}" title="Eliminar tarea">
+       <i class="bi bi-trash"></i>
+     </button>`
+     
+}
+
+    <ul class="dropdown-menu">
+
+        <li>
+        <a class="dropdown-item"
+        onclick="cambiarEstadoTarea(${item.id}, 'pendiente')">
+        Pendiente
+        </a>
+        </li>
+
+        <li>
+        <a class="dropdown-item"
+        onclick="cambiarEstadoTarea(${item.id}, 'en_progreso')">
+        En progreso
+        </a>
+        </li>
+
+        <li>
+        <a class="dropdown-item"
+        onclick="cambiarEstadoTarea(${item.id}, 'completada')">
+        Completada
+        </a>
+        </li>
+
+    </ul>
+
+    </div>
+
 
   </div>
 
@@ -185,16 +242,50 @@ function renderItems(){
 
     contenedor.appendChild(tarjeta);
 
+    if(item.estado?.toLowerCase() === "vencida"){
+    tarjeta.querySelector(".card").classList.add("vencida");
+}
+  if(item.esCompartida){
+    tarjeta.querySelector(".card").classList.add("wime-card-compartida");
+}
   });
+
+
 
 }
 
-function toggleItem(id) {
-    const item = db.find(i => i.id === id);
-    if (item) {
-        item.completa = !item.completa;
-        renderItems();
+async function cambiarEstadoTarea(id, nuevoEstado){
+
+    try{
+
+        const res = await fetch(`/api/tareas/${id}/estado`,{
+            method:"PUT",
+            credentials:"include",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                estado:nuevoEstado
+            })
+        });
+
+        const data = await res.json();
+
+        if(!data.success){
+            throw new Error("No se pudo actualizar");
+        }
+
+        console.log("✅ Estado actualizado:", data);
+
+        await cargarItems(); // recargar tablero
+
+    }catch(error){
+
+        console.error("Error cambiando estado:",error);
+        alert("No se pudo cambiar el estado");
+
     }
+
 }
 
 function addItem(tipo) {
@@ -288,26 +379,128 @@ Se ha compartido contigo la siguiente ${tipo} de WIME:
     window.location.href = `mailto:${email}?subject=${asunto}&body=${cuerpo}`;
 }
 
-function deleteItem(id) {
-    if (confirm("¿Eliminar?")) {
-        db = db.filter(x => x.id !== id);
-        renderItems();
+document.addEventListener("click", async (e) => {
+
+    // 🗑️ eliminar tarea (creador)
+    const btnEliminar = e.target.closest(".btn-eliminar");
+
+    if(btnEliminar){
+
+        const id = btnEliminar.dataset.id;
+
+        if(!confirm("¿Eliminar esta tarea?")) return;
+
+        try{
+
+            const res = await fetch(`/api/tareas/eliminar/${id}`,{
+                method:"DELETE",
+                credentials:"include"
+            });
+
+            const data = await res.json();
+
+            if(data.success){
+                await cargarItems();
+            }else{
+                alert(data.message);
+            }
+
+        }catch(err){
+            console.error(err);
+        }
+
+        return;
     }
-}
+
+    // ❌ quitar tarea compartida
+    const btnRemover = e.target.closest(".btn-remover");
+
+    if(btnRemover){
+
+        const id = btnRemover.dataset.id;
+
+        if(!confirm("¿Quitar esta tarea de tu lista?")) return;
+
+        try{
+
+            const res = await fetch(`/api/tareas/remover-compartida/${id}`,{
+                method:"DELETE",
+                credentials:"include"
+            });
+
+            const data = await res.json();
+
+            if(data.success){
+                await cargarItems();
+            }else{
+                alert(data.message);
+            }
+
+        }catch(err){
+            console.error(err);
+        }
+
+        return;
+    }
+
+});
 
 function updateStats() {
 
-    const total = db.length;
-    const hechas = db.filter(i => i.completa).length;
+    if (!Array.isArray(db)) return;
 
-    const porc = total ? Math.round((hechas / total) * 100) : 0;
+    // solo contar tareas
+    const tareas = db.filter(item => item.tipo === "tarea");
 
-    document.getElementById("stat-completadas").innerText = porc + "%";
-    document.getElementById("bar-completadas").style.width = porc + "%";
+    const total = tareas.length;
 
-    document.getElementById("stat-pendientes").innerText = (100 - porc) + "%";
-    document.getElementById("bar-pendientes").style.width = (100 - porc) + "%";
+    const completadas = tareas.filter(item =>
+        item.estado === "completada"
+    ).length;
+
+    const pendientes = tareas.filter(item =>
+        item.estado === "pendiente" || item.estado === "en_progreso"
+    ).length;
+
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
+
+    const vencidas = tareas.filter(item => {
+
+        if (!item.fechaLimite) return false;
+
+        const fechaLimite = new Date(item.fechaLimite);
+        fechaLimite.setHours(0,0,0,0);
+
+        return fechaLimite < hoy && item.estado !== "completada";
+
+    }).length;
+
+    const porcCompletadas = total ? Math.round((completadas / total) * 100) : 0;
+    const porcPendientes = total ? Math.round((pendientes / total) * 100) : 0;
+    const porcVencidas = total ? Math.round((vencidas / total) * 100) : 0;
+
+    const statComp = document.getElementById("stat-completadas");
+    const barComp = document.getElementById("bar-completadas");
+
+    if(statComp) statComp.innerText = porcCompletadas + "%";
+    if(barComp) barComp.style.width = porcCompletadas + "%";
+
+
+    const statPend = document.getElementById("stat-pendientes");
+    const barPend = document.getElementById("bar-pendientes");
+
+    if(statPend) statPend.innerText = porcPendientes + "%";
+    if(barPend) barPend.style.width = porcPendientes + "%";
+
+
+    const statVenc = document.getElementById("stat-vencidas");
+    const barVenc = document.getElementById("bar-vencidas");
+
+    if(statVenc) statVenc.innerText = porcVencidas + "%";
+    if(barVenc) barVenc.style.width = porcVencidas + "%";
 }
+
 
 function filtrar(tipo, btn) {
 
@@ -321,42 +514,6 @@ function filtrar(tipo, btn) {
     renderItems();
 }
 
-function initCalendar() {
-
-    const grid = document.getElementById("calGrid");
-    grid.innerHTML = "";
-
-    document.getElementById("calMonthYear").innerText =
-        new Intl.DateTimeFormat("es-ES", {
-            month: "long",
-            year: "numeric"
-        }).format(navDate);
-
-    let first = new Date(navDate.getFullYear(), navDate.getMonth(), 1).getDay();
-    let total = new Date(navDate.getFullYear(), navDate.getMonth() + 1, 0).getDate();
-
-    for (let s = 0; s < first; s++) grid.appendChild(document.createElement("div"));
-
-    for (let d = 1; d <= total; d++) {
-
-        const day = document.createElement("div");
-        day.innerText = d;
-
-        if (
-            d === new Date().getDate() &&
-            navDate.getMonth() === new Date().getMonth()
-        ) {
-            day.classList.add("cal-today");
-        }
-
-        grid.appendChild(day);
-    }
-}
-
-window.moveMonth = (offset) => {
-    navDate.setMonth(navDate.getMonth() + offset);
-    initCalendar();
-};
 
 document.getElementById("themeToggle").addEventListener("click", () => {
 
