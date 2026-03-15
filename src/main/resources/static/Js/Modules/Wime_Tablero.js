@@ -7,6 +7,8 @@ let filtroActual = "todas";
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    cargarEstadisticasTablero();
+
     fetch("/api/auth/check-session", {
         method: "GET",
         credentials: "include"
@@ -16,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.active) {
 
-            console.log("✅ Sesión activa:", data.usuario);
+            console.log("Sesión activa:", data.usuario);
 
             const bienvenida = document.getElementById("bienvenida");
 
@@ -24,10 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 bienvenida.innerText = `Bienvenido, ${data.usuario}`;
             }
 
+            // Obtener id del usuario guardado
+            const idUsuario = sessionStorage.getItem("idUsuario");
+
+            if (idUsuario) {
+                cargarFotoPerfil(idUsuario);
+            }
+
         } else {
 
-            console.warn("⚠️ No hay sesión activa, redirigiendo...");
-            window.location.href = "../../Login.html";
+            console.warn("No hay sesión activa, redirigiendo...");
+            window.location.href = "../../index.html";
 
         }
 
@@ -35,11 +44,39 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(err => {
 
         console.error("❌ Error verificando sesión:", err);
-        window.location.href = "../../Login.html";
+        window.location.href = "../../index.html";
 
     });
 
 });
+
+async function cargarFotoPerfil(idUsuario) {
+
+    try {
+
+        const res = await fetch(`/api/usuarios/${idUsuario}/foto`, {
+            credentials: "include"
+        });
+
+        const data = await res.json();
+
+        if (data.fotoPerfil) {
+
+            const foto = document.getElementById("fotoPerfil");
+
+            if (foto) {
+                foto.src = data.fotoPerfil + "?t=" + Date.now();
+            }
+
+        }
+
+    } catch (e) {
+
+        console.error("❌ Error cargando foto de perfil", e);
+
+    }
+
+}
 
 async function cargarItems(){
 
@@ -275,9 +312,20 @@ async function cambiarEstadoTarea(id, nuevoEstado){
             throw new Error("No se pudo actualizar");
         }
 
-        console.log("✅ Estado actualizado:", data);
+        console.log(" Estado actualizado:", data);
 
-        await cargarItems(); // recargar tablero
+        // 🔄 Recargar tareas del tablero
+        await cargarItems();
+
+        // 📊 Actualizar estadísticas del panel
+        if(typeof cargarEstadisticasTablero === "function"){
+            await cargarEstadisticasTablero();
+        }
+
+        // Si aún usas el cálculo local en lugar del endpoint
+        if(typeof updateStats === "function"){
+            updateStats();
+        }
 
     }catch(error){
 
@@ -288,96 +336,6 @@ async function cambiarEstadoTarea(id, nuevoEstado){
 
 }
 
-function addItem(tipo) {
-
-    const id = Date.now();
-    let nuevo;
-
-    if (tipo === "tarea") {
-
-        const nombre = document.getElementById("task-name").value;
-        const desc = document.getElementById("task-desc").value;
-        const prio = document.getElementById("task-priority").value;
-
-        if (!nombre) return alert("Nombre requerido");
-
-        nuevo = {
-            id,
-            tipo,
-            nombre,
-            desc,
-            prioridad: prio,
-            meta: "Hoy",
-            completa: false
-        };
-
-        bootstrap.Modal.getInstance(document.getElementById("modalTarea")).hide();
-
-    } else {
-
-        const nombre = document.getElementById("routine-name").value;
-        const desc = document.getElementById("routine-desc").value;
-        const hora = document.getElementById("routine-time").value;
-
-        if (!nombre || !hora) return alert("Completa los campos");
-
-        nuevo = {
-            id,
-            tipo,
-            nombre,
-            desc,
-            prioridad: "verde",
-            meta: hora,
-            completa: false
-        };
-
-        bootstrap.Modal.getInstance(document.getElementById("modalRutina")).hide();
-    }
-
-    db.push(nuevo);
-    renderItems();
-
-    document.querySelectorAll("input, textarea").forEach(i => i.value = "");
-}
-
-function compartirPorCorreo(tipo) {
-
-    let titulo, desc, detalle, email;
-
-    if (tipo === "tarea") {
-
-        titulo = document.getElementById("task-name").value;
-        desc = document.getElementById("task-desc").value;
-        detalle = "Prioridad: " + document.getElementById("task-priority").selectedOptions[0].text;
-        email = document.getElementById("task-share-email").value;
-
-    } else {
-
-        titulo = document.getElementById("routine-name").value;
-        desc = document.getElementById("routine-desc").value;
-        detalle = "Hora: " + document.getElementById("routine-time").value;
-        email = document.getElementById("routine-share-email").value;
-    }
-
-    if (!titulo || !email || !email.includes("@"))
-        return alert("Escribe el nombre y un correo válido");
-
-    const asunto = encodeURIComponent(`WIME: Te han compartido una ${tipo}`);
-
-    const cuerpo = encodeURIComponent(
-`Hola!
-
-Se ha compartido contigo la siguiente ${tipo} de WIME:
-
-📌 Título: ${titulo}
-📝 Nota: ${desc || "N/A"}
-⏰ Detalle: ${detalle}
-
-¡Sigue enfocado!`
-    );
-
-    window.location.href = `mailto:${email}?subject=${asunto}&body=${cuerpo}`;
-}
 
 document.addEventListener("click", async (e) => {
 
@@ -476,43 +434,46 @@ function updateStats() {
 
     }).length;
 
-    const porcCompletadas = total ? Math.round((completadas / total) * 100) : 0;
-    const porcPendientes = total ? Math.round((pendientes / total) * 100) : 0;
-    const porcVencidas = total ? Math.round((vencidas / total) * 100) : 0;
-
-    const statComp = document.getElementById("stat-completadas");
-    const barComp = document.getElementById("bar-completadas");
-
-    if(statComp) statComp.innerText = porcCompletadas + "%";
-    if(barComp) barComp.style.width = porcCompletadas + "%";
-
-
-    const statPend = document.getElementById("stat-pendientes");
-    const barPend = document.getElementById("bar-pendientes");
-
-    if(statPend) statPend.innerText = porcPendientes + "%";
-    if(barPend) barPend.style.width = porcPendientes + "%";
-
-
-    const statVenc = document.getElementById("stat-vencidas");
-    const barVenc = document.getElementById("bar-vencidas");
-
-    if(statVenc) statVenc.innerText = porcVencidas + "%";
-    if(barVenc) barVenc.style.width = porcVencidas + "%";
 }
 
+async function cargarEstadisticasTablero() {
 
-function filtrar(tipo, btn) {
+    try {
 
-    filtroActual = tipo;
+        const res = await fetch("/api/estadisticas-tablero", {
+            credentials: "include"
+        });
 
-    document.querySelectorAll("#filter-group button")
-        .forEach(b => b.classList.remove("active"));
+        const data = await res.json();
 
-    btn.classList.add("active");
+        if (!data.success) return;
 
-    renderItems();
+        const total = data.total || 0;
+        const completadas = data.completadas || 0;
+        const pendientes = data.pendientes || 0;
+        const vencidas = data.vencidas || 0;
+
+        const porcCompletadas = total ? Math.round((completadas / total) * 100) : 0;
+        const porcPendientes = total ? Math.round((pendientes / total) * 100) : 0;
+        const porcVencidas = total ? Math.round((vencidas / total) * 100) : 0;
+
+        document.getElementById("stat-completadas").innerText = porcCompletadas + "%";
+        document.getElementById("bar-completadas").style.width = porcCompletadas + "%";
+
+        document.getElementById("stat-pendientes").innerText = porcPendientes + "%";
+        document.getElementById("bar-pendientes").style.width = porcPendientes + "%";
+
+        document.getElementById("stat-vencidas").innerText = porcVencidas + "%";
+        document.getElementById("bar-vencidas").style.width = porcVencidas + "%";
+
+    } catch (error) {
+
+        console.error("Error cargando estadísticas:", error);
+
+    }
+
 }
+
 
 
 document.getElementById("themeToggle").addEventListener("click", () => {

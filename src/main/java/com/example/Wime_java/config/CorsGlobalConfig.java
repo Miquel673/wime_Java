@@ -14,7 +14,7 @@ public class CorsGlobalConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        // ✅ Permite acceso desde localhost y 127.0.0.1 en cualquier puerto
+                        //  Permite acceso desde localhost y 127.0.0.1 en cualquier puerto
                         .allowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*", "file://*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

@@ -18,7 +18,7 @@ public class RutinaService {
     @Autowired
     private NotificacionService notificacionService; // 👈 Se inyecta el servicio de notificaciones
 
-    // ✅ Guardar nueva rutina + crear notificación automática
+    //  Guardar nueva rutina + crear notificación automática
     public Rutina guardarRutina(Rutina rutina) {
         Rutina nuevaRutina = rutinaRepository.save(rutina);
 
@@ -26,23 +26,23 @@ public class RutinaService {
             String mensaje = "Se ha creado una nueva rutina: " + rutina.getNombreRutina();
             notificacionService.crearNotificacion(rutina.getIdUsuario(), "Rutina", mensaje);
         } catch (Exception e) {
-            System.err.println("⚠️ Error al crear notificación para la rutina: " + e.getMessage());
+            System.err.println(" Error al crear notificación para la rutina: " + e.getMessage());
         }
 
         return nuevaRutina;
     }
 
-    // ✅ Listar rutinas por usuario
+    //  Listar rutinas por usuario
     public List<Rutina> listarPorUsuario(Long idUsuario) {
         return rutinaRepository.findByIdUsuario(idUsuario);
     }
 
-    // ✅ Obtener rutina por ID
+    //  Obtener rutina por ID
     public Optional<Rutina> obtenerPorId(Long idRutina) {
         return rutinaRepository.findById(idRutina);
     }
 
-    // ✅ Editar rutina existente
+    //  Editar rutina existente
     public Rutina editarRutina(Rutina rutina) {
         Rutina actualizada = rutinaRepository.save(rutina);
 
@@ -50,13 +50,13 @@ public class RutinaService {
             String mensaje = "Se ha actualizado la rutina: " + rutina.getNombreRutina();
             notificacionService.crearNotificacion(rutina.getIdUsuario(), "Rutina", mensaje);
         } catch (Exception e) {
-            System.err.println("⚠️ Error al crear notificación de edición: " + e.getMessage());
+            System.err.println(" Error al crear notificación de edición: " + e.getMessage());
         }
 
         return actualizada;
     }
 
-    // ✅ Eliminar rutina
+    //  Eliminar rutina
     public void eliminarRutina(Long idRutina) {
         Optional<Rutina> rutinaOpt = rutinaRepository.findById(idRutina);
 
@@ -68,7 +68,7 @@ public class RutinaService {
                 String mensaje = "Se ha eliminado la rutina: " + rutina.getNombreRutina();
                 notificacionService.crearNotificacion(rutina.getIdUsuario(), "Rutina", mensaje);
             } catch (Exception e) {
-                System.err.println("⚠️ Error al crear notificación de eliminación: " + e.getMessage());
+                System.err.println(" Error al crear notificación de eliminación: " + e.getMessage());
             }
         }
     }
@@ -78,7 +78,7 @@ public Rutina actualizarEstado(Long id, String nuevoEstado) {
     Optional<Rutina> rutinaOpt = rutinaRepository.findById(id);
 
     if (rutinaOpt.isEmpty()) {
-        throw new IllegalArgumentException("⚠️ Rutina no encontrada");
+        throw new IllegalArgumentException(" Rutina no encontrada");
     }
 
     // 🔧 NORMALIZACIÓN
@@ -87,7 +87,7 @@ public Rutina actualizarEstado(Long id, String nuevoEstado) {
     if (!nuevoEstado.equals("pendiente") &&
         !nuevoEstado.equals("en progreso") &&
         !nuevoEstado.equals("completada")) {
-        throw new IllegalArgumentException("⚠️ Estado inválido: " + nuevoEstado);
+        throw new IllegalArgumentException(" Estado inválido: " + nuevoEstado);
     }
 
     Rutina rutina = rutinaOpt.get();

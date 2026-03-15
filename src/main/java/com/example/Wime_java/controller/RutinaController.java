@@ -41,7 +41,7 @@ public class RutinaController {
     @Autowired
     private NotificacionService notificacionService;
 
-    // ✅ Cambiar estado de rutina
+    //  Cambiar estado de rutina
     @PutMapping("/{id}/estado")
 public ResponseEntity<Map<String, Object>> cambiarEstadoRutina(
         @PathVariable Long id,
@@ -60,7 +60,7 @@ public ResponseEntity<Map<String, Object>> cambiarEstadoRutina(
     if (nuevoEstado == null || nuevoEstado.isBlank()) {
         return ResponseEntity.badRequest().body(Map.of(
             "success", false,
-            "message", "⚠️ Estado inválido"
+            "message", " Estado inválido"
         ));
     }
 
@@ -68,7 +68,7 @@ public ResponseEntity<Map<String, Object>> cambiarEstadoRutina(
     if (rutinaOpt.isEmpty() || !rutinaOpt.get().getIdUsuario().equals(idUsuario)) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
             "success", false,
-            "message", "⚠️ Rutina no encontrada o no pertenece al usuario"
+            "message", " Rutina no encontrada o no pertenece al usuario"
         ));
     }
 
@@ -77,7 +77,7 @@ public ResponseEntity<Map<String, Object>> cambiarEstadoRutina(
 
         return ResponseEntity.ok(Map.of(
             "success", true,
-            "message", "✅ Estado actualizado correctamente",
+            "message", " Estado actualizado correctamente",
             "estado", actualizada.getEstado()
         ));
 
@@ -90,7 +90,7 @@ public ResponseEntity<Map<String, Object>> cambiarEstadoRutina(
 }
 
 
-// ✅ Crear rutina con sesión
+//  Crear rutina con sesión
 @PostMapping("/crear")
 public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession session) {
     try {
@@ -127,7 +127,7 @@ public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession ses
     }
 }
 
-    // ✅ Listar rutinas del usuario logueado
+    //  Listar rutinas del usuario logueado
     @GetMapping("/listar")
     public Map<String, Object> listarRutinas(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
@@ -146,7 +146,7 @@ public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession ses
         return response;
     }
 
-    // ✅ Obtener rutina por ID
+    //  Obtener rutina por ID
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerRutina(@PathVariable Long id, HttpSession session) {
         Long idUsuario = (Long) session.getAttribute("id_usuario");
@@ -161,11 +161,11 @@ public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession ses
             return ResponseEntity.ok(rutinaOpt.get());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("success", false, "message", "⚠️ Rutina no encontrada"));
+                    .body(Map.of("success", false, "message", " Rutina no encontrada"));
         }
     }
 
-    // ✅ Editar rutina con notificación
+    //  Editar rutina con notificación
     @PutMapping("/editar/{id}")
     public ResponseEntity<Map<String, Object>> editarRutina(
             @PathVariable Long id,
@@ -183,7 +183,7 @@ public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession ses
         Optional<Rutina> rutinaOpt = rutinaRepository.findById(id);
         if (rutinaOpt.isEmpty() || !rutinaOpt.get().getIdUsuario().equals(idUsuario)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("success", false, "message", "⚠️ Rutina no encontrada o no pertenece al usuario"));
+                    .body(Map.of("success", false, "message", " Rutina no encontrada o no pertenece al usuario"));
         }
 
         Rutina rutina = rutinaOpt.get();
@@ -202,11 +202,11 @@ public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession ses
         notificacionService.crearNotificacion(idUsuario, titulo, mensaje);
 
         response.put("success", true);
-        response.put("message", "✅ Rutina actualizada con éxito");
+        response.put("message", " Rutina actualizada con éxito");
         return ResponseEntity.ok(response);
     }
 
-    // ✅ Eliminar rutina con notificación
+    //  Eliminar rutina con notificación
     @DeleteMapping("/eliminar/{id}")
     public Map<String, Object> eliminarRutina(@PathVariable Long id, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
@@ -232,7 +232,7 @@ public ResponseEntity<?> crearRutina(@RequestBody Rutina rutina, HttpSession ses
             response.put("message", "🗑️ Rutina eliminada");
         } else {
             response.put("success", false);
-            response.put("message", "⚠️ Rutina no encontrada o no pertenece al usuario");
+            response.put("message", " Rutina no encontrada o no pertenece al usuario");
         }
 
         return response;

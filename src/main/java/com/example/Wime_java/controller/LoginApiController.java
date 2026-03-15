@@ -37,13 +37,13 @@ public class LoginApiController {
             if (usuarioOpt.isPresent()) {
                 Usuario usuario = usuarioOpt.get();
 
-                // ✅ Guardar en sesión
+                //  Guardar en sesión
                 session.setAttribute("usuario", usuario);
                 session.setAttribute("id_usuario", usuario.getIdUsuario().longValue());
                 session.setAttribute("rol", usuario.getTipo()); // 👈 Guardamos el tipo (ej: "admin" o "usuario")
 
                 response.put("success", true);
-                response.put("message", "✅ Login exitoso");
+                response.put("message", " Login exitoso");
                 response.put("usuario", usuario.getNombreUsuario());
                 response.put("rol", usuario.getTipo()); // 👈 Devolvemos el rol
                 response.put("idUsuario", usuario.getIdUsuario());
@@ -55,7 +55,7 @@ public class LoginApiController {
 
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "⚠️ Error interno en el servidor.");
+            response.put("message", " Error interno en el servidor.");
             response.put("error", e.getMessage());
         }
 

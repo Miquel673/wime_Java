@@ -1,196 +1,349 @@
-/* ======================================================
-   VARIABLES
-====================================================== */
+/* =========================
+   VARIABLES Y GENERALES
+========================= */
 
 :root {
-  --bg-main: #f8f9fa;
-  --bg-card: #ffffff;
-  --bg-soft: #dee2e6;
-  --text-main: #2e3031;
-  --border-main: #dee2e6;
-  --primary: #27508c;
+  --primary: royalblue;
+  --secondary: violet;
+  --gradient: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
 
-  --radius: 12px;
-  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --bg: #f4f6fb;
+  --text: #222;
+  --card: #ffffff;
+
+  --sidebar-w: 280px;
 }
 
-/* ======================================================
-   DARK MODE
-====================================================== */
-
-body.dark-mode {
-  --bg-main: #121212;
-  --bg-card: #1e1e1e;
-  --bg-soft: #2a2a2a;
-  --text-main: #e4e6eb; /* Mejor contraste */
-  --border-main: #3a3a3a;
+body.dark {
+  --bg: #0a0a0c;
+  --text: #ececec;
+  --card: #161618;
 }
-
-body.dark-mode .bg-white {
-  background-color: var(--bg-card) !important;
-}
-
-body.dark-mode .text-bg-primary {
-  background-color: var(--primary) !important;
-}
-
-/* ======================================================
-   BASE
-====================================================== */
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--bg) !important;
+  color: var(--text);
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.4s ease;
+  display: flex;
 }
 
-.main-content {
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  margin-left: 255px;
-  padding: 20px;
-  transition: margin 0.3s ease;
-}
+/* =========================
+   SIDEBAR
+========================= */
 
-/* Responsive para sidebar */
-@media (max-width: 768px) {
-  .main-content {
-    margin-left: 0;
-    padding: 15px;
-  }
-}
-
-/* ======================================================
-   AVATAR
-====================================================== */
-
-img[alt="Avatar"] {
-  object-fit: cover;
-  border: 2px solid var(--border-main);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
-  cursor: pointer;
-}
-
-img[alt="Avatar"]:hover {
-  transform: scale(1.07);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-body.dark-mode img[alt="Avatar"]:hover {
-  box-shadow: 0 4px 12px rgba(255,255,255,0.15);
-}
-
-/* ======================================================
-   TARJETAS
-====================================================== */
-
-.card,
-.bg-white {
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover,
-.bg-white:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-
-/* ======================================================
-   NOTIFICACIONES
-====================================================== */
-
-#listaNotificaciones {
-  margin-top: 10px;
-  max-height: 400px;
+.sidebar {
+  width: var(--sidebar-w);
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: var(--gradient);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  z-index: 1100;
   overflow-y: auto;
-  padding-right: 8px;
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary) var(--bg-main);
+  scrollbar-width: none;
 }
 
-/* Scroll Chrome */
-#listaNotificaciones::-webkit-scrollbar {
-  width: 6px;
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
-#listaNotificaciones::-webkit-scrollbar-thumb {
-  background-color: var(--primary);
-  border-radius: 10px;
+.sidebar h2 {
+  font-weight: 800;
+  text-align: center;
+  padding: 30px 0 10px;
+  margin: 0;
+  letter-spacing: 2px;
 }
 
-#listaNotificaciones::-webkit-scrollbar-track {
-  background-color: var(--bg-main);
+.sidebar hr {
+  border-top: 1px solid rgba(255,255,255,0.2);
+  margin: 15px 25px;
+  opacity: 1;
 }
 
-.notificacion {
-  background-color: var(--bg-soft);
-  border: 1px solid var(--border-main);
-  border-radius: var(--radius);
-  padding: 12px 10px;
-  margin-bottom: 12px;
-  box-shadow: var(--shadow-soft);
-  border-left: 4px solid var(--primary);
-  animation: fadeIn 0.3s ease;
-  transition: all 0.3s ease;
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  gap: 5px;
 }
 
-.notificacion:hover {
-  transform: translateX(4px);
-}
-
-.notificacion.no-leida {
-  background-color: rgba(13,110,253,0.12);
-}
-
-/* Estados */
-.estado {
+.sidebar nav a,
+.sidebar .nav-btn {
+  color: white !important;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 15px;
+  transition: 0.3s;
   font-weight: 500;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
 }
 
-.estado.leida {
-  color: #4caf50;
+.sidebar i {
+  margin-right: 15px;
+  font-size: 1.3rem;
 }
 
-.estado.pendiente {
-  color: #ff6b6b;
+.sidebar nav a:hover,
+.sidebar .nav-btn:hover,
+.nav-active {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
 }
 
-/* ======================================================
-   BOTONES
-====================================================== */
+/* =========================
+   CALENDARIO SIDEBAR
+========================= */
 
-.btn {
+.sidebar-calendar {
+  margin: auto 20px 30px 20px;
+  padding: 20px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.cal-date {
+  padding: 4px 0;
+}
+
+.cal-today {
+  background: white !important;
+  color: var(--primary) !important;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  font-weight: 800;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
+/* =========================
+   CONTENIDO
+========================= */
+
+.content {
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Mejor tamaño en móvil */
-@media (max-width: 768px) {
-  .btn {
-    font-size: 1rem;
-    padding: 10px;
-  }
+/* =========================
+   TARJETA PERFIL
+========================= */
+
+.card {
+  background: var(--card) !important;
+  border-radius: 25px;
+  color: var(--text);
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 800px;
 }
 
-/* ======================================================
-   ANIMACIONES
-====================================================== */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.profile-img-container {
+  width: 130px;
+  height: 130px;
+  margin: 0 auto;
+  background: var(--gradient);
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid var(--card);
+}
+
+/* =========================
+   BOTONES
+========================= */
+
+.btn-gradient {
+  background: var(--gradient);
+  color: white !important;
+  border: none;
+}
+
+.btn-settings-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.3rem;
+  transition: 0.3s;
+}
+
+/* =========================
+   BOTÓN TEMA
+========================= */
+
+.theme-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  z-index: 2000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#themeIcon {
+  transition: transform 0.4s ease;
+  font-size: 1.5rem;
+}
+
+.icon-rotate {
+  transform: rotate(360deg);
+}
+
+/* =========================
+   PROGRESO
+========================= */
+
+.progreso {
+  background: rgba(0,0,0,0.05);
+  height: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+body.dark .progreso {
+  background: rgba(255,255,255,0.1);
+}
+
+.barra {
+  height: 100%;
+  transition: width 1.5s ease;
+}
+
+.barra.verde {
+  background: #2ecc71;
+}
+
+.barra.amarillo {
+  background: #f1c40f;
+}
+
+.barra.rojo {
+  background: #e74c3c;
+}
+
+/* =========================
+   MODALES
+========================= */
+
+.modal-content {
+  background-color: var(--card) !important;
+  color: var(--text) !important;
+  border-radius: 25px !important;
+}
+
+.modal-content .form-control,
+.modal-content .form-select {
+  color: var(--text) !important;
+  border: 2px solid rgba(128,128,128,0.3) !important;
+}
+
+.modal-content input::placeholder,
+.modal-content textarea::placeholder {
+  color: rgba(128,128,128,0.6) !important;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+  background-color: transparent !important;
+  color: var(--text) !important;
+  box-shadow: none;
+  border-color: var(--secondary) !important;
+}
+
+.modal-content select option {
+  background: var(--card);
+  color: var(--text);
+}
+
+body.dark .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* =========================
+   NOTIFICACIONES
+========================= */
+
+.notification-item {
+  background: rgba(128,128,128,0.1);
+  border-radius: 20px;
+}
+
+/* =========================
+   VER CONTRASEÑA
+========================= */
+
+.toggle-pass {
+  position: absolute;
+  right: 15px;
+  top: 38px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #888;
+}
+
+.profile-img-container{
+    position: relative;
+    display: inline-block;
+}
+
+.correo-usuario{
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    color: white;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+

@@ -59,7 +59,7 @@ public class TareaController {
 
 
 
-    // ✅ Cambiar estado de tarea
+    //  Cambiar estado de tarea
     @PutMapping("/{id}/estado")
     public ResponseEntity<Map<String, Object>> cambiarEstadoTarea(
             @PathVariable Long id,
@@ -81,7 +81,7 @@ public class TareaController {
             if (nuevoEstado == null || nuevoEstado.isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "success", false,
-                        "message", "⚠️ No se proporcionó un estado válido"
+                        "message", " No se proporcionó un estado válido"
                 ));
             }
 
@@ -89,7 +89,7 @@ public class TareaController {
             if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                         "success", false,
-                        "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                        "message", " Tarea no encontrada o no pertenece al usuario"
                 ));
             }
 
@@ -103,7 +103,7 @@ public class TareaController {
             );
 
             response.put("success", true);
-            response.put("message", "✅ Estado de la tarea actualizado correctamente");
+            response.put("message", " Estado de la tarea actualizado correctamente");
             response.put("estado", nuevoEstado);
             return ResponseEntity.ok(response);
 
@@ -240,7 +240,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "✅ Tarea creada con éxito"
+                "message", " Tarea creada con éxito"
         ));
 
     } catch (Exception e) {
@@ -275,7 +275,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         ));
         }
 
-    // ✅ Obtener tarea por ID (para editar)
+    //  Obtener tarea por ID (para editar)
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> obtenerTareaPorId(
             @PathVariable Long id,
@@ -294,7 +294,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "success", false,
-                    "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                    "message", " Tarea no encontrada o no pertenece al usuario"
             ));
         }
 
@@ -304,7 +304,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         ));
     }
 
-    // ✅ Editar tarea
+    //  Editar tarea
     @PutMapping("/editar/{id}")
     public ResponseEntity<Map<String, Object>> editarTarea(
             @PathVariable Long id,
@@ -323,7 +323,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "success", false,
-                    "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                    "message", " Tarea no encontrada o no pertenece al usuario"
             ));
         }
 
@@ -345,7 +345,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "✅ Tarea actualizada correctamente"
+                "message", " Tarea actualizada correctamente"
         ));
         
         
@@ -353,7 +353,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
 
     
 
-    // ✅ Eliminar tarea
+    //  Eliminar tarea
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Map<String, Object>> eliminarTarea(
             @PathVariable Long id,
@@ -371,7 +371,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "success", false,
-                    "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                    "message", " Tarea no encontrada o no pertenece al usuario"
             ));
         }
 

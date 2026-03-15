@@ -48,7 +48,7 @@ button {
   border-left: 4px solid #0d6efd;
 }
 
-/* ✅ Estado de lectura */
+/*  Estado de lectura */
 .estado.leida {
   color: green;
   font-weight: 500;

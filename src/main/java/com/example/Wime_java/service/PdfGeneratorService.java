@@ -67,7 +67,7 @@ public class PdfGeneratorService {
 }
 
 
-    // ✅ Reporte detallado de Tareas
+    //  Reporte detallado de Tareas
     public ByteArrayInputStream generarReporteTareas(List<Tarea> tareas) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -124,7 +124,7 @@ public class PdfGeneratorService {
 }
 
 
-    // ✅ Reporte detallado de Rutinas
+    //  Reporte detallado de Rutinas
     public ByteArrayInputStream generarReporteRutinas(List<Rutina> rutinas) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();

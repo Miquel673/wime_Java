@@ -4,7 +4,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  console.log("✅ Script de login cargado correctamente");
+  console.log("Script de login cargado correctamente");
 
   const form = document.getElementById("form-login");
 
@@ -43,7 +43,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (data.success) {
 
-        const idUsuario = data.id_usuario || data.idUsuario;
+        const idUsuario =
+          data.id_usuario ||
+          data.idUsuario ||
+          data.id ||
+          data.usuarioId;
+
         const nombreUsuario = data.nombre || data.nombreUsuario || "Usuario";
         const rolUsuario = data.rol || data.rolUsuario || "Usuario";
 

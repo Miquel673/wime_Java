@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const msgNombre = document.getElementById("msgNombre");
 
   if (!idUsuario) {
-    console.warn("⚠️ Usuario no autenticado");
+    console.warn(" Usuario no autenticado");
     return;
   }
 
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nuevoNombre = nombreInput.value.trim();
 
     if (!nuevoNombre) {
-      msgNombre.textContent = "⚠️ El nombre no puede estar vacío";
+      msgNombre.textContent = " El nombre no puede estar vacío";
       msgNombre.style.color = "red";
       return;
     }
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const data = await res.json();
     if (data.success) {
-      msgNombre.textContent = "✅ Nombre actualizado";
+      msgNombre.textContent = " Nombre actualizado";
       msgNombre.style.color = "green";
     } else {
       msgNombre.textContent = data.message;

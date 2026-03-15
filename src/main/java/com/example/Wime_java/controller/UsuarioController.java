@@ -123,7 +123,7 @@ public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos
             String mensaje = "Hola " + nombre + ", tu correo ha sido registrado exitosamente en Wime.";
             emailService.sendMassEmail(List.of(email), asunto, mensaje);
         } catch (Exception ex) {
-            System.out.println("⚠️ No se pudo enviar el correo: " + ex.getMessage());
+            System.out.println(" No se pudo enviar el correo: " + ex.getMessage());
         }
 
         return ResponseEntity.ok(Map.of(
@@ -230,4 +230,69 @@ public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos
                     .body(Map.of("success", false, "message", "Error al eliminar la foto: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/{idUsuario}/cambiar-password")
+public ResponseEntity<?> cambiarPassword(
+        @PathVariable Integer idUsuario,
+        @RequestBody Map<String,String> body){
+
+    String nuevaPassword = body.get("password");
+
+    Usuario usuario = usuarioService.obtenerPorId(idUsuario);
+
+    if(usuario == null){
+        return ResponseEntity.badRequest()
+        .body(Map.of("success",false,"message","Usuario no encontrado"));
+    }
+
+    String hash = passwordEncoder.encode(nuevaPassword);
+    usuario.setContrasenaUsuario(hash);
+
+    usuarioService.actualizarUsuario(usuario);
+
+    return ResponseEntity.ok(Map.of(
+        "success",true,
+        "message","Contraseña actualizada"
+    ));
+    
+}
+
+@GetMapping("/{idUsuario}")
+public ResponseEntity<?> obtenerUsuario(@PathVariable Integer idUsuario) {
+
+    try {
+
+        Usuario usuario = usuarioService.obtenerPorId(idUsuario);
+
+        if(usuario == null){
+            return ResponseEntity.badRequest().body(
+                Map.of(
+                    "success", false,
+                    "message", "Usuario no encontrado"
+                )
+            );
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "id", usuario.getIdUsuario(),
+            "nombre", usuario.getNombreUsuario(),
+            "email", usuario.getEmailUsuario(),
+            "foto", usuario.getFotoPerfil()
+        ));
+
+    } catch (Exception e) {
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+            Map.of(
+                "success", false,
+                "message", e.getMessage()
+            )
+        );
+
+    }
+}
+
+
+
 }

@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const previewBody = document.getElementById("preview-body");
 
 
-  /* ✅ Vista previa
+  /*  Vista previa
   btnPreview.addEventListener("click", async () => {
     const tipo = tipoReporte.value;
     if (!tipo) {
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-  // ✅ Exportar PDF (ejemplo)
+  //  Exportar PDF (ejemplo)
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const tipo = tipoReporte.value;

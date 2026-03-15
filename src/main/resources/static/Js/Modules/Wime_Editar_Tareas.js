@@ -3,14 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const tareaId = params.get("id");
 
   if (!tareaId) {
-    alert("⚠️ No se proporcionó ID de tarea");
+    alert(" No se proporcionó ID de tarea");
     window.location.href = "../../HTML/Interfaces/Wime_interfaz_Tablero.html";
     return;
   }
 
   const form = document.getElementById("form-editar-tarea");
 
-  // ✅ Cargar datos de la tarea en el formulario
+  //  Cargar datos de la tarea en el formulario
   fetch(`/api/tareas/${tareaId}`)
     .then(res => {
       if (!res.ok) throw new Error("Error al obtener la tarea");
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "../../HTML/Interfaces/Wime_interfaz_Tablero.html";
     });
 
-  // ✅ Guardar cambios
+  //  Guardar cambios
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(res => res.json())
       .then(result => {
         if (result.success) {
-          alert("✅ Tarea actualizada correctamente");
+          alert(" Tarea actualizada correctamente");
           window.location.href = "../../HTML/Interfaces/Wime_interfaz_Tablero.html";
         } else {
           throw new Error(result.message || "Error desconocido al guardar");

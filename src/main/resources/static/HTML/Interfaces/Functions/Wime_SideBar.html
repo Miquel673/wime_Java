@@ -55,10 +55,10 @@
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          console.log("✅ Sesión cerrada");
+          console.log(" Sesión cerrada");
           window.location.href = "../../../Login.html";
         } else {
-          console.error("⚠️ Error cerrando sesión:", data.message);
+          console.error(" Error cerrando sesión:", data.message);
         }
       })
       .catch(err => console.error("❌ Error en la solicitud:", err));

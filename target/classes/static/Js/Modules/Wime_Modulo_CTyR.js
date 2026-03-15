@@ -28,7 +28,7 @@ async function cargarTareas() {
     console.log("📌 Respuesta del backend (tareas):", resultado);
 
     if (!resultado.success) {
-      console.warn("⚠️", resultado.message);
+      console.warn("", resultado.message);
       return;
     }
 
@@ -49,7 +49,7 @@ function cargarRutinas() {
       if (data.success) {
         mostrarRutinas(data.rutinas);
       } else {
-        console.error("⚠️ Error cargando rutinas:", data.message);
+        console.error(" Error cargando rutinas:", data.message);
       }
     })
     .catch(error => console.error("❌ Error en fetch:", error));
@@ -237,7 +237,7 @@ function mostrarError(tipo, mensaje) {
 // Delegación de eventos para botones
 document.addEventListener("click", (e) => {
 
-  // ✅ Eliminar tarea (creador)
+  //  Eliminar tarea (creador)
   const btnEliminar = e.target.closest(".btn-eliminar");
   if (btnEliminar) {
     const id = btnEliminar.dataset.id;
@@ -256,7 +256,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ✅ Quitar tarea compartida (receptor)
+  //  Quitar tarea compartida (receptor)
   const btnRemover = e.target.closest(".btn-remover");
   if (btnRemover) {
     const id = btnRemover.dataset.id;
@@ -282,7 +282,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ✅ Editar tarea
+  //  Editar tarea
   const btnEditar = e.target.closest(".btn-editar");
   if (btnEditar) {
     const id = btnEditar.dataset.id;

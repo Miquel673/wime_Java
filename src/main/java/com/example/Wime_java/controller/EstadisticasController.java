@@ -23,28 +23,34 @@ public class EstadisticasController {
     @Autowired
     private RutinaRepository rutinaRepository;
 
-    @GetMapping("/estadisticas")
-    public Map<String, Object> obtenerEstadisticas(HttpSession session) {
-        Map<String, Object> response = new HashMap<>();
+@GetMapping("/estadisticas-tablero")
+public Map<String, Object> estadisticasTablero(HttpSession session) {
 
-        Long idUsuario = (Long) session.getAttribute("id_usuario");
-        if (idUsuario == null) {
-            response.put("success", false);
-            response.put("message", "⚠️ Sesión no iniciada");
-            return response;
-        }
+    Map<String, Object> response = new HashMap<>();
 
-        Long tareasCompletadas = tareaRepository.countByIdUsuarioAndEstado(idUsuario, "completada");
-        Long rutinasFinalizadas = rutinaRepository.countByIdUsuarioAndEstado(idUsuario, "completada");
+    Long idUsuario = (Long) session.getAttribute("id_usuario");
 
-        Long enProceso = tareaRepository.countByIdUsuarioAndEstado(idUsuario, "en progreso")
-                + rutinaRepository.countByIdUsuarioAndEstado(idUsuario, "en progreso");
-
-        response.put("success", true);
-        response.put("tareas_completadas", tareasCompletadas);
-        response.put("rutinas_finalizadas", rutinasFinalizadas);
-        response.put("en_proceso", enProceso);
-
+    if (idUsuario == null) {
+        response.put("success", false);
         return response;
     }
+
+    Long total = tareaRepository.countByIdUsuario(idUsuario);
+
+    Long completadas = tareaRepository.countByIdUsuarioAndEstado(idUsuario, "completada");
+
+    Long pendientes = tareaRepository.countByIdUsuarioAndEstado(idUsuario, "pendiente")
+            + tareaRepository.countByIdUsuarioAndEstado(idUsuario, "en_progreso");
+
+    Long vencidas = tareaRepository.countTareasVencidas(idUsuario);
+
+    response.put("success", true);
+    response.put("total", total);
+    response.put("completadas", completadas);
+    response.put("pendientes", pendientes);
+    response.put("vencidas", vencidas);
+
+    return response;
+}
+
 }

@@ -147,7 +147,7 @@ public List<TareaTableroDTO> obtenerTareasParaTablero(Long idUsuario) {
 
         if (!tareaConfig.estadoValido(tarea.getEstado())) {
             throw new IllegalArgumentException(
-                    "⚠️ Estado de tarea inválido");
+                    " Estado de tarea inválido");
         }
 
         return tareaRepository.save(tarea);
@@ -172,13 +172,13 @@ public List<TareaTableroDTO> obtenerTareasParaTablero(Long idUsuario) {
 
         if (!tareaConfig.estadoValido(estadoNormalizado)) {
             throw new IllegalArgumentException(
-                    "⚠️ Estado inválido: " + nuevoEstado);
+                    " Estado inválido: " + nuevoEstado);
         }
 
         Tarea tarea = tareaRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
-                                "⚠️ No se encontró la tarea con ID: " + id));
+                                " No se encontró la tarea con ID: " + id));
 
         tarea.setEstado(estadoNormalizado);
         return tareaRepository.save(tarea);

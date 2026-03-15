@@ -1,63 +1,47 @@
+async function cargarEstadisticasTablero(){
 
-// ===================== Gráfico Estadístico ===================== //
+    try{
 
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("/api/estadisticas", {
-  credentials: "include"
-})
-  .then(res => res.json())
-  .then(data => {
-      if (data.success) {
-        const ctx = document.getElementById("grafico-estadisticas").getContext("2d");
-
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Tareas Realizadas', 'Rutinas Finalizadas', 'En Proceso'],
-            datasets: [{
-              label: 'Cantidad',
-              data: [
-                data.tareas_completadas,
-                data.rutinas_finalizadas,
-                data.en_proceso
-              ],
-              backgroundColor: [
-                'rgba(25, 135, 84, 0.8)',   // verde
-                'rgba(13, 110, 253, 0.8)',  // azul
-                'rgba(255, 193, 7, 0.8)'    // amarillo
-              ],
-              borderRadius: 8
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: false
-              },
-              tooltip: {
-                callbacks: {
-                  label: context => `Total: ${context.raw}`
-                }
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 1
-                },
-                title: {
-                  display: true,
-                  text: 'Cantidad'
-                }
-              }
-            }
-          }
+        const res = await fetch("/api/estadisticas-tablero",{
+            method:"GET",
+            credentials:"include"
         });
-      } else {
-        console.warn("⚠️ No se pudieron cargar las estadísticas:", data.message);
-      }
-    })
-    .catch(err => console.error("❌ Error cargando gráfico:", err));
-});
+
+        const data = await res.json();
+
+        if(!data.success){
+            console.warn("No se pudieron cargar las estadísticas");
+            return;
+        }
+
+        const total = data.total || 0;
+        const completadas = data.completadas || 0;
+        const pendientes = data.pendientes || 0;
+        const vencidas = data.vencidas || 0;
+
+        const porcCompletadas = total ? Math.round((completadas / total) * 100) : 0;
+        const porcPendientes = total ? Math.round((pendientes / total) * 100) : 0;
+        const porcVencidas = total ? Math.round((vencidas / total) * 100) : 0;
+
+        actualizarBarra("completadas", porcCompletadas);
+        actualizarBarra("pendientes", porcPendientes);
+        actualizarBarra("vencidas", porcVencidas);
+
+    }catch(error){
+
+        console.error("Error cargando estadísticas:", error);
+
+    }
+
+}
+
+
+function actualizarBarra(tipo, porcentaje){
+
+    const stat = document.getElementById(`stat-${tipo}`);
+    const bar = document.getElementById(`bar-${tipo}`);
+
+    if(stat) stat.innerText = porcentaje + "%";
+    if(bar) bar.style.width = porcentaje + "%";
+
+}

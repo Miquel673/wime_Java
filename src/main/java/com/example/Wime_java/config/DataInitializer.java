@@ -32,7 +32,7 @@ public class DataInitializer {
                         admin.setEdad(30); // 👈 valor fijo para evitar error
 
                         usuarioRepository.save(admin);
-                        System.out.println("✅ Usuario admin creado con éxito.");
+                        System.out.println(" Usuario admin creado con éxito.");
                     }
             );
 
@@ -50,7 +50,7 @@ public class DataInitializer {
                         user.setEdad(25); // 👈 valor fijo
 
                         usuarioRepository.save(user);
-                        System.out.println("✅ Usuario normal creado con éxito.");
+                        System.out.println(" Usuario normal creado con éxito.");
                     }
             );
         };

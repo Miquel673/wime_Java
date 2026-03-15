@@ -12,7 +12,7 @@ function handleCredentialResponse(response) {
   .then(res => res.json())
   .then(data => {
     if (data.success) {
-      alert("✅ Bienvenido, " + data.nombre);
+      alert(" Bienvenido, " + data.nombre);
       // Puedes redirigir o guardar sesión
     } else {
       alert("❌ " + data.message);

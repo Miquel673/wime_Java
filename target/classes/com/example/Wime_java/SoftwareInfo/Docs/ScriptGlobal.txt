@@ -39,7 +39,7 @@ if (!isset($_SESSION["usuario"])) {
       .then(html => {
         document.getElementById('sidebar-container').innerHTML = html;
 
-        // ✅ Espera a que el HTML esté insertado, y entonces inicializa el calendario
+        //  Espera a que el HTML esté insertado, y entonces inicializa el calendario
         if (typeof inicializarCalendario === "function") {
           inicializarCalendario();
         }

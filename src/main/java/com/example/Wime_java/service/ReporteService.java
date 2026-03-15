@@ -26,8 +26,8 @@ public class ReporteService {
         this.pdfGeneratorService = pdfGeneratorService;
     }
 
-    // ✅ Reporte de Tareas por usuario
-    // ✅ Reporte de Tareas por usuario
+    //  Reporte de Tareas por usuario
+    //  Reporte de Tareas por usuario
 public ByteArrayInputStream generarReporteTareas(Long idUsuario) {
     List<Tarea> tareas = tareaRepository.findByIdUsuario(idUsuario);
     if (tareas == null || tareas.isEmpty()) {
@@ -37,7 +37,7 @@ public ByteArrayInputStream generarReporteTareas(Long idUsuario) {
     return pdfGeneratorService.generarReporteTareas(tareas);
 }
 
-// ✅ Reporte de Rutinas por usuario
+//  Reporte de Rutinas por usuario
 public ByteArrayInputStream generarReporteRutinas(Long idUsuario) {
     List<Rutina> rutinas = rutinaRepository.findByIdUsuario(idUsuario);
     if (rutinas == null || rutinas.isEmpty()) {

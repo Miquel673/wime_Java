@@ -3,14 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const rutinaId = params.get("id");
 
   if (!rutinaId) {
-    alert("⚠️ No se proporcionó ID de rutina");
+    alert(" No se proporcionó ID de rutina");
     window.location.href = "../../HTML/Interfaces/Wime_interfaz_Tablero.html";
     return;
   }
 
   const form = document.getElementById("form-editar-rutina");
 
-  // ✅ Cargar datos de la rutina
+  //  Cargar datos de la rutina
   fetch(`/api/rutinas/${rutinaId}`)
     .then(res => {
       if (!res.ok) throw new Error("Error al obtener la rutina");
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "../../HTML/Interfaces/Wime_interfaz_Tablero.html";
     });
 
-  // ✅ Guardar cambios
+  //  Guardar cambios
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(res => res.json())
       .then(resp => {
         if (resp.success) {
-          alert("✅ Rutina actualizada con éxito");
+          alert(" Rutina actualizada con éxito");
           window.location.href = "../../HTML/Interfaces/Wime_interfaz_Tablero.html";
         } else {
           alert("❌ " + resp.message);

@@ -227,3 +227,18 @@ body.dark .performance-card b, body.dark .performance-card span:not(.badge) {
     transform: scale(1.15);
     color: #ff4d5a;
 }
+
+.lista-notificaciones{
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.notification-item{
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.notification-item:hover{
+    background: rgba(0,0,0,0.03);
+}
