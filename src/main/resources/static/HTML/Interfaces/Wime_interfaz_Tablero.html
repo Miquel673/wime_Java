@@ -1,215 +1,338 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>WIME | Tablero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Wime</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../../Css/Interfaces/Wime_interfaz_Tablero.Css">
+    <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png" />
 
-  <!-- Librerías externas -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script defer src="../../Js/Functions/Estadisticas.js"></script>
+    <script defer src="../../Js/Functions/Wime_Func_Calendario.js"></script>
+    <script defer src="../../Js/Modules/Wime_Tablero.js"></script>
+    <script defer src="../../Js/Functions/Wime_Func_Editar.js"></script>
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="/bootstrap-5.3.7-dist/css/bootstrap.min.css">
-
-  <!-- Estilos propios -->
-  <link rel="stylesheet" href="../../Css/Interfaces/Wime_interfaz_Tablero.Css">
-  <link rel="stylesheet" href="../../Css/Interfaces/Funciones/Wime_SideBar.Css">
-
-  <!-- Ícono -->
-  <link rel="icon" type="image/png" href="/IMG/Logo_Wime.png">
 </head>
-
 <body>
-  <header>
-    <!-- Botón menú móvil -->
-    <button class="toggle-sidebar d-md-none" onclick="toggleSidebar()">
-      <i class="bi bi-list"></i>
-    </button>
 
-    <!-- Sidebar dinámico -->
-    <div id="sidebar-container"></div>
+    <div class="sidebar">
+        <h2>WIME</h2>
+        <hr>
+        <nav>
+            <a href="#" class="nav-active"><i class="bi bi-grid-1x2"></i> Mi Tablero</a>
+            <a href="/cuenta"><i class="bi bi-person-circle"></i> Perfil</a>
+            <button class="nav-btn" data-bs-toggle="modal" data-bs-target="#modalTarea"><i class="bi bi-plus-circle"></i> Nueva Tarea</button>
+            <button class="nav-btn" data-bs-toggle="modal" data-bs-target="#modalRutina"><i class="bi bi-calendar-plus"></i> Nueva Rutina</button>
+            <button class="nav-btn" data-bs-toggle="modal" data-bs-target="#modalNotif"><i class="bi bi-bell"></i>Notificaciones</button>
+            <hr>
+            <button class="nav-btn" onclick="cerrarSesion()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+        </nav>
 
-    <script>
-      function toggleSidebar() {
-        document.body.classList.toggle('sidebar-visible');
-      }
+        <div class="sidebar-calendar">
+            <div class="d-flex justify-content-between align-items-center mb-3 text-white">
+                <i class="bi bi-chevron-left cursor-pointer" onclick="moveMonth(-1)"></i>
+                <span id="calMonthYear" class="fw-bold"></span>
+                <i class="bi bi-chevron-right cursor-pointer" onclick="moveMonth(1)"></i>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+        </div>
+    </div>
 
-      // Cargar sidebar desde /HTML/
-      fetch('../Interfaces/Functions/Wime_SideBar.html')
-        .then(response => response.text())
-        .then(html => {
-          document.getElementById('sidebar-container').innerHTML = html;
-          if (typeof inicializarCalendario === "function") {
-            inicializarCalendario();
-          }
-        });
-    </script>
+    <main class="main-content">
+        <div class="user-banner shadow">
+            <img id="fotoPerfil" src="../../IMG/EmptyAvatar.jpeg" alt="Perfil">
+            <div>
+                <h1 id="bienvenida" class="fw-bold mb-1" style="color: white !important;"></h1>
+                <p class="mb-0 opacity-75" id="fecha-actual" style="color: white !important;"></p>
+            </div>
+        </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalNuevo" tabindex="-1" aria-labelledby="modalNuevoLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalNuevoLabel">¿Qué deseas crear?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-          </div>
-          <div class="modal-body d-flex flex-column gap-2">
-            <a href="../Modules/Wime_interfaz_Modulo_CTareas.html" class="btn btn-primary">Crear Tarea</a>
-            <a href="../Modules/Wime_interfaz_Modulo_CRutinas.html" class="btn btn-success">Crear Rutina</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold m-0">Metas del Día</h4>
+            <div class="btn-group" id="filter-group">
+                <button class="btn btn-outline-primary btn-sm active" onclick="filtrar('todas', this)">Todas</button>
+                <button class="btn btn-outline-primary btn-sm" onclick="filtrar('rutina', this)">Rutinas</button>
+                <button class="btn btn-outline-primary btn-sm" onclick="filtrar('tarea', this)">Tareas</button>
+            </div>
+        </div>
+
+        <div id="contenedor-items" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3"></div>
+
+        <div class="performance-card shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-line me-2"></i>Rendimiento</h5>
+                <div class="btn-group btn-group-sm" id="performance-filter-group">
+                    <button class="btn btn-outline-primary active" id="btn-rendimiento-todas" type="button">Todas</button>
+                    <button class="btn btn-outline-primary" id="btn-rendimiento-rutina" type="button">Rutinas</button>
+                    <button class="btn btn-outline-primary" id="btn-rendimiento-tarea" type="button">Tareas</button>
+                </div>
+            </div>            <div class="mb-4">
+                <div class="d-flex justify-content-between"><span class="small fw-bold">Completadas</span><span id="stat-completadas" class="text-success small fw-bold">0%</span></div>
+                <div class="progreso"><div id="bar-completadas" class="barra verde" style="width: 0%;"></div></div>
+            </div>
+            <div class="mb-4">
+                <div class="d-flex justify-content-between"><span class="small fw-bold">Pendientes</span><span id="stat-pendientes" class="text-warning small fw-bold">0%</span></div>
+                <div class="progreso"><div id="bar-pendientes" class="barra amarillo" style="width: 0%;"></div></div>
+            </div>
+
+            <div class="mb-0">
+            <div class="d-flex justify-content-between">
+                <span class="small fw-bold">Vencidas</span>
+                <span id="stat-vencidas" class="text-danger small fw-bold">0%</span>
+            </div>
+
+            <div class="progreso">
+                <div id="bar-vencidas" class="barra rojo" style="width:0%"></div>
+            </div>
+            </div>
+        </div>
+
+        
+
+        
+    </main>
+
+    <div class="modal fade" id="modalTarea" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 shadow-lg">
+            <button type="button" class="btn-close modal-close-btn" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+
+            <h5 class="fw-bold mb-3">Crear Nueva Tarea</h5>
+
+            <!-- Nombre -->
+            <input 
+                type="text" 
+                id="task-name" 
+                class="form-control mb-3 rounded-pill" 
+                placeholder="Nombre de la tarea"
+            >
+
+            <!-- Fecha límite -->
+            <input 
+                type="date" 
+                id="task-date" 
+                class="form-control mb-3 rounded-pill"
+            >
+
+            <!-- Descripción -->
+            <textarea 
+                id="task-desc" 
+                class="form-control mb-3"
+                placeholder="Descripción..."
+                style="border-radius: 15px; height: 80px; resize: none;"
+            ></textarea>
+
+            <!-- Prioridad -->
+            <select 
+                id="task-priority" 
+                class="form-select mb-4 rounded-pill"
+            >
+                <option value="rojo">Prioridad Alta</option>
+                <option value="amarillo">Prioridad Media</option>
+                <option value="verde" selected>Prioridad Baja</option>
+            </select>
+
+            <!-- Botón guardar -->
+            <button 
+                class="btn-wime mb-3"
+                onclick="addItem('tarea')"
+            >
+                Guardar Tarea
+            </button>
+
+            <!-- Compartir -->
+            <div class="share-section">
+
+                <label class="small fw-bold mb-2">
+                Compartir por correo:
+                </label>
+
+                <input 
+                type="email"
+                id="task-share-email"
+                class="form-control input-destinatario mb-2"
+                placeholder="correo@ejemplo.com">
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="modalRutina" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 shadow-lg">
+                <button type="button" class="btn-close modal-close-btn" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <h5 class="fw-bold mb-3">Crear Nueva Rutina</h5>
+                <input type="text" id="routine-name" class="form-control mb-3 rounded-pill" placeholder="Nombre de la rutina">
+                <textarea id="routine-desc" class="form-control mb-3" placeholder="Descripción..." style="border-radius: 15px; height: 80px; resize: none;"></textarea>
+                <div class="row g-2 mb-3 routine-date-group">
+                    <div class="col-md-6">
+                        <label for="routine-start-date" class="small fw-bold mb-1 d-block">Fecha inicio</label>
+                        <input type="date" id="routine-start-date" class="form-control rounded-pill">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="routine-end-date" class="small fw-bold mb-1 d-block">Fecha fin</label>
+                        <input type="date" id="routine-end-date" class="form-control rounded-pill">
+                    </div>
+                </div>
+                <select id="routine-priority" class="form-select mb-3 rounded-pill">
+                    <option value="alta">Prioridad Alta</option>
+                    <option value="media" selected>Prioridad Media</option>
+                    <option value="baja">Prioridad Baja</option>
+                </select>
+                <select id="routine-frequency" class="form-select mb-3 rounded-pill">
+                    <option value="diario" selected>Diaria</option>
+                    <option value="semanal">Semanal</option>
+                    <option value="mensual">Mensual</option>
+                </select>                <button class="btn-wime mb-3" onclick="addItem('rutina')">Crear Rutina</button>
+
+                <div class="share-section">
+                    <label class="small fw-bold mb-2">Compartir por correo:</label>
+                    <input type="text" id="routine-share-email" class="form-control input-destinatario" placeholder="correo1@ejemplo.com, correo2@ejemplo.com">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<div class="modal fade" id="modalNotif" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg p-4">
+
+
+      <button type="button" class="btn-close modal-close-btn" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      <h4 class="fw-bold mb-2">Notificaciones</h4>
+      <hr class="opacity-50 mb-4">
+
+      <!-- CONTENEDOR DINÁMICO -->
+      <div id="listaNotificaciones" class="lista-notificaciones"></div>
+
+      <!-- BOTONES -->
+      <div class="d-flex justify-content-between mt-3">
+        <button class="btn btn-sm btn-outline-primary" id="btnMarcarLeidas">
+          Marcar como leídas
+        </button>
+
+        <button class="btn btn-sm btn-outline-danger" id="btnEliminarNotificaciones">
+          Borrar todas
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="modalEditarRutina" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 shadow-lg">
+
+            <button type="button" class="btn-close modal-close-btn" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          <h5 class="fw-bold mb-3">Editar rutina</h5>
+
+          <input type="hidden" id="edit-routine-id">
+          <input type="hidden" id="edit-routine-estado">
+
+          <label class="small fw-bold mb-1">Nombre</label>
+          <input type="text" id="edit-routine-nombre" class="form-control mb-3 rounded-pill" placeholder="Nombre de la rutina">
+
+          <label class="small fw-bold mb-1">Fecha de asignación</label>
+          <input type="date" id="edit-routine-fecha-inicio" class="form-control mb-3 rounded-pill">
+
+          <label class="small fw-bold mb-1">Fecha final</label>
+          <input type="date" id="edit-routine-fecha-fin" class="form-control mb-3 rounded-pill">
+
+          <label class="small fw-bold mb-1">Descripción</label>
+          <textarea id="edit-routine-descripcion" class="form-control mb-3" placeholder="Descripción..." style="border-radius: 15px; height: 90px; resize: none;"></textarea>
+
+          <label class="small fw-bold mb-1">Prioridad</label>
+          <select id="edit-routine-prioridad" class="form-select mb-3 rounded-pill">
+            <option value="alta">Prioridad Alta</option>
+            <option value="media">Prioridad Media</option>
+            <option value="baja">Prioridad Baja</option>
+          </select>
+
+          <label class="small fw-bold mb-1">Frecuencia</label>
+          <select id="edit-routine-frecuencia" class="form-select mb-3 rounded-pill">
+            <option value="diario">Diaria</option>
+            <option value="semanal">Semanal</option>
+            <option value="mensual">Mensual</option>
+          </select>
+
+          <button type="button" id="btn-guardar-edicion-rutina" class="btn-wime mb-3">Guardar cambios</button>
+
+          <div class="share-section">
+            <label class="small fw-bold mb-2">Compartir rutina con otro correo:</label>
+            <input type="text" id="edit-routine-share-email" class="form-control input-destinatario mb-2" placeholder="correo1@ejemplo.com, correo2@ejemplo.com">
+            <button type="button" id="btn-compartir-rutina-edicion" class="btn-share">
+              <i class="bi bi-send me-2"></i>Compartir rutina
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </header>
-  
 
-  <main class="main" id="Main">
-    <h1 class="titulo">Tablero</h1>
-    <div class="tabs">
-      <div class="tab active" data-tipo="tareas">Tareas</div>
-      <div class="tab" data-tipo="rutinas">Rutinas</div>
+    <div class="modal fade" id="modalEditarTarea" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 shadow-lg">
+          <button type="button" class="btn-close modal-close-btn" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          <h5 class="fw-bold mb-3">Editar tarea</h5>
+
+          <input type="hidden" id="edit-task-id">
+          <input type="hidden" id="edit-task-estado">
+
+          <label class="small fw-bold mb-1">Título</label>
+          <input type="text" id="edit-task-titulo" class="form-control mb-3 rounded-pill" placeholder="Título de la tarea">
+
+          <label class="small fw-bold mb-1">Fecha límite</label>
+          <input type="date" id="edit-task-fecha" class="form-control mb-3 rounded-pill">
+
+          <label class="small fw-bold mb-1">Descripción</label>
+          <textarea id="edit-task-descripcion" class="form-control mb-3" placeholder="Descripción..." style="border-radius: 15px; height: 90px; resize: none;"></textarea>
+
+          <label class="small fw-bold mb-1">Prioridad</label>
+          <select id="edit-task-prioridad" class="form-select mb-3 rounded-pill">
+            <option value="alta">Prioridad Alta</option>
+            <option value="media">Prioridad Media</option>
+            <option value="baja">Prioridad Baja</option>
+          </select>
+
+          <button type="button" id="btn-guardar-edicion" class="btn-wime mb-3">Guardar cambios</button>
+
+          <div class="share-section">
+            <label class="small fw-bold mb-2">Compartir tarea con otro correo:</label>
+            <input type="text" id="edit-task-share-email" class="form-control input-destinatario mb-2" placeholder="correo1@ejemplo.com, correo2@ejemplo.com">
+            <button type="button" id="btn-compartir-edicion" class="btn-share">
+              <i class="bi bi-send me-2"></i>Compartir tarea
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="top-bar d-flex gap-3 align-items-center flex-wrap">
-      <input type="text" placeholder="🔍 Buscar" class="form-control" id="busqueda" style="max-width: 300px;">
-      <button class="btn btn-primary">
-        <a class="link-offset-2 link-underline link-underline-opacity-0 text-light"
-           href="#" id="nuevoBtn" data-bs-toggle="modal" data-bs-target="#modalNuevo">
-           Nuevo
-        </a>
-      </button>
+
+
+    <div id="toast-container"
+        class="toast-container position-fixed top-0 end-0 p-3"
+        style="z-index: 9999;">
     </div>
 
-    <select id="filtro-estado" class="form-select" style="max-width: 200px;">
-      <option value="">Todos los estados</option>
-      <option value="pendiente">Pendiente</option>
-      <option value="en progreso">En progreso</option>
-      <option value="completada">Completada</option>
-    </select>
+    <button id="themeToggle" class="theme-btn"><i id="themeIcon" class="bi bi-sun"></i></button>
 
-    <div  id="contenido">
-      <div id="contenedor-tareas" class="row row-cols-1 row-cols-md-2 g-4 mt-3"></div>
-      <div id="contenedor-rutinas" class="row row-cols-1 row-cols-md-2 g-4 mt-3" style="display: none;"></div>
-    </div>
-  </main>
-
-  <!-- Contenedor global de toasts -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../Js/Modules/Wime_Modulo_CT.js"></script>
+    <script src="../../Js/Functions/Toast.js"></script>
+    <script src="../../Js/Functions/Notificacion.js"></script>
+    <script src="../../Js/Functions/Estadisticas.js"></script>
+    <script src="../../Js/Modules/Wime_Modulo_CR.js"></script>
 
 
-  <!-- Scripts -->
-  <script src="/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../Js/Modules/Wime_Modulo_CTyR.js"></script>
-  <script src="../../Js/Functions/calendario.js"></script>
-  <script src="../../Js/Functions/Filtros.js"></script>
-  <script src="../../Js/Config-Services/TemaConfig.js"></script>
-  
 
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    fetch("/api/auth/check-session", {
-      method: "GET",
-      credentials: "include"
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.active) {
-          console.log("✅ Sesión activa:", data.usuario);
-          // Opcional: mostrar el nombre del usuario en el tablero
-          const titulo = document.querySelector(".titulo");
-          if (titulo) {
-            titulo.innerText = `Tablero de ${data.usuario}`;
-          }
-        } else {
-          console.warn("⚠️ No hay sesión activa, redirigiendo...");
-          window.location.href = "../../Login.html";
-        }
-      })
-      .catch(err => {
-        console.error("❌ Error verificando sesión:", err);
-        window.location.href = "../../Login.html";
-      });
-  });
-
-  // 1) Función que se encarga de inicializar comportamientos del sidebar
-  function initSidebarFeatures(container) {
-    console.log("initSidebarFeatures: inicializando...");
-
-    // 1.a - Vincular logout
-    const logoutBtn = container.querySelector('#logout-btn') || container.querySelector('.sidebar-footer button');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', cerrarSesion);
-      console.log('✔️ logout listener attached');
-    } else {
-      console.warn('⚠️ logout button no encontrado dentro del sidebar.');
-    }
-
-    // 1.b - Inicializar calendario si existe la función (la carga de calendario.js debe estar presente)
-    if (typeof inicializarCalendario === 'function') {
-      try {
-        inicializarCalendario();
-        console.log('✔️ Calendario inicializado desde sidebar.');
-      } catch (e) {
-        console.warn('⚠️ Error inicializando calendario:', e);
-      }
-    }
-
-    // aquí puedes vincular más botones/funciones del sidebar si las tienes
-  }
-
-  // 2) Función de logout (robusta, con logs y manejo de errores)
-  async function cerrarSesion() {
-    console.log('🔐 cerrarSesion: iniciando request de logout...');
-    try {
-      // Usa ruta RELATIVA si el frontend se sirve desde el mismo origen (recomendado).
-      const resp = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include' // <- imprescindible para que mande la cookie JSESSIONID
-      });
-
-      console.log('🔐 cerrarSesion: fetch completado, status=', resp.status);
-
-      // intenta parsear JSON (puede fallar si backend devuelve vacío)
-      let data = null;
-      try { data = await resp.json(); } catch(e) { /* no JSON */ }
-
-      console.log('🔐 cerrarSesion: body=', data);
-
-      if (resp.ok && data && data.success) {
-        console.log('✅ Sesión cerrada correctamente en el backend. Redirigiendo...');
-        // redirige al login (ruta EN TU static/HTML — adapta el nombre exacto)
-        window.location.href = '../../Login.html';
-      } else if (resp.ok && data && !data.success) {
-        alert('No se pudo cerrar sesión: ' + (data.message || 'error desconocido'));
-      } else {
-        alert('Error cerrando sesión. Status: ' + resp.status);
-      }
-    } catch (err) {
-      console.error('❌ Error al llamar a /api/auth/logout:', err);
-      alert('Error de conexión al cerrar sesión.');
-    }
-  }
-
-  // 3) Cargar el sidebar y luego inicializar
-  fetch('../Interfaces/Functions/Wime_SideBar.html')
-    .then(r => r.text())
-    .then(html => {
-      const container = document.getElementById('sidebar-container');
-      container.innerHTML = html;
-
-      // IMPORTANTE: ejecutar init tras insertar el HTML
-      initSidebarFeatures(container);
-
-      // Si el sidebar trae <script> inline que quieres ejecutar, tienes 2 opciones:
-      //  - mover esos scripts a archivos .js y cargarlos en la página padre,
-      //  - o ejecutar manualmente los <script> insertados (no recomendado).
-    })
-    .catch(err => {
-      console.error('❌ Error cargando sidebar:', err);
-    });
-</script>
 
 </body>
-</html>  
+</html>

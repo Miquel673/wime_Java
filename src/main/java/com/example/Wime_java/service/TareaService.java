@@ -2,6 +2,7 @@ package com.example.Wime_java.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,6 +14,7 @@ import com.example.Wime_java.dto.TareaTableroDTO;
 import com.example.Wime_java.model.Tarea;
 import com.example.Wime_java.model.TareaCompartida;
 import com.example.Wime_java.model.Usuario;
+import com.example.Wime_java.repository.NotificacionRepository;
 import com.example.Wime_java.repository.TareaCompartidaRepository;
 import com.example.Wime_java.repository.TareaRepository;
 import com.example.Wime_java.repository.UsuarioRepository;
@@ -25,17 +27,23 @@ public class TareaService {
     private final TareaCompartidaRepository tareaCompartidaRepository;
     private final TareaConfig tareaConfig;
     private final UsuarioRepository usuarioRepository;
+    private final NotificacionService notificacionService;
+    private final NotificacionRepository notificacionRepository;
 
     public TareaService(
         TareaRepository tareaRepository,
         TareaCompartidaRepository tareaCompartidaRepository,
         TareaConfig tareaConfig,
-        UsuarioRepository usuarioRepository) {
+        UsuarioRepository usuarioRepository,
+        NotificacionService notificacionService,
+        NotificacionRepository notificacionRepository) {
 
     this.tareaRepository = tareaRepository;
     this.tareaCompartidaRepository = tareaCompartidaRepository;
     this.tareaConfig = tareaConfig;
     this.usuarioRepository = usuarioRepository;
+    this.notificacionService = notificacionService;
+    this.notificacionRepository = notificacionRepository;
 }
 
         // ==========================================================
@@ -46,9 +54,24 @@ public List<TareaTableroDTO> obtenerTareasParaTablero(Long idUsuario) {
     List<TareaCompartida> relaciones =
             tareaCompartidaRepository.findByIdUsuario(idUsuario);
 
+
+                Map<Long, TareaCompartida> relacionPorTarea = relaciones.stream()
+            .collect(Collectors.toMap(
+                    TareaCompartida::getIdTarea,
+                    r -> r,
+                    (a, b) -> a
+            ));
+
+    // Fallback para tareas existentes sin relación en tareas_usuarios
+    // (por ejemplo, datos históricos/importados antes de crear el vínculo).
+    List<Tarea> tareasPropias = tareaRepository.findByIdUsuario(idUsuario);
+    for (Tarea tarea : tareasPropias) {
+        relacionPorTarea.putIfAbsent(tarea.getIdTarea(), crearRelacionCreadorTemporal(tarea.getIdTarea(), idUsuario));
+    }
+
     List<TareaTableroDTO> resultado = new java.util.ArrayList<>();
 
-    for (TareaCompartida relacion : relaciones) {
+    for (TareaCompartida relacion : relacionPorTarea.values()) {
 
         Tarea tarea = tareaRepository
                 .findById(relacion.getIdTarea())
@@ -95,6 +118,14 @@ public List<TareaTableroDTO> obtenerTareasParaTablero(Long idUsuario) {
     }
 
     return resultado;
+}
+
+private TareaCompartida crearRelacionCreadorTemporal(Long idTarea, Long idUsuario) {
+    TareaCompartida relacion = new TareaCompartida();
+    relacion.setIdTarea(idTarea);
+    relacion.setIdUsuario(idUsuario);
+    relacion.setRol(TareaCompartida.Rol.CREADOR);
+    return relacion;
 }
 
     // ==========================================================
@@ -147,7 +178,7 @@ public List<TareaTableroDTO> obtenerTareasParaTablero(Long idUsuario) {
 
         if (!tareaConfig.estadoValido(tarea.getEstado())) {
             throw new IllegalArgumentException(
-                    "⚠️ Estado de tarea inválido");
+                    " Estado de tarea inválido");
         }
 
         return tareaRepository.save(tarea);
@@ -172,13 +203,13 @@ public List<TareaTableroDTO> obtenerTareasParaTablero(Long idUsuario) {
 
         if (!tareaConfig.estadoValido(estadoNormalizado)) {
             throw new IllegalArgumentException(
-                    "⚠️ Estado inválido: " + nuevoEstado);
+                    " Estado inválido: " + nuevoEstado);
         }
 
         Tarea tarea = tareaRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
-                                "⚠️ No se encontró la tarea con ID: " + id));
+                                " No se encontró la tarea con ID: " + id));
 
         tarea.setEstado(estadoNormalizado);
         return tareaRepository.save(tarea);
@@ -188,8 +219,13 @@ public void actualizarTareasVencidas(Long idUsuario) {
 
     LocalDate hoy = LocalDate.now();
 
-    List<Tarea> tareas = tareaRepository.findByIdUsuario(idUsuario);
+    List<Long> idsTareas = tareaCompartidaRepository.findByIdUsuario(idUsuario)
+            .stream()
+            .map(TareaCompartida::getIdTarea)
+            .distinct()
+            .toList();
 
+    List<Tarea> tareas = tareaRepository.findAllById(idsTareas);
     for (Tarea tarea : tareas) {
 
         if (tarea.getFechaLimite() == null) continue;
@@ -206,8 +242,54 @@ public void actualizarTareasVencidas(Long idUsuario) {
 
             tarea.setEstado("VENCIDA");
             tareaRepository.save(tarea);
+            notificarVencida(tarea);
+            continue;
+        }
+
+        if (!noEsCompletada || !noEsYaVencida) {
+            continue;
+        }
+
+        if (tarea.getFechaLimite().isEqual(hoy) || tarea.getFechaLimite().isEqual(hoy.plusDays(1))) {
+            notificarProximaAVencer(tarea);
         }
     }
+}
+
+private void notificarVencida(Tarea tarea) {
+    String nombreCreador = obtenerNombreUsuario(tarea.getIdUsuario());
+    List<TareaCompartida> participantes = tareaCompartidaRepository.findByIdTarea(tarea.getIdTarea());
+
+    for (TareaCompartida relacion : participantes) {
+        boolean esCompartida = !relacion.getIdUsuario().equals(tarea.getIdUsuario());
+        String mensaje = esCompartida
+                ? "La tarea compartida '" + tarea.getTitulo() + "' de " + nombreCreador + " cambió automáticamente a VENCIDA."
+                : "La tarea '" + tarea.getTitulo() + "' cambió automáticamente a VENCIDA.";
+
+        notificacionService.crearNotificacion(relacion.getIdUsuario(), "Tarea vencida", mensaje);
+    }
+}
+
+private void notificarProximaAVencer(Tarea tarea) {
+    String nombreCreador = obtenerNombreUsuario(tarea.getIdUsuario());
+    List<TareaCompartida> participantes = tareaCompartidaRepository.findByIdTarea(tarea.getIdTarea());
+
+    for (TareaCompartida relacion : participantes) {
+        boolean esCompartida = !relacion.getIdUsuario().equals(tarea.getIdUsuario());
+        String mensaje = esCompartida
+                ? "La tarea compartida '" + tarea.getTitulo() + "' de " + nombreCreador + " está a punto de vencer (fecha límite: " + tarea.getFechaLimite() + ")."
+                : "La tarea '" + tarea.getTitulo() + "' está a punto de vencer (fecha límite: " + tarea.getFechaLimite() + ").";
+
+        if (!notificacionRepository.existsByIdUsuarioAndTipoAndMensaje(relacion.getIdUsuario(), "Tarea por vencer", mensaje)) {
+            notificacionService.crearNotificacion(relacion.getIdUsuario(), "Tarea por vencer", mensaje);
+        }
+    }
+}
+
+private String obtenerNombreUsuario(Long idUsuario) {
+    return usuarioRepository.findById(idUsuario.intValue())
+            .map(Usuario::getNombreUsuario)
+            .orElse("el creador");
 }
 
 }

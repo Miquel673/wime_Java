@@ -27,7 +27,7 @@ public class ExportService {
         try (StringWriter writer = new StringWriter();
              CSVWriter csvWriter = new CSVWriter(writer)) {
 
-            csvWriter.writeNext(new String[]{"Nombre", "Prioridad", "Fecha", "Estado"});
+            csvWriter.writeNext(new String[]{"Nombre", "Prioridad", "Fecha", "Estado", "Descripcion"});
 
             if (tipo.equalsIgnoreCase("tareas")) {
 
@@ -38,7 +38,8 @@ public class ExportService {
                             t.getTitulo(),
                             t.getPrioridad(),
                             t.getFechaLimite() != null ? t.getFechaLimite().toString() : "",
-                            t.getEstado()
+                            t.getEstado(),
+                            t.getDescripcion() != null ? t.getDescripcion() : ""
                     });
                 }
 
@@ -51,7 +52,8 @@ public class ExportService {
                             r.getNombreRutina(),
                             r.getPrioridad(),
                             r.getFechaFin() != null ? r.getFechaFin().toString() : "",
-                            r.getEstado()
+                            r.getEstado(),
+                            r.getDescripcion() != null ? r.getDescripcion() : ""
                     });
                 }
 

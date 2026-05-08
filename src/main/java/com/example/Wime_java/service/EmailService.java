@@ -3,12 +3,9 @@ package com.example.Wime_java.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -30,7 +27,16 @@ public class EmailService {
         }
     }
 
+        public void sendPasswordRecoveryEmail(String to, String subject, String messageBody, String actionUrl) throws Exception {
+        sendEmail(to, subject, messageBody, actionUrl, "Cambiar contraseña");
+    }
+
     private void sendEmail(String to, String subject, String messageBody) throws Exception {
+
+        sendEmail(to, subject, messageBody, "http://localhost:8080/", "Abrir en Wime");
+    }
+
+    private void sendEmail(String to, String subject, String messageBody, String actionUrl, String actionText) throws Exception {
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -38,6 +44,9 @@ public class EmailService {
         Context context = new Context();
         context.setVariable("titulo", subject);
         context.setVariable("mensaje", messageBody);
+
+        context.setVariable("actionUrl", actionUrl);
+        context.setVariable("actionText", actionText);
 
         String htmlContent = templateEngine.process("email-template", context);
 

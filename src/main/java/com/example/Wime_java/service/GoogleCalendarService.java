@@ -70,7 +70,7 @@ public void crearEventoDeTarea(Tarea tarea) throws Exception {
             accessToken = refreshAccessToken(refresh);
             sessionStore.updateAccessToken(httpSession, accessToken);
         } else {
-            System.out.println("❌ Usuario no autenticado con Google Calendar.");
+            System.out.println(" Usuario no autenticado con Google Calendar.");
             return;
         }
     }

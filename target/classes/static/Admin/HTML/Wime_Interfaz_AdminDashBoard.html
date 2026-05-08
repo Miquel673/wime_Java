@@ -1,18 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Panel Admin</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wime - Panel Admin</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../Css/Wime_Interfaz_AdminDashBoard.Css">
+
+    <link rel="icon" type="image/png" href="../../IMG/Logo_Wime.png"/>
+    
 </head>
 <body>
 
-    <h1>Panel de Administración</h1>
+    <div class="sidebar">
+        <h2>WIME</h2>
+        <nav>
+            <a href="#" class="nav-active"><i class="bi bi-speedometer2"></i>&nbsp; Panel Admin</a>
+            <hr>
+            <button class="nav-btn" onclick="cerrarSesion()"><i class="bi bi-box-arrow-right"></i>&nbsp; Cerrar Sesión</button>
+        </nav>
 
-    <div>
-        <a href="./Wime_Interfaz_AdminUsuarios.html">
-            <button>Gestionar Usuarios</button>
-        </a>
+        <div class="admin-list">
+            <h4><i class="bi bi-shield-lock"></i> Administradores</h4>
+            <ul id="listaAdministradores">
+                <li>Cargando...</li>
+            </ul>
+        </div>
     </div>
 
+    <main class="content">
+        <section class="user-banner">
+            <img id="fotoPerfilAdmin" src="/IMG/EmptyAvatar.jpeg" alt="Foto perfil admin">
+            <div>
+                <h4 id="bienvenidaAdmin" style="margin:0; font-weight:700;">Bienvenido</h4>
+                <small id="rolAdmin">Rol: Administrador</small>
+            </div>
+        </section>
+
+        <section class="actions-top">
+            <button class="btn-export" onclick="exportarReporteAdmin()">
+                <i class="bi bi-file-earmark-pdf"></i> Exportar Reporte PDF
+            </button>
+        </section>
+
+
+        <div class="card">
+            <h2 style="margin-top:0;">Reportes de usuarios</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-title">Total usuarios</div>
+                    <div id="totalUsuarios" class="stat-value">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">Activos</div>
+                    <div id="usuariosActivos" class="stat-value">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">Inactivos</div>
+                    <div id="usuariosInactivos" class="stat-value">0</div>
+                </div>
+            </div>
+            <div style="margin-top:20px;">
+                <canvas id="loginChart" height="90"></canvas>
+            </div>
+        </div>
+
+                <div class="card">
+            <div class="header-table">
+                <h2 style="margin: 0; font-weight: 800;">Notificaciones administrativas</h2>
+                <button class="btn-crud btn-reload" onclick="limpiarNotificacionesAdmin()">
+                    <i class="bi bi-trash"></i> &nbsp; Limpiar notificaciones
+                </button>
+            </div>
+            <ul class="notifs-list" id="listaNotificacionesAdmin">
+                <li>No hay notificaciones.</li>
+            </ul>
+        </div>
+
+
+        <div class="card">
+            <div class="header-table">
+                <h2 style="margin: 0; font-weight: 800;">Gestión de Usuarios</h2>
+                <button class="btn-crud btn-reload" onclick="cargarUsuarios()">
+                    <i class="bi bi-arrow-clockwise"></i> &nbsp; Actualizar Lista
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Último Acceso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaUsuarios"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <button class="theme-btn" onclick="toggleTheme()" title="Cambiar modo">
+        <i class="bi bi-sun-fill" id="themeIcon"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../JS/AdminScripts.js"></script>
 </body>
 </html>

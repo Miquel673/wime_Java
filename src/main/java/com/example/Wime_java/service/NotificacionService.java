@@ -20,7 +20,8 @@ public class NotificacionService {
         if (idUsuario == null) {
             throw new IllegalArgumentException("El ID de usuario no puede ser nulo.");
         }
-        return notificacionRepository.findByIdUsuario(idUsuario);
+        
+        return notificacionRepository.findByIdUsuarioOrderByFechaDesc(idUsuario);
     }
 
     // Crear una nueva notificación
@@ -47,15 +48,13 @@ public class NotificacionService {
 
         List<Notificacion> notificaciones = notificacionRepository.findByIdUsuario(idUsuario);
 
-        if (notificaciones.isEmpty()) {
-            throw new IllegalStateException("No se encontraron notificaciones para el usuario ID: " + idUsuario);
-        }
-
         for (Notificacion n : notificaciones) {
             n.setLeida(true);
         }
 
-        notificacionRepository.saveAll(notificaciones);
+        if (!notificaciones.isEmpty()) {
+            notificacionRepository.saveAll(notificaciones);
+        }
     }
 
     // Eliminar todas las notificaciones del usuario
@@ -65,12 +64,15 @@ public class NotificacionService {
             throw new IllegalArgumentException("El ID de usuario no puede ser nulo.");
         }
 
-        List<Notificacion> notificaciones = notificacionRepository.findByIdUsuario(idUsuario);
+        notificacionRepository.deleteByIdUsuario(idUsuario);
 
-        if (notificaciones.isEmpty()) {
-            throw new IllegalStateException("No hay notificaciones para eliminar para el usuario ID: " + idUsuario);
+    }
+
+    @Transactional
+    public void eliminarNotificacion(Long idUsuario, Long idNotificacion) {
+        if (idUsuario == null || idNotificacion == null) {
+            throw new IllegalArgumentException("idUsuario e idNotificacion son obligatorios.");
         }
-
-        notificacionRepository.deleteAll(notificaciones);
+        notificacionRepository.deleteByIdAndIdUsuario(idNotificacion, idUsuario);
     }
 }

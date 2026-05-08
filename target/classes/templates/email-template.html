@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Wime - Notificación</title>
+    <title>Wime - Correo</title>
 </head>
 
 <body style="margin:0; padding:0; background:#f4f6f9; font-family: Arial, sans-serif;">
@@ -12,8 +12,9 @@
 
         <!-- LOGO -->
         <div style="text-align:center; margin-bottom:20px;">
-            <img src="cid:wimeLogo" alt="Wime Logo" style="width:160px;" />
+            <img src="../static/IMG/LogoWimepeueño.png" alt="Wime Logo" style="width:160px;" />
         </div>
+
 
         <!-- TITULO -->
         <h2 style="color:#3b3f5c; text-align:center; margin-bottom:10px;"
@@ -26,10 +27,10 @@
         </p>
 
         <div style="text-align:center; margin-top:25px;">
-            <a href="../static/HTML/Interfaces/Wime_interfaz_Tablero.html"
+                        <a th:href="${actionUrl}"
                style="background:#4b70f5; color:white; padding:12px 20px; text-decoration:none;
                border-radius:8px; font-weight:bold;">
-                Abrir en Wime
+                <span th:text="${actionText}">Abrir en Wime</span>
             </a>
         </div>
 

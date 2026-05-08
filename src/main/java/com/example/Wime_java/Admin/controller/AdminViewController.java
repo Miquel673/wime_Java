@@ -10,11 +10,11 @@ public class AdminViewController {
 
     @GetMapping("/dashboard")
     public String dashboard() {
-        return "admin-dashboard";
+        return "redirect:/Admin/HTML/Wime_Interfaz_AdminDashBoard.html";
     }
 
     @GetMapping("/usuarios-vista")
     public String usuariosVista() {
-        return "admin-usuarios";
+        return "redirect:/Admin/HTML/Wime_Interfaz_AdminDashBoard.html";
     }
 }

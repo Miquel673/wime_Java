@@ -48,7 +48,7 @@ public class UsuarioService {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByEmailUsuario(email);
 
         if (usuarioOpt.isEmpty()) {
-            System.out.println("❌ Usuario no encontrado con email: " + email);
+            System.out.println(" Usuario no encontrado con email: " + email);
             return Optional.empty();
         }
 
@@ -56,12 +56,12 @@ public class UsuarioService {
 
         boolean passwordOk = BCrypt.checkpw(contrasena, usuario.getContrasenaUsuario());
         if (!passwordOk) {
-            System.out.println("❌ Contraseña incorrecta para usuario: " + email);
+            System.out.println(" Contraseña incorrecta para usuario: " + email);
             return Optional.empty();
         }
 
         if (!"Activo".equalsIgnoreCase(usuario.getEstado())) {
-            System.out.println("⚠️ Usuario no está activo: " + email);
+            System.out.println(" Usuario no está activo: " + email);
             return Optional.empty();
         }
 
@@ -70,7 +70,7 @@ public class UsuarioService {
             if (LocalDateTime.now().isAfter(limite)) {
                 usuario.setEstado("Inactivo");
                 usuarioRepository.save(usuario);
-                System.out.println("⚠️ Usuario inactivo por más de 60 días: " + email);
+                System.out.println(" Usuario inactivo por más de 60 días: " + email);
                 return Optional.empty();
             }
         }
@@ -88,15 +88,17 @@ public class UsuarioService {
         System.out.println("📸 Ruta encontrada en BD: " + ruta);
         return ruta;
     }
-    System.out.println("⚠️ Usuario no encontrado con ID: " + idUsuario);
+    System.out.println(" Usuario no encontrado con ID: " + idUsuario);
     return null;
 }
-
-
 
     // 🔹 OBTENER USUARIO POR ID
     public Usuario obtenerPorId(Integer idUsuario) {
         return usuarioRepository.findById(idUsuario).orElse(null);
+    }
+
+        public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmailUsuario(email).orElse(null);
     }
 
     // 🔹 ACTUALIZAR FOTO DE PERFIL (solo actualiza la URL en BD)
@@ -116,7 +118,7 @@ public Usuario guardarFoto(Integer idUsuario, MultipartFile file) throws IOExcep
     // 🔍 Verificar existencia del usuario
     Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
     if (usuarioOpt.isEmpty()) {
-        System.out.println("❌ Usuario no encontrado con ID: " + idUsuario);
+        System.out.println(" Usuario no encontrado con ID: " + idUsuario);
         return null;
     }
 
@@ -124,7 +126,7 @@ public Usuario guardarFoto(Integer idUsuario, MultipartFile file) throws IOExcep
 
     // 🧾 Validar archivo
     if (file == null || file.isEmpty()) {
-        System.out.println("⚠️ Archivo vacío o no recibido correctamente.");
+        System.out.println(" Archivo vacío o no recibido correctamente.");
         return null;
     }
 
@@ -143,7 +145,7 @@ public Usuario guardarFoto(Integer idUsuario, MultipartFile file) throws IOExcep
             Files.deleteIfExists(rutaVieja);
             System.out.println("🗑️ Foto anterior eliminada: " + nombreViejo);
         } catch (Exception e) {
-            System.err.println("⚠️ No se pudo eliminar la foto anterior: " + e.getMessage());
+            System.err.println(" No se pudo eliminar la foto anterior: " + e.getMessage());
         }
     }
 
@@ -153,7 +155,7 @@ public Usuario guardarFoto(Integer idUsuario, MultipartFile file) throws IOExcep
 
     // 💾 Actualizar usuario en la BD
     usuarioRepository.save(usuario);
-    System.out.println("✅ Foto actualizada correctamente para el usuario: " + idUsuario);
+    System.out.println(" Foto actualizada correctamente para el usuario: " + idUsuario);
 
     return usuario;
 }
@@ -178,7 +180,25 @@ public Usuario guardarFoto(Integer idUsuario, MultipartFile file) throws IOExcep
         return true;
     }
 
+        public boolean eliminarCuenta(Integer idUsuario) {
+        Usuario usuario = obtenerPorId(idUsuario);
+        if (usuario == null) return false;
 
+        String urlFoto = usuario.getFotoPerfil();
+        if (urlFoto != null && urlFoto.contains("/uploads/fotos_perfil/")) {
+            String nombreArchivo = urlFoto.substring(urlFoto.lastIndexOf("/") + 1);
+            Path rutaArchivo = Paths.get(UPLOAD_DIR_FILESYSTEM + nombreArchivo);
+            try {
+                Files.deleteIfExists(rutaArchivo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        usuarioRepository.delete(usuario);
+        return true;
+    }
+    
     public Usuario getUsuarioActual() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getUsuarioActual'");

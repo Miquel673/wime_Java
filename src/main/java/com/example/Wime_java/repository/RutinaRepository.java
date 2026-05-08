@@ -13,6 +13,8 @@ public interface RutinaRepository extends JpaRepository<Rutina, Long> {
     // 🔹 Obtener todas las rutinas de un usuario
     List<Rutina> findByIdUsuario(Long idUsuario);
 
+    Long countByIdUsuario(Long idUsuario);
+
     // 🔹 Contar rutinas por usuario y estado
     Long countByIdUsuarioAndEstado(Long idUsuario, String estado);
 

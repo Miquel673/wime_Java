@@ -17,19 +17,16 @@ import com.example.Wime_java.service.NotificacionService;
 
 @RestController
 @RequestMapping("/api/notificaciones")
-
 public class NotificacionController {
 
     @Autowired
     private NotificacionService notificacionService;
 
-    // ✅ Obtener todas las notificaciones de un usuario
     @GetMapping("/{idUsuario}")
     public List<Notificacion> obtenerNotificaciones(@PathVariable Long idUsuario) {
         return notificacionService.obtenerPorUsuario(idUsuario);
     }
 
-    // ✅ Crear una nueva notificación
     @PostMapping("/crear")
     public Notificacion crearNotificacion(
             @RequestParam Long idUsuario,
@@ -38,27 +35,35 @@ public class NotificacionController {
         return notificacionService.crearNotificacion(idUsuario, tipo, mensaje);
     }
 
-    // ✅ Marcar todas las notificaciones como leídas
     @PutMapping("/{idUsuario}/marcar-leidas")
     public String marcarLeidas(@PathVariable Long idUsuario) {
         try {
             notificacionService.marcarLeidas(idUsuario);
-            return "✅ Notificaciones marcadas como leídas";
+            return "Notificaciones marcadas como leídas";
         } catch (Exception e) {
-            e.printStackTrace();
-            return "❌ Error al marcar como leídas: " + e.getMessage();
+            return "Error al marcar como leídas: " + e.getMessage();
         }
     }
 
-    // ✅ Eliminar todas las notificaciones de un usuario
     @DeleteMapping("/{idUsuario}/eliminar-todas")
     public String eliminarTodas(@PathVariable Long idUsuario) {
         try {
             notificacionService.eliminarTodas(idUsuario);
-            return "🗑️ Todas las notificaciones eliminadas";
+            return "Todas las notificaciones eliminadas";
         } catch (Exception e) {
-            e.printStackTrace();
-            return "❌ Error al eliminar notificaciones: " + e.getMessage();
+            return "Error al eliminar notificaciones: " + e.getMessage();
+        }
+    }
+
+    @DeleteMapping("/{idUsuario}/{idNotificacion}")
+    public String eliminarNotificacion(
+            @PathVariable Long idUsuario,
+            @PathVariable Long idNotificacion) {
+        try {
+            notificacionService.eliminarNotificacion(idUsuario, idNotificacion);
+            return "Notificación eliminada";
+        } catch (Exception e) {
+            return "Error al eliminar notificación: " + e.getMessage();
         }
     }
 }

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,7 +61,7 @@ public class TareaController {
 
 
 
-    // ✅ Cambiar estado de tarea
+    //  Cambiar estado de tarea
     @PutMapping("/{id}/estado")
     public ResponseEntity<Map<String, Object>> cambiarEstadoTarea(
             @PathVariable Long id,
@@ -73,7 +75,7 @@ public class TareaController {
             if (idUsuario == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                         "success", false,
-                        "message", "❌ Sesión no iniciada"
+                        "message", " Sesión no iniciada"
                 ));
             }
 
@@ -81,7 +83,7 @@ public class TareaController {
             if (nuevoEstado == null || nuevoEstado.isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "success", false,
-                        "message", "⚠️ No se proporcionó un estado válido"
+                        "message", " No se proporcionó un estado válido"
                 ));
             }
 
@@ -89,7 +91,7 @@ public class TareaController {
             if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                         "success", false,
-                        "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                        "message", " Tarea no encontrada o no pertenece al usuario"
                 ));
             }
 
@@ -103,7 +105,7 @@ public class TareaController {
             );
 
             response.put("success", true);
-            response.put("message", "✅ Estado de la tarea actualizado correctamente");
+            response.put("message", " Estado de la tarea actualizado correctamente");
             response.put("estado", nuevoEstado);
             return ResponseEntity.ok(response);
 
@@ -111,7 +113,7 @@ public class TareaController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(Map.of(
                     "success", false,
-                    "message", "❌ Error interno al actualizar el estado: " + e.getMessage()
+                    "message", " Error interno al actualizar el estado: " + e.getMessage()
             ));
         }
     }
@@ -129,7 +131,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
     if (idUsuarioSesion == null) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                 "success", false,
-                "message", "❌ Sesión no iniciada"
+                "message", " Sesión no iniciada"
         ));
     }
 
@@ -146,6 +148,8 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (datos.get("fechaLimite") != null) {
             LocalDate fechaLimite = LocalDate.parse((String) datos.get("fechaLimite"));
             tarea.setFechaLimite(fechaLimite);
+
+            validarFechaNoAnterior(fechaLimite, "La fecha límite no puede ser anterior a la fecha actual");
         }
 
         // ------------------------------------
@@ -240,14 +244,20 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "✅ Tarea creada con éxito"
+                "message", " Tarea creada con éxito"
+        ));
+
+            } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
         ));
 
     } catch (Exception e) {
         e.printStackTrace();
         return ResponseEntity.internalServerError().body(Map.of(
                 "success", false,
-                "message", "❌ Error al guardar la tarea: " + e.getMessage()
+                "message", " Error al guardar la tarea: " + e.getMessage()
         ));
     }
 }
@@ -275,7 +285,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         ));
         }
 
-    // ✅ Obtener tarea por ID (para editar)
+    //  Obtener tarea por ID (para editar)
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> obtenerTareaPorId(
             @PathVariable Long id,
@@ -286,7 +296,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (idUsuario == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "success", false,
-                    "message", "❌ Sesión no iniciada"
+                    "message", " Sesión no iniciada"
             ));
         }
 
@@ -294,7 +304,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "success", false,
-                    "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                    "message", " Tarea no encontrada o no pertenece al usuario"
             ));
         }
 
@@ -304,7 +314,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         ));
     }
 
-    // ✅ Editar tarea
+    //  Editar tarea
     @PutMapping("/editar/{id}")
     public ResponseEntity<Map<String, Object>> editarTarea(
             @PathVariable Long id,
@@ -315,7 +325,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (idUsuario == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "success", false,
-                    "message", "❌ Sesión no iniciada"
+                    "message", " Sesión no iniciada"
             ));
         }
 
@@ -323,37 +333,165 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "success", false,
-                    "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                    "message", " Tarea no encontrada o no pertenece al usuario"
+            ));
+        }
+
+        try {
+            Tarea tarea = tareaOpt.get();
+            if (tareaActualizada.getFechaLimite() != null) {
+                validarFechaNoAnterior(tareaActualizada.getFechaLimite(), "La fecha límite no puede ser anterior a la fecha actual");
+            }
+
+            tarea.setTitulo(tareaActualizada.getTitulo());
+            tarea.setDescripcion(tareaActualizada.getDescripcion());
+            tarea.setEstado(tareaActualizada.getEstado());
+            tarea.setPrioridad(tareaActualizada.getPrioridad());
+            tarea.setFechaLimite(tareaActualizada.getFechaLimite());
+
+            tareaRepository.save(tarea);
+
+            // 🔔 Notificación de edición
+            notificacionService.crearNotificacion(
+                    idUsuario,
+                    "Tarea editada",
+                    "Se ha actualizado la tarea: " + tarea.getTitulo()
+            );
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", " Tarea actualizada correctamente"
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+    private void validarFechaNoAnterior(LocalDate fecha, String mensaje) {
+        if (fecha != null && fecha.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(mensaje);
+        }
+    }
+    
+@PostMapping("/compartir/{id}")
+    public ResponseEntity<Map<String, Object>> compartirTarea(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body,
+            HttpSession session) {
+
+        Long idUsuario = (Long) session.getAttribute("id_usuario");
+        if (idUsuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "success", false,
+                    "message", " Sesión no iniciada"
+            ));
+        }
+
+        String rawEmails = body.get("emails");
+        if (rawEmails == null || rawEmails.isBlank()) {
+            rawEmails = body.get("email");
+        }
+
+        if (rawEmails == null || rawEmails.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", " Debes ingresar al menos un correo válido"
+            ));
+        }
+
+        Set<String> emailsDestino = java.util.Arrays.stream(rawEmails.split(","))
+                .map(String::trim)
+                .filter(e -> !e.isBlank())
+                .collect(Collectors.toSet());
+
+        if (emailsDestino.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", " Debes ingresar al menos un correo válido"
+            ));
+        }
+
+        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+        if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "success", false,
+                    "message", " Tarea no encontrada o no pertenece al usuario"
             ));
         }
 
         Tarea tarea = tareaOpt.get();
-        tarea.setTitulo(tareaActualizada.getTitulo());
-        tarea.setDescripcion(tareaActualizada.getDescripcion());
-        tarea.setEstado(tareaActualizada.getEstado());
-        tarea.setPrioridad(tareaActualizada.getPrioridad());
-        tarea.setFechaLimite(tareaActualizada.getFechaLimite());
 
-        tareaRepository.save(tarea);
+        List<Usuario> usuarios = usuarioRepository.findByEmailUsuarioIn(List.copyOf(emailsDestino));
+        if (usuarios.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "success", false,
+                    "message", " No se encontraron usuarios para los correos enviados"
+            ));
+        }
 
-        // 🔔 Notificación de edición
-        notificacionService.crearNotificacion(
-                idUsuario,
-                "Tarea editada",
-                "Se ha actualizado la tarea: " + tarea.getTitulo()
-        );
+        int compartidas = 0;
+
+        for (Usuario usuarioDestino : usuarios) {
+            Long idDestino = usuarioDestino.getIdUsuario().longValue();
+
+            if (idDestino.equals(idUsuario)) {
+                continue;
+            }
+
+            if (tareaCompartidaRepository.existsByIdTareaAndIdUsuario(id, idDestino)) {
+                continue;
+            }
+
+            TareaCompartida compartida = new TareaCompartida();
+            compartida.setIdTarea(id);
+            compartida.setIdUsuario(idDestino);
+            compartida.setRol(TareaCompartida.Rol.COMPARTIDA);
+            tareaCompartidaRepository.save(compartida);
+
+            try {
+                notificacionService.crearNotificacion(
+                        idDestino,
+                        "Nueva tarea compartida",
+                        "Se ha compartido contigo la tarea: " + tarea.getTitulo()
+                );
+            } catch (Exception e) {
+                System.err.println("⚠️ No se pudo crear notificación de tarea compartida: " + e.getMessage());
+            }
+
+            try {
+                emailService.sendMassEmail(
+                        List.of(usuarioDestino.getEmailUsuario()),
+                        "Te compartieron una tarea en WIME",
+                        "Hola " + usuarioDestino.getNombreUsuario() + ",\n\n"
+                                + "Te compartieron la tarea: " + tarea.getTitulo() + "\n"
+                                + "Descripción: " + (tarea.getDescripcion() == null ? "Sin descripción" : tarea.getDescripcion())
+                );
+            } catch (Exception e) {
+                System.err.println("⚠️ No se pudo enviar correo de tarea compartida: " + e.getMessage());
+            }
+
+            compartidas++;
+        }
+
+        if (compartidas == 0) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", " No se pudo compartir: usuarios inválidos, duplicados o tu propio correo"
+            ));
+        }
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "✅ Tarea actualizada correctamente"
+                "message", " Tarea compartida con " + compartidas + " usuario(s)"
         ));
-        
-        
     }
 
-    
 
-    // ✅ Eliminar tarea
+
+    //  Eliminar tarea
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Map<String, Object>> eliminarTarea(
             @PathVariable Long id,
@@ -363,7 +501,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (idUsuario == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "success", false,
-                    "message", "❌ Sesión no iniciada"
+                    "message", " Sesión no iniciada"
             ));
         }
 
@@ -371,7 +509,7 @@ public ResponseEntity<Map<String, Object>> guardarTarea(
         if (tareaOpt.isEmpty() || !tareaOpt.get().getIdUsuario().equals(idUsuario)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "success", false,
-                    "message", "⚠️ Tarea no encontrada o no pertenece al usuario"
+                    "message", " Tarea no encontrada o no pertenece al usuario"
             ));
         }
 

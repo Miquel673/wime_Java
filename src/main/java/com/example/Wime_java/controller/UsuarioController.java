@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.Wime_java.model.Usuario;
 import com.example.Wime_java.service.EmailService;
+import com.example.Wime_java.service.PasswordRecoveryService;
 import com.example.Wime_java.service.UsuarioService;
 
 @RestController
@@ -40,6 +42,8 @@ public class UsuarioController {
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private PasswordRecoveryService passwordRecoveryService;
 
 
     private static final String UPLOAD_DIR_FILESYSTEM = System.getProperty("user.dir") + "/uploads/fotos_perfil/";
@@ -123,7 +127,7 @@ public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos
             String mensaje = "Hola " + nombre + ", tu correo ha sido registrado exitosamente en Wime.";
             emailService.sendMassEmail(List.of(email), asunto, mensaje);
         } catch (Exception ex) {
-            System.out.println("⚠️ No se pudo enviar el correo: " + ex.getMessage());
+            System.out.println(" No se pudo enviar el correo: " + ex.getMessage());
         }
 
         return ResponseEntity.ok(Map.of(
@@ -230,4 +234,230 @@ public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> datos
                     .body(Map.of("success", false, "message", "Error al eliminar la foto: " + e.getMessage()));
         }
     }
+
+    @DeleteMapping("/{idUsuario}/eliminar-cuenta")
+public ResponseEntity<?> eliminarCuenta(
+        @PathVariable Integer idUsuario,
+        @RequestBody Map<String, String> body){
+
+    String password = body.get("password");
+
+    if(password == null || password.trim().isEmpty()){
+        return ResponseEntity.badRequest().body(Map.of(
+            "success", false,
+            "message", "Debes confirmar tu contraseña"
+        ));
+    }
+
+    Usuario usuario = usuarioService.obtenerPorId(idUsuario);
+
+    if(usuario == null){
+        return ResponseEntity.badRequest().body(Map.of(
+            "success", false,
+            "message", "Usuario no encontrado"
+        ));
+    }
+
+    boolean passwordValida = passwordEncoder.matches(password, usuario.getContrasenaUsuario());
+
+    if(!passwordValida){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            "success", false,
+            "message", "La contraseña es incorrecta"
+        ));
+    }
+
+    boolean eliminado = usuarioService.eliminarCuenta(idUsuario);
+
+    if(!eliminado){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+            "success", false,
+            "message", "No se pudo eliminar la cuenta"
+        ));
+    }
+
+    return ResponseEntity.ok(Map.of(
+        "success", true,
+        "message", "Cuenta eliminada correctamente"
+    ));
+}
+
+@PostMapping("/{idUsuario}/cambiar-password")
+public ResponseEntity<?> cambiarPassword(
+        @PathVariable Integer idUsuario,
+        @RequestBody Map<String,String> body){
+
+    String passwordActual = body.get("currentPassword");
+    String nuevaPassword = body.get("password");
+
+        if(passwordActual == null || passwordActual.trim().isEmpty() || nuevaPassword == null || nuevaPassword.trim().isEmpty()){
+        return ResponseEntity.badRequest().body(Map.of(
+            "success",false,
+            "message","Debes completar todos los campos"
+        ));
+    }
+
+    Usuario usuario = usuarioService.obtenerPorId(idUsuario);
+
+    if(usuario == null){
+        return ResponseEntity.badRequest()
+        .body(Map.of("success",false,"message","Usuario no encontrado"));
+    }
+    
+    boolean passwordActualValida = passwordEncoder.matches(passwordActual, usuario.getContrasenaUsuario());
+
+    if(!passwordActualValida){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            "success",false,
+            "message","La contraseña actual es incorrecta"
+        ));
+    }
+
+    String hash = passwordEncoder.encode(nuevaPassword);
+    usuario.setContrasenaUsuario(hash);
+
+    usuarioService.actualizarUsuario(usuario);
+
+    return ResponseEntity.ok(Map.of(
+        "success",true,
+        "message","Contraseña actualizada"
+    ));
+    
+}
+
+@GetMapping("/{idUsuario}")
+public ResponseEntity<?> obtenerUsuario(@PathVariable Integer idUsuario) {
+
+    try {
+
+        Usuario usuario = usuarioService.obtenerPorId(idUsuario);
+
+        if(usuario == null){
+            return ResponseEntity.badRequest().body(
+                Map.of(
+                    "success", false,
+                    "message", "Usuario no encontrado"
+                )
+            );
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "id", usuario.getIdUsuario(),
+            "nombre", usuario.getNombreUsuario(),
+            "email", usuario.getEmailUsuario(),
+            "foto", usuario.getFotoPerfil()
+        ));
+
+    } catch (Exception e) {
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+            Map.of(
+                "success", false,
+                "message", e.getMessage()
+            )
+        );
+
+    }
+}
+
+@PostMapping("/recuperar-password")
+public ResponseEntity<?> recuperarPassword(@RequestBody Map<String, String> body) {
+    try {
+        String email = body.get("email");
+
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", "Debes ingresar un correo válido"
+            ));
+        }
+
+        String correoLimpio = email.trim();
+        Usuario usuario = usuarioService.buscarPorEmail(correoLimpio);
+
+        if (usuario != null) {
+            String token = passwordRecoveryService.createToken(correoLimpio);
+            String recoveryUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/")
+                    .queryParam("resetToken", token)
+                    .toUriString();
+
+            String asunto = "Recuperación de contraseña";
+            String mensaje = "Se ha solicitado el cambio de tu contraseña";
+
+            emailService.sendPasswordRecoveryEmail(correoLimpio, asunto, mensaje, recoveryUrl);
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "Solicitud procesada"
+        ));
+
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+            "success", false,
+            "message", "No se pudo enviar el correo de recuperación"
+        ));
+    }
+}
+
+@GetMapping("/recover-token/{token}")
+public ResponseEntity<?> validarTokenRecuperacion(@PathVariable String token) {
+    String email = passwordRecoveryService.getEmailIfTokenValid(token);
+
+    if (email == null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            "success", false,
+            "message", "Token inválido o expirado"
+        ));
+    }
+
+    return ResponseEntity.ok(Map.of(
+        "success", true,
+        "email", email
+    ));
+}
+
+@PostMapping("/reset-password")
+public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+    String token = body.get("token");
+    String nuevaPassword = body.get("password");
+
+    if (token == null || token.trim().isEmpty() || nuevaPassword == null || nuevaPassword.trim().isEmpty()) {
+        return ResponseEntity.badRequest().body(Map.of(
+            "success", false,
+            "message", "Datos incompletos"
+        ));
+    }
+
+    String email = passwordRecoveryService.consumeToken(token.trim());
+
+    if (email == null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            "success", false,
+            "message", "El enlace de recuperación expiró o no es válido"
+        ));
+    }
+
+    Usuario usuario = usuarioService.buscarPorEmail(email);
+
+    if (usuario == null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            "success", false,
+            "message", "Usuario no encontrado"
+        ));
+    }
+
+    String hash = passwordEncoder.encode(nuevaPassword.trim());
+    usuario.setContrasenaUsuario(hash);
+    usuarioService.actualizarUsuario(usuario);
+
+    return ResponseEntity.ok(Map.of(
+        "success", true,
+        "message", "Contraseña actualizada"
+    ));
+}
+
+
 }

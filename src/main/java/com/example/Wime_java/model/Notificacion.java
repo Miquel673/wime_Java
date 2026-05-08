@@ -33,20 +33,21 @@ public class Notificacion {
     @Column(name = "leida", nullable = false)
     private boolean leida = false;
 
-        // ✅ Constructor vacío
+        //  Constructor vacío
     public Notificacion() {
         this.fecha = LocalDateTime.now(); // <-- AQUI LA MAGIA
         this.leida = false;
     }
 
-    // ✅ Constructor completo (si lo tienes)
-    public Notificacion(Long idUsuario, String titulo, String mensaje) {
+        //  Constructor completo (si lo tienes)
+    public Notificacion(Long idUsuario, String tipo, String mensaje) {
         this.idUsuario = idUsuario;
         this.tipo = tipo;
         this.mensaje = mensaje;
         this.fecha = LocalDateTime.now();
         this.leida = false;
     }
+
 
     // Getters y Setters
     public Long getId() { return id; }
